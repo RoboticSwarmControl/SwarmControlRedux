@@ -7,6 +7,15 @@
 	},
 	"buffers":
 	[
+		{
+			"file": "index.js",
+			"settings":
+			{
+				"buffer_size": 167,
+				"line_ending": "Unix",
+				"name": "var express = require('express');"
+			}
+		}
 	],
 	"build_system": "",
 	"command_palette":
@@ -32,12 +41,12 @@
 	},
 	"file_history":
 	[
+		"/home/crertel/work/SwarmControlRedux/package.json",
 		"/home/crertel/work/SwarmControlRedux/README.md",
 		"/home/crertel/work/SwarmControlRedux/gulpfile.js",
 		"/home/crertel/work/SwarmControlRedux/.travis.yml",
 		"/home/crertel/work/SwarmControlRedux/.client.jshintrc",
 		"/home/crertel/work/SwarmControlRedux/.server.jshintrc",
-		"/home/crertel/work/SwarmControlRedux/package.json",
 		"/home/crertel/work/SwarmControlRedux/package.json.1",
 		"/home/crertel/projects/phoenix/phoenix-lobster/web/router.ex",
 		"/home/crertel/projects/phoenix/phoenix-lobster/web/views/story_view.ex",
@@ -82,8 +91,36 @@
 	"groups":
 	[
 		{
+			"selected": 0,
 			"sheets":
 			[
+				{
+					"buffer": 0,
+					"file": "index.js",
+					"settings":
+					{
+						"buffer_size": 167,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								167,
+								167
+							]
+						],
+						"settings":
+						{
+							"auto_name": "var express = require('express');",
+							"syntax": "Packages/JavaScript/JavaScript.tmLanguage"
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"type": "text"
+				}
 			]
 		}
 	],
