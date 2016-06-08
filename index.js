@@ -9,8 +9,8 @@ function handleIndex( req, res ){
 	res.status(200).send('Hi!');
 }
 
-var gameRouter = require('server/gameController.js');
-var resultRouter = require('server/resultController.js');
+var gameRouter = require('./server/gameController.js');
+var resultRouter = require('./server/resultController.js');
 
 app.use('/results', resultRouter)
 app.use('/games', gameRouter);

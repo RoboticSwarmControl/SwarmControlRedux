@@ -4,7 +4,7 @@ var express = require('express');
 
 var router = express.Router();
 
-router.get('/', function _renderIndex( req, res) {
+router.get('/', function _renderGamesIndex( req, res) {
 	URFP(req);
 	res.status(200).send('Games!');
 });
@@ -15,4 +15,4 @@ router.get('/:gameID', function _renderGame( req, res) {
 	res.status(200).send('Game ' + game);
 });
 
-return router;
+module.exports = router;
