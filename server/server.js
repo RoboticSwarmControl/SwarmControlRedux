@@ -1,5 +1,5 @@
 'use strict';
-function URFP( x ) { /* jshint expr:true */ x; }
+
 var express = require('express');
 var app = express();
 
@@ -7,7 +7,7 @@ var gameRouter = require('./gameController.js');
 var resultRouter = require('./resultController.js');
 var appRouter = require('./appController.js');
 
-app.use('/results', resultRouter)
+app.use('/results', resultRouter);
 app.use('/games', gameRouter);
 app.get('/', appRouter);
 

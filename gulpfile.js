@@ -9,9 +9,9 @@ var gulp = require('gulp'),
 gulp.task('build:styles', function() {
     return gulp.src('styles/**/*.css')
                 .pipe(concat('main.css'))
-                .pipe(gulp.dest('static/css'))
+                .pipe(gulp.dest('dist/css'))
                 .pipe(rename({suffix: '.min'}))
-                .pipe(gulp.dest('static/css'))
+                .pipe(gulp.dest('dist/css'))
                 .pipe(notify({ message: 'Built styles.'}));
 });
 
@@ -25,9 +25,9 @@ gulp.task('lint:client', function() {
 gulp.task('build:client', function() {
     return gulp.src('client/**/*.js')
                 .pipe(concat('main-client.js'))
-                .pipe(gulp.dest('static/js'))
+                .pipe(gulp.dest('dist/js'))
                 .pipe(rename({suffix: '.min'}))
-                .pipe(gulp.dest('static/js'))
+                .pipe(gulp.dest('dist/js'))
                 .pipe(notify({ message: 'Built client scripts.' }));
 });
 
@@ -39,12 +39,7 @@ gulp.task('lint:server', function() {
 });
 
 gulp.task('build:server', function() {
-    return gulp.src('server/**/*.js')                                     
-                .pipe(concat('main-server.js'))
-                .pipe(gulp.dest('static/js'))
-                .pipe(rename({suffix: '.min'}))
-                .pipe(gulp.dest('static/js'))
-                .pipe(notify({ message: 'Built server scripts.' }));
+    return notify({ message: 'Built server scripts.' });
 });
 
 gulp.task('clean', function(cb) {

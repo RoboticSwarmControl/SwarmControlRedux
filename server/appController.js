@@ -5,8 +5,8 @@ var router = express.Router();
 var util = require('./util.js');
 
 router.get('/', function _renderGamesIndex( req, res) {
-	URFP(req);	
-	util.renderPage('./server/views/index.html.ejs')
+	URFP(req);
+	util.renderPage('index.html.ejs')
 	.then( function (page) {
 		res.status(200).send(page);
 	})

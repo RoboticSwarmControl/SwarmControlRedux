@@ -8,7 +8,7 @@
     "lint": "gulp lint",
     "build": "gulp default",
     "clean": "gulp clean",
-    "start": "nodejs src/server/server.js",
+    "start": "node server/server.js",
     "build:server": "gulp scripts-server",
     "build:client": "gulp scripts-client"
   },
@@ -25,7 +25,8 @@
   "dependencies": {
     "bluebird": "^3.4.0",
     "ejs": "^2.4.2",
-    "express": "^4.13.3"
+    "express": "^4.13.3",
+    "pg-promise": "^4.6.2"
   },
   "devDependencies": {
     "del": "^2.2.0",
