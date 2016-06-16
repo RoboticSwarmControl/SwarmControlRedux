@@ -1,0 +1,17 @@
+<div class="row">	  
+	<% (locals.tasks||[]).forEach( function( task ) { %>
+	<div class="span2">
+		<a href="<%= task.url %>">
+	        <div id="div1" align="center">
+	            <div class ="highlightit", style="display: inline">
+	            	<img src="<%= task.image %>"></img>
+	            </div>
+	            <div align="center">
+	                <b>NEW!</b> <%= task.name %> <br>(1 of 6)
+	            </div>
+	            <script>drawMeritBadges("div1","<%= task.id %>",3);</script>
+	        </div>
+        </a>
+    </div>
+	<% }) %>
+</div>

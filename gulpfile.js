@@ -7,9 +7,17 @@ var gulp = require('gulp'),
     del = require('del');
 
 gulp.task('build:styles', function() {
-    return gulp.src('styles/**/*.css')
+    return gulp.src([   'client/css/common.css',
+                        'client/css/landing.css',
+                        'client/css/results.css'])
                 .pipe(concat('main.css'))
                 .pipe(gulp.dest('dist/css'))
+                .pipe(notify({ message: 'Built styles.'}));
+});
+
+gulp.task('build:styles-vendor', function() {
+    return gulp.src(['vendor/bootstrap-3.3.6-dist/css/bootstrap.css'])
+                .pipe(concat('main-client-vendor.css'))
                 .pipe(rename({suffix: '.min'}))
                 .pipe(gulp.dest('dist/css'))
                 .pipe(notify({ message: 'Built styles.'}));
@@ -25,10 +33,28 @@ gulp.task('lint:client', function() {
 gulp.task('build:client', function() {
     return gulp.src('client/**/*.js')
                 .pipe(concat('main-client.js'))
-                .pipe(gulp.dest('dist/js'))
                 .pipe(rename({suffix: '.min'}))
                 .pipe(gulp.dest('dist/js'))
                 .pipe(notify({ message: 'Built client scripts.' }));
+});
+
+gulp.task('build:client-images', function (){
+return gulp.src('client/images/*.*')
+            .pipe(gulp.dest('dist/images'))
+            .pipe(notify({ message: 'Built client images.' }));
+});
+
+gulp.task('build:client-vendor', function() {
+    return gulp.src([
+                        'vendor/jquery-2.2.4/js/jquery-2.2.4.min.js',
+                        'vendor/colorbox-1.6.4/js/jquery.colorbox-min.js',
+                        'vendor/bootstrap-3.3.6-dist/js/bootstrap.min.js'
+                    ])
+                .pipe(concat('main-client-vendor.js'))
+                .pipe(gulp.dest('dist/js'))
+                .pipe(rename({suffix: '.min'}))
+                .pipe(gulp.dest('dist/js'))
+                .pipe(notify({ message: 'Built client vendor scripts.' }));
 });
 
 gulp.task('lint:server', function() {
@@ -43,7 +69,7 @@ gulp.task('build:server', function() {
 });
 
 gulp.task('clean', function(cb) {
-    return del(['static/css', 'static/js'], cb);
+    return del(['dist'], cb);
 });
 
 gulp.task('lint', function() {
@@ -51,5 +77,12 @@ gulp.task('lint', function() {
 });
 
 gulp.task('default', ['clean'], function() {
-    return gulp.start('build:styles', 'lint:client', 'lint:server', 'build:client', 'build:server');
+    return gulp.start(  'build:styles',
+                        'build:styles-vendor',
+                        'lint:client',
+                        'lint:server',
+                        'build:client',
+                        'build:client-images',
+                        'build:client-vendor',
+                        'build:server');
 });
