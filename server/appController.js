@@ -6,7 +6,7 @@ var util = require('./util.js');
 
 router.get('/', function _renderGamesIndex( req, res) {
 	URFP(req);
-	util.renderPage('index.html.ejs')
+	util.renderPage('landing.html.ejs')
 	.then( function (page) {
 		res.status(200).send(page);
 	})

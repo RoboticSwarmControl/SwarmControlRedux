@@ -8,7 +8,16 @@ var promisedRenderPage = Promise.promisify( ejs.renderFile );
 function renderPage( name, data ){
 	return promisedRenderPage(	path.join(__dirname, 'views', name),
 								data,
-								{ strict: true, cache: true });
+								{
+									/* we set strict to true to prevent certain JS weirdness that can occur */
+									strict: true,
+
+									/*
+										cache only in production--in dev, we want to reload pages when
+										we change the markup and instantly see the effect
+									*/
+									cache:  process.env.NODE_ENV === 'production'
+								});
 }
 
 module.exports = {
