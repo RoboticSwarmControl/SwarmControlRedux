@@ -1,18 +1,18 @@
 'use strict';
-function URFP( x ) { /* jshint expr:true */ x; }
 var express = require('express');
-
+var util = require('./util.js');
 var router = express.Router();
 
-router.get('/', function _renderGamesIndex( req, res) {
-	URFP(req);
-	res.status(200).send('Games!');
-});
-
-router.get('/:gameID', function _renderGame( req, res) {
-	URFP(req);
+router.get('/:gameID', function _renderGame( req, res) {	
 	var game = req.params.gameID;
-	res.status(200).send('Game ' + game);
+	
+	util.renderPage('game.html.ejs', { taskName: game })
+	.then( function (page) {
+		res.status(200).send(page);
+	})
+	.catch(function (err) {
+		res.status(500).send(err.toString());
+	});
 });
 
 module.exports = router;

@@ -1,0 +1,52 @@
+<!DOCTYPE html>  
+<html itemscope itemtype="http://schema.org/CreativeWork">
+    <head>
+        <%- include('partials/app-common-head.html.ejs') %>
+        <%- include('partials/common-scripts.html.ejs') %>
+    </head>
+    <body>        
+        <%- include('partials/analytics.html.ejs') %>
+        <%- include('partials/navbar.html.ejs') %>
+
+        <div class="container">
+            <div class="row-fluid">
+                <div class="col-md-4">
+                    <script>
+                        //$(function() { app.init( 'HATS' ); });
+                    </script>
+
+                    <h1>SwarmControl:</h1>
+                    <div id="taskName">
+                    <h3> TASKNAME </h3>
+                    </div>
+
+                    <div class="well task-info">
+                        <div id="task-instructions">
+                        </div>
+                        <div id="task-theScience" >
+                        </div>
+                    </div>
+                    <br>
+                </div>
+                <div class="col-md-8", align="center">
+                      <div class="canvas" id="canvasID">
+                        <canvas class="pull-right" id="canvas" width="600" height="600" style="background-color:#EEEEEE;" >
+                        </canvas>
+                    </div>
+                    <div class="float" >     
+                        <div class="task-buttons, pull-right">
+                            <button id="-play-again-button" class="btn btn-success" onClick="window.location.reload()">Restart</button>
+                            <button id="-tasks-button" class="btn btn-success" onClick="parent.location='../'">Main Menu</button>
+                        </div>
+                        <div class="center" id="taskFeedback"> </div>                  
+                  </div>
+                </div>
+            </div>
+        </div>
+        
+        <%- include('partials/terms-and-conditions.html.ejs') %>
+
+        <%- include('partials/footer.html.ejs') %>
+        <%- include('partials/user-voice.html.ejs') %>
+    </body>
+</html>
