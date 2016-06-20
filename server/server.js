@@ -10,7 +10,7 @@ var appRouter = require('./appController.js');
 
 app.use('/results', resultRouter);
 app.use('/games', gameRouter);
-app.get('/', appRouter);
+app.use('/', appRouter);
 app.use('/assets', express.static( path.join(__dirname, '..', 'dist') ));
 
 app.listen(3000);
