@@ -76,9 +76,7 @@
 	        }); 
 	} 
 	</script>
-
-
-	<%- include('partials/landing-tasks.html.ejs', {tasks: locals.tasks} ) %>
+		<%- include('partials/landing-tasks.html.ejs', {tasks: locals.tasks || [] } ) %>
 	<br>
 	</div>
 </div>

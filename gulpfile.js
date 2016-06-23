@@ -39,7 +39,7 @@ gulp.task('build:client', function() {
 });
 
 gulp.task('build:client-images', function (){
-return gulp.src('client/images/*.*')
+    return gulp.src('client/images/*.*')
             .pipe(gulp.dest('dist/images'))
             .pipe(notify({ message: 'Built client images.' }));
 });
@@ -74,6 +74,13 @@ gulp.task('lint:server', function() {
 gulp.task('build:server', function() {
     return notify({ message: 'Built server scripts.' });
 });
+
+gulp.task('build:games-images', function () {
+    return gulp.src('games/**/preview.png', { base:'games' })
+            .pipe(gulp.dest('dist/games'))
+            .pipe(notify({ message: 'Built client images.' }));
+});
+
 gulp.task('build:games-vendor', function() {
     return gulp.src([
                         'vendor/flotr2/flotr2.min.js',
@@ -104,6 +111,7 @@ gulp.task('default', ['clean'], function() {
                         'build:client',
                         'build:client-images',
                         'build:client-vendor',
+                        'build:games-images',
                         'build:games-vendor',
                         'build:server');
 });

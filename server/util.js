@@ -5,6 +5,16 @@ var Promise = require('bluebird');
 
 var promisedRenderPage = Promise.promisify( ejs.renderFile );
 
+function assertField( object, fieldName, objectName ) {
+	if ( typeof object[fieldName] === 'undefined' ) {
+		throw (objectName || 'Object') +  'Object missing field ' + fieldName;
+	}
+}
+
+function getGameDirectory() {
+	return path.join(__dirname, '..', 'games');
+}
+
 function renderPage( name, data ){
 	return promisedRenderPage(	path.join(__dirname, 'views', name),
 								data,
@@ -21,5 +31,7 @@ function renderPage( name, data ){
 }
 
 module.exports = {
-	renderPage: renderPage
+	renderPage: renderPage,
+	getGameDirectory: getGameDirectory,
+	assertField: assertField
 };

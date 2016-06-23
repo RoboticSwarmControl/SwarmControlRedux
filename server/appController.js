@@ -6,13 +6,7 @@ var util = require('./util.js');
 
 router.get('/', function _renderGamesIndex( req, res) {
 	URFP(req);
-	util.renderPage('landing.html.ejs', { tasks: [] })
-	.then( function (page) {
-		res.status(200).send(page);
-	})
-	.catch(function (err) {
-		res.status(500).send(err.toString());
-	});
+	res.redirect('/games');	
 });
 
 router.get('/subscribe', function _renderGamesIndex( req, res) {
