@@ -30,10 +30,14 @@ function loadGames() {
 			fs.statSync( manifest.paths.science );
 
 			router.get('/' + manifest.name , function _renderGame( req, res) {	
-				URFP(req);
-				var game = manifest.displayName;
-				
-				util.renderPage('game.html.ejs', { taskName: game })
+				URFP(req);				
+
+				util.renderPage('game.html.ejs',
+								{
+									taskName: manifest.displayName,
+									sciencePartial: manifest.paths.science,
+									instructionsPartial: manifest.paths.instructions,
+								})
 				.then( function (page) {
 					res.status(200).send(page);
 				})
