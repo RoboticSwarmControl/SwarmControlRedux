@@ -23,7 +23,8 @@ function loadGames() {
 
 			manifest.paths = {
 				instructions: path.join( gameDir, 'instructions.html.ejs'),
-				science: path.join( gameDir, 'science.html.ejs')
+				science: path.join( gameDir, 'science.html.ejs'),
+				game: '/assets/games/' + gameName+ '/' + gameName + '.js'
 			};
 
 			fs.statSync( manifest.paths.instructions );
@@ -35,6 +36,7 @@ function loadGames() {
 				util.renderPage('game.html.ejs',
 								{
 									taskName: manifest.displayName,
+									gameScriptPath: manifest.paths.game,
 									sciencePartial: manifest.paths.science,
 									instructionsPartial: manifest.paths.instructions,
 								})
