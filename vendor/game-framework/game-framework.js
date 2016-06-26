@@ -35,6 +35,7 @@
 		this._currentFrameStartTime = new Date();
 		this._lastFrameStartTime = this._currentFrameStartTime;
 		this._timeInPause = 0;
+		this._inputEvents = [];
 
 		this.kAllowedTimeInPause = 30*1000; // 30 secs in pause before moving on
 		
@@ -61,6 +62,7 @@
 	};
 
 	GameFramework.prototype.doStateOverview = function ( dt, inputEvents ){
+		console.log("overview");
 		if (inputEvents.length > 0) {
 			// on new input, we're running again.
 			return this.doStateRunning;
@@ -70,6 +72,8 @@
 	};
 
 	GameFramework.prototype.doStateRunning = function ( dt, inputEvents ){
+		console.log("running");
+
 		this._updateCallback();
 
 		// run 
@@ -80,14 +84,21 @@
 	};
 
 	GameFramework.prototype.doStateAbandoned = function ( dt, inputEvents  ){
+		console.log("abandoned");
+		/* do abandoned screen */
+
 		return this.doStateHalted;
 	};
 
 	GameFramework.prototype.doStateHalted = function ( dt, inputEvents  ) {
+		console.log("halted");
+
 		return this.doStateHalted;
 	};
 
 	GameFramework.prototype.doStatePaused = function( dt, inputEvents ) {		
+		console.log("paused");
+
 		this._timeInPause += dt;
 	
 		if (this._timeInPause > this.kAllowedTimeInPause) {
@@ -104,11 +115,13 @@
 	};
 
 	GameFramework.prototype.doStateWon = function ( dt, inputEvents  ) {
+		console.log("won");
 		this._winTestCallback();
 		return this.doStateHalted;
-	};	
+	};
 
 	GameFramework.prototype.doStateLost = function ( dt, inputEvents  ) {	
+		console.log("lost");
 		this._loseTestCallback();
 		return this.doStateHalted;
 	};
@@ -118,8 +131,65 @@
 		this._currentFrameStartTime = new Date();
 		var dt = this._currentFrameStartTime - this._lastFrameStartTime;
 
-		this._currentState = this._currentState(dt);
-
-		window.requestAnimationFrame( this.run.bind(this) );
+		this._currentState = this._currentState(dt, this._inputEvents);
+		this._inputEvents = [];
+		if (this._currentState !== this.doStateHalted){
+			window.requestAnimationFrame( this.run.bind(this) );
+		}
 	};
+
+	GameFramework.prototype.init = function( $canvas ) {
+		this._$canvas = $canvas;
+
+		$canvas[0].on('keyup', function(e){
+		}, false);
+
+		$canvas[0].on('keydown', function(e){
+		}, false);
+
+		$canvas[0].on('mousedown', function(e){
+		}, false);
+
+		$canvas[0].on('mousemove', function(e){
+		}, false);
+
+		$canvas[0].on('mouseup', function(e){
+		}, false);
+
+		$canvas[0].on('touchmove', function(e){
+			/*
+            e.preventDefault();
+            var rect = this.getBoundingClientRect();
+            var touch = e.touches[0];
+            var left = touch.pageX - rect.left - this.clientLeft + this.scrollLeft;
+            var top = touch.pageY - rect.top - this.clientTop + this.scrollTop;
+
+            that._mX = 20 * left/this.width;
+            that._mY = 20 * top/this.height -2; //
+            */
+        }, false);        
+
+        $canvas[0].on('touchstart', function(e) {
+        	/*
+            that._attracting = true;
+            //check if this is the first valid keypress, if so, starts the timer
+            if( that._startTime == null )
+            { 
+                that.lastUserInteraction = new Date().getTime();
+                that._startTime = that.lastUserInteraction;
+                that._runtime = 0.0;
+            }
+            */
+        }, false);
+
+        $canvas[0].on('touchend', function (e) {
+        	/*
+            that.lastUserInteraction = new Date().getTime();
+            that._attracting = false;
+            */
+        }, false);
+	};
+
+	window.GameFramework = window.GameFramework || GameFramework;
+
 })(Box2D, $);

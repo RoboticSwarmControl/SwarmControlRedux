@@ -89,9 +89,11 @@ gulp.task('build:games-scripts', function () {
 
 gulp.task('build:games-vendor', function() {
     return gulp.src([
+                        'vendor/box2dWeb-2.1.a.3/Box2dWeb-2.1.a.3.min.js',
                         'vendor/flotr2/flotr2.min.js',
                         'vendor/jcanvas-6.0/jcanvas.min.js',
-                        'vendor/rng-1.0/rng.js'
+                        'vendor/rng-1.0/rng.js',
+                        'vendor/game-framework/game-framework.js'
                     ])
                 .pipe(concat('main-games-vendor.js'))
                 .pipe(gulp.dest('dist/js'))

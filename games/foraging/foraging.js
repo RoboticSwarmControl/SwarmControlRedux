@@ -41,7 +41,7 @@ var varyingControlTask = _.extend({}, baseTask, attractiveController, repulsiveC
                 $('.mode-button').removeClass('btn-success');
                 $('#button-'+m).addClass('btn-success');
             });
-        });                
+        });
     },
 
 
