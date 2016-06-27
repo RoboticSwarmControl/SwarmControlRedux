@@ -39,26 +39,45 @@
 
 		this.kAllowedTimeInPause = 30*1000; // 30 secs in pause before moving on
 		
+		this._initCallback = function () { };
 		this._overviewCallback = function () { };
 		this._updateCallback = function () { };
 		this._winTestCallback = function () { return false; };
-		this._loseTestCallback = function () { return false; };		
+		this._loseTestCallback = function () { return false; };
+
+		this.constants.colorRobot = "blue";
+	    this.constants.colorRobotEdge = "rgb(50,50,255)";
+	    this.constants.colorRobotGoal = "blue";
+	    this.constants.colorRobotAtGoal: "lightblue";
+	    this.constants.colorObstacle: "rgb(95,96,98)";
+	    this.constants.colorGoalArrow = "rgb(0,110,0)";
+	    this.constants.colorGoal = "green";  				// color of unclocked button (middle) "green",
+	    this.constants.colorObject = "green";  				// color of clicked button,  "green" = 0,128,0,
+	    this.constants.colorObjectEdge = "darkgreen";		// color of clicked button border "darkgreen",
+	    this.constants.colorObjectAtGoal = "lightgreen";
+	    this.constants.strokeWidth = 2;
+	    this.constants.strokeWidthThick = 4;
+	    this.constants.obsThick = 0.2;						//thickness of obstacles at edges and internally
 	};	
 
-	GameFramework.prototype.setOverviewFunction = function ( overviewFunctionCb ) {
-		this._overviewCallback = overviewFunctionCb;
+	GameFramework.prototype.setInitCallback = function ( initFunctionCb ) {
+		this._initCallback = initFunctionCb.bind(this);
+	};
+
+	GameFramework.prototype.setOverviewCallback = function ( overviewFunctionCb ) {
+		this._overviewCallback = overviewFunctionCb.bind(this);
 	};
 
 	GameFramework.prototype.setUpdateCallback = function ( updateFunctionCb ) {
-		this._updateCallback = updateFunctionCb;
+		this._updateCallback = updateFunctionCb.bind(this);
 	};
 
 	GameFramework.prototype.setWinTestCallback = function ( winTestCallback ) {
-		this._winTestCallback = winTestCallback;
+		this._winTestCallback = winTestCallback.bind(this);
 	};
 
 	GameFramework.prototype.setLoseTestCallback = function ( lostTestCallback ) {
-		this._loseTestCallback = lostTestCallback;
+		this._loseTestCallback = lostTestCallback.bind(this);
 	};
 
 	GameFramework.prototype.doStateOverview = function ( dt, inputEvents ){
@@ -139,6 +158,8 @@
 	};
 
 	GameFramework.prototype.init = function( $canvas ) {
+		this._initCallback();
+
 		this._$canvas = $canvas;
 
 		$canvas[0].on('keyup', function(e){

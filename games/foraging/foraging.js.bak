@@ -1,215 +1,23 @@
-var game = new GameFramework();
-
-game.setInitCallback( function () {
-    this.task.modes = ['attractive','repulsive','global'];
-    this.task.mode = 'default';
-    this.task.repulsing = false;
-    this.task.attracting = false;
-    this.task.numRobots = 100;
-    this.task.robotRadius: 0.5;
-    this.task.robots = [];          // array of bodies representing the robots
-    this.task.goals = [];           // array of goals of form {x,y,w,h}
-    this.task.blocks = [];          // array of bodies representing blocks
-    this.task.numblocksCollected = 0;
-    this.task.numBlocksTotal = 50;
-    this.mX = 0;
-    this.mY = 0;
-    this.world = new phys.world( new phys.vec2(0, 0), true );    // physics world to contain sim
-
-    function makeBox( world, x, y, xThickness, yThickness) {
-        var fixDef = new phys.fixtureDef;    
-        fixDef.density = 20.0;
-        fixDef.friction = 0.5;
-        fixDef.restitution = 0.2;  //bouncing value
-        fixDef.shape = new phys.polyShape;
-        fixDef.shape.SetAsBox(xThickness, yThickness);
-
-        // body definition for obstacles
-        var bodyDef = new phys.bodyDef;
-        bodyDef.userData = 'obstacle';
-        bodyDef.type = phys.body.b2_staticBody;
-        bodyDef.position.Set(x, y);
+var varyingControlTask = _.extend({}, baseTask, attractiveController, repulsiveController, globalController, {
+    taskName: 'forage',
+    taskMode: 'default',
     
-        world.CreateBody(bodyDef).CreateFixture(fixDef);
-    }
-
-    // create bottom wall
-    makeBox(    this.world,
-                10, 20 - this.constants.obsThick,
-                10, this.constants.obsThick);
-
-    // create top wall
-    makeBox(    this.world,
-                10, this.constants.obsThick,
-                10, this.constants.obsThick);
-    
-    // create left wall
-    makeBox(    this.world,
-                this.constants.obsThick, 10,
-                this.constants.obsThick, 10);
-
-    // create right wall
-    makeBox(    this.world,
-                20 - this.constants.obsThick, 10,
-                this.constants.obsThick, 10);
-    
-    // create mid lower wall    
-    makeBox(    this.world,
-                25, 6.66,
-                20, this.constants.obsThick);
-
-    // create mid upper wall
-    makeBox(    this.world,
-                -5, 13.33,
-                20, this.constants.obsThick);
-
-    // create food blocks
-    var bodyDef = new phys.bodyDef;
-    bodyDef.type = phys.body.b2_dynamicBody;
-    bodyDef.userData = 'workpiece';
-    fixDef.shape = new phys.polyShape();
-    fixDef.shape.SetAsBox( 0.3, 0.3);
-    fixDef.density = 5.0;
-    fixDef.friction = 0.5;
-    fixDef.restitution = 0.2;  //bouncing value
-    for(var i = 0; i < this._numblocksTotal; ++i) {
-        bodyDef.position.x = 0.5 + 9.5 * Math.random();
-        bodyDef.position.y = 13 + 7 * Math.random();
-        var body = this.world.CreateBody(bodyDef);
-        body.CreateFixture(fixDef);
-        body.m_angularDamping = 5;
-        body.m_linearDamping = 5;
-        this.task.blocks.push(body);
-    }
-
-    // create some robots
-    bodyDef = new phys.bodyDef;
-    this.task.robotRadius = 0.5*6.0/Math.sqrt(this.task.numRobots);
-    var rowLength = Math.floor(7/(2*this.task.robotRadius));
-    var xoffset = this.task.robotRadius+0.5;
-    var yoffset = 13.5+this.task.robotRadius;
-    bodyDef.type = phys.body.b2_dynamicBody;
-    bodyDef.userData = 'robot';
-    fixDef.density = 1.0;
-    fixDef.friction = 0.5;
-    fixDef.restitution = 0.2;  //bouncing value
-    fixDef.isSensor = false;
-    fixDef.shape = new phys.circleShape( this._robotRadius ); 
-    for(var i = 0; i < this._numrobots; ++i) {
-        //random position
-        bodyDef.position.x = xoffset + 9*Math.random();
-        bodyDef.position.y = yoffset + 6*Math.random();
-        var body = this.world.CreateBody(bodyDef);
-        body.CreateFixture(fixDef);
-        body.m_angularDamping = 10;
-        body.m_linearDamping = 10;
-        body.foodx = -1;
-        body.foody = -1;
-        this.task.robots.push(body);
-    }
-
-    /*
-    var contactListener = new Box2D.Dynamics.b2ContactListener;
-    contactListener.BeginContact = function(contact, manifold) {
-
-       if(   contact.m_fixtureA.m_body.m_userData == 'robot' &&
-             contact.m_fixtureB.m_body.m_userData == 'workpiece')
-        {
-            contact.m_fixtureA.m_body.m_userData = 'contact';
-            contact.m_fixtureA.m_shape.m_radius = contact.m_fixtureA.m_shape.m_radius*1.5;
-            contact.m_fixtureB.m_body.m_userData = 'empty';
-            contact.m_fixtureA.m_body.foodx = contact.m_fixtureB.m_body.GetPosition().x;
-            contact.m_fixtureA.m_body.foody = contact.m_fixtureB.m_body.GetPosition().y;
-        }
-       else if( contact.m_fixtureA.m_body.m_userData == 'workpiece' &&
-             contact.m_fixtureB.m_body.m_userData == 'robot') 
-       { 
-        contact.m_fixtureB.m_body.m_userData = 'contact';
-        contact.m_fixtureA.m_body.m_userData = 'empty';
-        contact.m_fixtureB.m_shape.m_radius = contact.m_fixtureB.m_shape.m_radius*1.5;
-        contact.m_fixtureB.m_body.foodx = contact.m_fixtureA.m_body.GetPosition().x;
-        contact.m_fixtureB.m_body.foody = contact.m_fixtureA.m_body.GetPosition().y;
-       }
-    };
-    this._world.SetContactListener(contactListener);
-    */
-    
-    // create the goal
-    /*
-    bodyDef.type = phys.body.b2_dynamicBody;
-    bodyDef.userData = 'goal';
-    bodyDef.position.Set(3.35,16.5);
-    this._goals.push( this._world.CreateBody(bodyDef) );
-    fixDef.isSensor = true;
-    fixDef.shape = new phys.circleShape(3.25); 
-    this._goals[0].CreateFixture(fixDef);
-    */
-});
-
-game.setOverviewCalback( function() {
-    var color = 'white';
-
-    for (var i = 0; i < 5; i++) {
-        var pos = this.task.blocks[i].GetPosition();
-        if( pos.x < 16 && pos.y < 13 && pos.y > 5){
-            color = this.constants.colorObjectEdge;
-            drawutils.drawRect(30*(pos.x+1.7),30*pos.y, 80,22, 'rgba(240, 240, 240, 0.4)',0,'rgba(240, 240, 240, 0.4)',0);
-            drawutils.drawText(30*(pos.x+1.7),30*pos.y,'←Food', 1.5, color, color);
-        }
-    }
-    
-    color = that.colorObject;
-    drawutils.drawRect(300,560, 470,30, 'rgba(240, 240, 240, 0.7)',0,'rgba(240, 240, 240, 0.7)',0);
-    if(that.mobileUserAgent){
-        drawutils.drawText(300,560, 'use touchscreen to bring 90% of food home', 1.5, color, color);
-    } else {
-        drawutils.drawText(300,560, 'use your mouse to bring 90% of food home', 1.5, color, color);
-    }
-
-    var strInstruction = '';
-    var strControlMode = 'mouse click';
-    if(that.mobileUserAgent)
-        {strControlMode = 'your touch';}
-    switch( that.taskMode ) {
-        case 'attractive': strInstruction ='Robots are attracted to '+strControlMode; break;
-        case 'repulsive' : strInstruction ='Robots are repulsed from '+strControlMode;break;
-        case 'global' : strInstruction ='Robots move in direction of '+strControlMode;break;
-    }
-    drawutils.drawRect(300,65, 420,60, 'rgba(240, 240, 240, 0.7)',0,'rgba(240, 240, 240, 0.7)',0);
-    drawutils.drawText(300,80,strInstruction, 1.5, color, color)
-    drawutils.drawText(300,50,that.taskMode+' control:', 1.5, 'black', 'black')
-
-    var meanx = 0;
-    var miny =  Number.MAX_VALUE;
-    var minx =  Number.MAX_VALUE;
-    var meany = 0;
-    for(var i = 0; i < this.task.numRobots; ++i) {
-        var pos = this.task.robots[i].GetPosition();
-        meanx = meanx + pos.x/this._numrobots;
-        meany = meany + pos.y/this._numrobots;
-        if( pos.y < miny)
-            {miny = pos.y;}
-        if( pos.x < minx)
-            {minx = pos.x;}
-    }
-    color = this.constants.colorRobot;
-    drawutils.drawText(30*(minx-2.3),30*(meany- 0.55),'Robots→', 1.5, color, color);
-});
-
-game.setUpdateCallback( function () {
-});
-
-game.setWinTestCallback( function() {
-});
-
-game.setLoseTestCallback( function() {
-});
-
-game.init( $("#canvas") );
-game.run();
-
-/*
-var varyingControlTask = _.extend({}, baseTask, attractiveController, repulsiveController, globalController, {    
+    _numrobots: 100,                                        // number of robots
+    _robotRadius: 0.5,
+    _robots: [],                                            // array of bodies representing the robots
+    _blocks: [],                                            // array of bodies representing blocks
+    _goals: [],                                             // array of goals of form {x,y,w,h}
+    _impulse: 50,                                           // impulse to move robots by
+    _impulseV: new phys.vec2(0,0),                          // global impulse to control all robots
+    _world: new phys.world( new phys.vec2(0, 0), true ),    // physics world to contain sim
+    _zeroReferencePoint: new phys.vec2(0,0),                // cached reference point for impulse application    
+    _mX: 0,
+    _mY: 0,
+    _attracting: false,
+    _repulsing: false,
+    _taskModes: ['attractive', 'repulsive', 'global'],
+    _numblocksCollected: 0,
+    _numblocksTotal: 50,
 
     setupInstructions: function ( options ){
         'use strict';
@@ -521,8 +329,64 @@ var varyingControlTask = _.extend({}, baseTask, attractiveController, repulsiveC
         });
         // draw text before game starts
         if(that._startTime == null){
+            var color = 'white';
+           
+            var i = 0;
+            var c = 0;
+            while( i < 5) {
+                var pos = that._blocks[c++].GetPosition();
+                if( pos.x < 16 && pos.y < 13 && pos.y > 5){
+                    color = that.colorObjectEdge; 
+                    drawutils.drawRect(30*(pos.x+1.7),30*pos.y, 80,22, 'rgba(240, 240, 240, 0.4)',0,'rgba(240, 240, 240, 0.4)',0);
+                    drawutils.drawText(30*(pos.x+1.7),30*pos.y,'←Food', 1.5, color, color);
+                    i++;
+                }
+            };
             
+            color = that.colorObject;
+            drawutils.drawRect(300,560, 470,30, 'rgba(240, 240, 240, 0.7)',0,'rgba(240, 240, 240, 0.7)',0);
+            if(that.mobileUserAgent){
+                drawutils.drawText(300,560, 'use touchscreen to bring 90% of food home', 1.5, color, color);
+            }else{drawutils.drawText(300,560, 'use your mouse to bring 90% of food home', 1.5, color, color);}
+
+            var strInstruction = '';
+            var strControlMode = 'mouse click';
+            if(that.mobileUserAgent)
+                {strControlMode = 'your touch';}
+            switch( that.taskMode ) {
+                case 'attractive': strInstruction ='Robots are attracted to '+strControlMode; break;
+                case 'repulsive' : strInstruction ='Robots are repulsed from '+strControlMode;break;
+                case 'global' : strInstruction ='Robots move in direction of '+strControlMode;break;
+            }
+            drawutils.drawRect(300,65, 420,60, 'rgba(240, 240, 240, 0.7)',0,'rgba(240, 240, 240, 0.7)',0);
+            drawutils.drawText(300,80,strInstruction, 1.5, color, color)
+            drawutils.drawText(300,50,that.taskMode+' control:', 1.5, 'black', 'black')
+
+            var meanx = 0;
+            var miny =  Number.MAX_VALUE;
+            var minx =  Number.MAX_VALUE;
+            var meany = 0;
+            for(var i = 0; i < this._numrobots; ++i) {
+                var pos = this._robots[i].GetPosition();
+                meanx = meanx + pos.x/this._numrobots;
+                meany = meany + pos.y/this._numrobots;
+                if( pos.y < miny)
+                    {miny = pos.y;}
+                if( pos.x < minx)
+                    {minx = pos.x;}
+            }
+            color = that.colorRobot;
+            drawutils.drawText(30*(minx-2.3),30*(meany- 0.55),'Robots→', 1.5, color, color);
         }
     }
 });
-*/
+
+// this makes sure that the "this" context is properly set
+for (var m in varyingControlTask) {
+    if (typeof varyingControlTask[m] == 'function') {
+        varyingControlTask[m] = _.bind( varyingControlTask[m], varyingControlTask );
+    }
+}
+
+// register our task with the application
+app.registerTask( varyingControlTask );
