@@ -41,15 +41,17 @@
 		
 		this._initCallback = function () { };
 		this._overviewCallback = function () { };
+		this._drawCallback = function () { };
 		this._updateCallback = function () { };
 		this._winTestCallback = function () { return false; };
 		this._loseTestCallback = function () { return false; };
 
+		this.constants = {};
 		this.constants.colorRobot = "blue";
 	    this.constants.colorRobotEdge = "rgb(50,50,255)";
 	    this.constants.colorRobotGoal = "blue";
-	    this.constants.colorRobotAtGoal: "lightblue";
-	    this.constants.colorObstacle: "rgb(95,96,98)";
+	    this.constants.colorRobotAtGoal = "lightblue";
+	    this.constants.colorObstacle = "rgb(95,96,98)";
 	    this.constants.colorGoalArrow = "rgb(0,110,0)";
 	    this.constants.colorGoal = "green";  				// color of unclocked button (middle) "green",
 	    this.constants.colorObject = "green";  				// color of clicked button,  "green" = 0,128,0,
@@ -72,6 +74,10 @@
 		this._updateCallback = updateFunctionCb.bind(this);
 	};
 
+	GameFramework.prototype.setDrawCallback = function ( drawCb ) {
+		this._drawCallback = drawCb.bind(this);
+	}
+
 	GameFramework.prototype.setWinTestCallback = function ( winTestCallback ) {
 		this._winTestCallback = winTestCallback.bind(this);
 	};
@@ -81,7 +87,8 @@
 	};
 
 	GameFramework.prototype.doStateOverview = function ( dt, inputEvents ){
-		console.log("overview");
+		this._drawCallback();
+		this._overviewCallback( dt, inputEvents);
 		if (inputEvents.length > 0) {
 			// on new input, we're running again.
 			return this.doStateRunning;
@@ -93,7 +100,8 @@
 	GameFramework.prototype.doStateRunning = function ( dt, inputEvents ){
 		console.log("running");
 
-		this._updateCallback();
+		this._drawCallback();
+		this._updateCallback( dt, inputEvents );
 
 		// run 
 
@@ -158,26 +166,28 @@
 	};
 
 	GameFramework.prototype.init = function( $canvas ) {
+		drawutils.init();
+
 		this._initCallback();
 
 		this._$canvas = $canvas;
 
-		$canvas[0].on('keyup', function(e){
+		$canvas.on('keyup', function(e){
 		}, false);
 
-		$canvas[0].on('keydown', function(e){
+		$canvas.on('keydown', function(e){
 		}, false);
 
-		$canvas[0].on('mousedown', function(e){
+		$canvas.on('mousedown', function(e){
 		}, false);
 
-		$canvas[0].on('mousemove', function(e){
+		$canvas.on('mousemove', function(e){
 		}, false);
 
-		$canvas[0].on('mouseup', function(e){
+		$canvas.on('mouseup', function(e){
 		}, false);
 
-		$canvas[0].on('touchmove', function(e){
+		$canvas.on('touchmove', function(e){
 			/*
             e.preventDefault();
             var rect = this.getBoundingClientRect();
@@ -190,7 +200,7 @@
             */
         }, false);        
 
-        $canvas[0].on('touchstart', function(e) {
+        $canvas.on('touchstart', function(e) {
         	/*
             that._attracting = true;
             //check if this is the first valid keypress, if so, starts the timer
@@ -203,7 +213,7 @@
             */
         }, false);
 
-        $canvas[0].on('touchend', function (e) {
+        $canvas.on('touchend', function (e) {
         	/*
             that.lastUserInteraction = new Date().getTime();
             that._attracting = false;

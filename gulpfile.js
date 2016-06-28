@@ -93,6 +93,10 @@ gulp.task('build:games-vendor', function() {
                         'vendor/flotr2/flotr2.min.js',
                         'vendor/jcanvas-6.0/jcanvas.min.js',
                         'vendor/rng-1.0/rng.js',
+                        'vendor/game-framework/utils/drawutils.js',
+                        'vendor/game-framework/utils/mathutils.js',
+                        'vendor/game-framework/utils/miscutils.js',
+                        'vendor/game-framework/utils/physutils.js',
                         'vendor/game-framework/game-framework.js'
                     ])
                 .pipe(concat('main-games-vendor.js'))
