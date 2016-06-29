@@ -1,5 +1,9 @@
 var game = new GameFramework();
 
+game.setPregameCallback( function() {
+    $('.mode-button').prop('disabled',true);
+});
+
 game.setInitCallback( function () {
     this.task = {};
     this.task.modes = ['attractive','repulsive','global'];
@@ -16,6 +20,15 @@ game.setInitCallback( function () {
     this.mX = 0;
     this.mY = 0;
     this.world = new phys.world( new phys.vec2(0, 0), true );    // physics world to contain sim
+
+    $('#button-'+this.task.mode).addClass('btn-success');
+    _.each(this.task.modes, function (mode) {
+        $('#button-' + mode).click(function() {
+            this.task.mode = mode;
+            $('.mode-button').removeClass('btn-success');
+            $('#button-'+mode).addClass('btn-success');
+        }.bind(this));
+    }.bind(this));
 
     function makeBox( world, x, y, xThickness, yThickness) {
         var fixDef = new phys.fixtureDef;
@@ -149,6 +162,7 @@ game.setInitCallback( function () {
 });
 
 game.setDrawCallback( function () {
+    drawutils.clearCanvas();
 
     // draw goal zone
     var collectionProgress = this.task.numblocksCollected / this.task.numBlocksTotal;

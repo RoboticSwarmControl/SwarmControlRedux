@@ -41,6 +41,7 @@
 		
 		this._initCallback = function () { };
 		this._overviewCallback = function () { };
+		this._pregameCallback = function () { };
 		this._drawCallback = function () { };
 		this._updateCallback = function () { };
 		this._winTestCallback = function () { return false; };
@@ -70,6 +71,10 @@
 		this._overviewCallback = overviewFunctionCb.bind(this);
 	};
 
+	GameFramework.prototype.setPregameCallback = function ( pregameCb ) {
+		this._pregameCallback = pregameCb.bind(this);
+	};
+
 	GameFramework.prototype.setUpdateCallback = function ( updateFunctionCb ) {
 		this._updateCallback = updateFunctionCb.bind(this);
 	};
@@ -90,7 +95,8 @@
 		this._drawCallback();
 		this._overviewCallback( dt, inputEvents);
 		if (inputEvents.length > 0) {
-			// on new input, we're running again.
+			// on new input, we're gonna run. fire the preagme and roll!
+			this._pregameCallback();
 			return this.doStateRunning;
 		} else {
 			return this.doStateOverview;
@@ -98,8 +104,6 @@
 	};
 
 	GameFramework.prototype.doStateRunning = function ( dt, inputEvents ){
-		console.log("running");
-
 		this._drawCallback();
 		this._updateCallback( dt, inputEvents );
 
@@ -133,7 +137,7 @@
 			return this.doStateAbandoned;
 		} else  if (inputEvents.length > 0) {
 			// on new input, we're running again.
-			this._timeInPause = 0;
+			this._timeInPause = 0;			
 			return this.doStateRunning;
 		} else {
 			// in none of those cases, keep pausing.
@@ -165,6 +169,10 @@
 		}
 	};
 
+	GameFramework.prototype.handleInput = function( evt ){
+		this._inputEvents.push(evt);
+	};
+
 	GameFramework.prototype.init = function( $canvas ) {
 		drawutils.init();
 
@@ -172,23 +180,22 @@
 
 		this._$canvas = $canvas;
 
-		$canvas.on('keyup', function(e){
-		}, false);
+		console.log($canvas);
 
-		$canvas.on('keydown', function(e){
-		}, false);
+		$canvas.on('keyup', this.handleInput.bind(this));
 
-		$canvas.on('mousedown', function(e){
-		}, false);
+		$canvas.on('keydown', this.handleInput.bind(this));
 
-		$canvas.on('mousemove', function(e){
-		}, false);
+		$canvas.on('mousedown', this.handleInput.bind(this));
 
-		$canvas.on('mouseup', function(e){
-		}, false);
+		$canvas.on('mousemove', this.handleInput.bind(this));
 
-		$canvas.on('touchmove', function(e){
+		$canvas.on('mouseup', this.handleInput.bind(this));
+
+		$canvas.on('touchmove',  this.handleInput.bind(this)
 			/*
+			function(e){
+			
             e.preventDefault();
             var rect = this.getBoundingClientRect();
             var touch = e.touches[0];
@@ -197,11 +204,15 @@
 
             that._mX = 20 * left/this.width;
             that._mY = 20 * top/this.height -2; //
-            */
-        }, false);        
+            
+        } */
+        );
 
-        $canvas.on('touchstart', function(e) {
+        $canvas.on('touchstart',
+        	 this.handleInput.bind(this)
         	/*
+        	function(e) {
+        	
             that._attracting = true;
             //check if this is the first valid keypress, if so, starts the timer
             if( that._startTime == null )
@@ -209,16 +220,20 @@
                 that.lastUserInteraction = new Date().getTime();
                 that._startTime = that.lastUserInteraction;
                 that._runtime = 0.0;
-            }
-            */
-        }, false);
+            }           
+        } */
+        );
 
-        $canvas.on('touchend', function (e) {
-        	/*
+        $canvas.on('touchend',  this.handleInput.bind(this)
+		/*
+        function (e) {
+        	
             that.lastUserInteraction = new Date().getTime();
             that._attracting = false;
-            */
-        }, false);
+            
+        }
+        */
+        );
 	};
 
 	window.GameFramework = window.GameFramework || GameFramework;
