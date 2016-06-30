@@ -36,6 +36,7 @@
 		this._lastFrameStartTime = this._currentFrameStartTime;
 		this._timeInPause = 0;
 		this._inputEvents = [];
+		this._physSimAcculmulator = 0;
 
 		this.kAllowedTimeInPause = 30*1000; // 30 secs in pause before moving on
 		
@@ -46,6 +47,9 @@
 		this._updateCallback = function () { };
 		this._winTestCallback = function () { return false; };
 		this._loseTestCallback = function () { return false; };
+
+		this.world = new phys.world( new phys.vec2(0, 0), true );    // physics world to contain sim
+
 
 		this.constants = {};
 		this.constants.colorRobot = "blue";
@@ -107,9 +111,16 @@
 		this._drawCallback();
 		this._updateCallback( dt, inputEvents );
 
-		// run 
-
-		// step bodies
+		// advance the simulation according to the number of steps we have in our DT
+        // this is an *almost correct* hack from http://gafferongames.com/game-physics/fix-your-timestep/
+        // Note that we don't try to fix temporal stuttering
+        var stepSize = 1/60;
+        this._physSimAcculmulator += dt / 1000;
+        while (this._physSimAcculmulator > stepSize) {
+            this.world.Step( stepSize, 10, 10);
+            this._physSimAcculmulator -= stepSize;
+        }
+		this.world.ClearForces();
 
 		return this.doStateRunning;
 	};
@@ -182,17 +193,27 @@
 
 		console.log($canvas);
 
-		$canvas.on('keyup', this.handleInput.bind(this));
+		$canvas.on('keyup', function _handleKeyUp(evt) {
+			this._inputEvents.push(evt);
+		}.bind(this));
 
-		$canvas.on('keydown', this.handleInput.bind(this));
+		$canvas.on('keydown', function _handleKeyDown(evt) {
+			this._inputEvents.push(evt)
+		}.bind(this));
 
-		$canvas.on('mousedown', this.handleInput.bind(this));
+		$canvas.on('mousedown', function _handleMouseDown(evt){
+			this._inputEvents.push(evt);
+		}.bind(this));
 
-		$canvas.on('mousemove', this.handleInput.bind(this));
+		$canvas.on('mousemove', function _handleMouseMove(evt) {
+			this._inputEvents.push(evt);
+		}.bind(this));
 
-		$canvas.on('mouseup', this.handleInput.bind(this));
+		$canvas.on('mouseup', function _handleMouseUp(evt) {
+			this._inputEvents.push(evt);
+		}.bind(this));
 
-		$canvas.on('touchmove',  this.handleInput.bind(this)
+		$canvas.on('touchmove',  function _handleTouchMove(evt) {
 			/*
 			function(e){
 			
@@ -206,10 +227,9 @@
             that._mY = 20 * top/this.height -2; //
             
         } */
-        );
+        }.bind(this));
 
-        $canvas.on('touchstart',
-        	 this.handleInput.bind(this)
+        $canvas.on('touchstart', function _handleTouchStart(evt){
         	/*
         	function(e) {
         	
@@ -222,9 +242,9 @@
                 that._runtime = 0.0;
             }           
         } */
-        );
+        }.bind(this));
 
-        $canvas.on('touchend',  this.handleInput.bind(this)
+        $canvas.on('touchend',  function _functionTouchEnd(evt) {
 		/*
         function (e) {
         	
@@ -233,9 +253,8 @@
             
         }
         */
-        );
+        }.bind(this) );
 	};
 
 	window.GameFramework = window.GameFramework || GameFramework;
-
 })(Box2D, $);

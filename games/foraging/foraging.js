@@ -19,7 +19,6 @@ game.setInitCallback( function () {
     this.task.numBlocksTotal = 50;
     this.mX = 0;
     this.mY = 0;
-    this.world = new phys.world( new phys.vec2(0, 0), true );    // physics world to contain sim
 
     $('#button-'+this.task.mode).addClass('btn-success');
     _.each(this.task.modes, function (mode) {
@@ -241,7 +240,7 @@ game.setDrawCallback( function () {
         }
     }
 
-    /*
+    //*
     if( this.task.mode == 'global')
     {
         //draw arrow
@@ -256,10 +255,14 @@ game.setDrawCallback( function () {
       drawutils.drawLine(pts,'rgba(0, 0, 153, 0.5)',true,18,false);
     }else{
         // draw controller position.  James asked for this, but the lag behind the cursor position is very noticeable, so I commented it out.
-        drawutils.drawLine([[30*(-0.2+this._mX), 30*this._mY],[30*(0.2+this._mX), 30*this._mY]],'darkblue',true); // minus
-        drawutils.drawLine([[30*(this._mX), 30*(-0.2+this._mY)],[30*(this._mX), 30*(0.2+this._mY)]],'darkblue',true); //vertical
+        drawutils.drawLine([ [30*(-0.2+this._mX), 30*this._mY],[30*(0.2+this._mX), 30*this._mY]],'darkblue',true); // minus
+        drawutils.drawLine([    [   30*(this._mX),
+                                    30*(-0.2+this._mY)],
+                                [   30*(this._mX),
+                                    30*(0.2+this._mY)]
+                            ],'darkblue',true); //vertical
     }
-    */    
+    //*/    
 });
 
 
@@ -313,13 +316,18 @@ game.setOverviewCallback( function() {
     drawutils.drawText(30*(minx-2.3),30*(meany- 0.55),'Robots→', 1.5, color, color);
 });
 
-game.setUpdateCallback( function () {
+game.setUpdateCallback( function (dt, inputs) {
+
 });
 
 game.setWinTestCallback( function() {
+    // players must collect at leaast 90% of blocks to win
+    return (this.task.numblocksCollected / this.task.numblocksTotal ) >= 0.9;
 });
 
 game.setLoseTestCallback( function() {
+    // in this game, we can't lose--no time constraints or anything.
+    return false;
 });
 
 $(window).on('load', function () {
