@@ -242,16 +242,25 @@
 			evt.preventDefault();
 			evt.stopPropagation();
 			var rect = evt.target.getBoundingClientRect();
-            var left = evt.screenX - rect.left - evt.target.clientLeft + evt.target.scrollLeft;
-            var top = evt.screenY - rect.top - evt.target.clientTop + evt.target.scrollTop;
+			var left = evt.clientX - rect.left;
+			var top = evt.clientY - rect.top;
+            //var left = evt.screenX - rect.left - evt.target.clientLeft + evt.target.scrollLeft;
+            //var top = evt.screenY - rect.top - evt.target.clientTop + evt.target.scrollTop;
 
+            // these are the mouse coordinates in normalized [0,1] canvas space
+            var u = left / evt.target.width;
+            var v = top / evt.target.height;
+
+            // these are the mouse coordinates in world space
             var mX = 20 * left/evt.target.width;
-            var mY = 20 * top/evt.target.height -2;
+            var mY = 20 * top/evt.target.height; // -2
 
 			this._inputEvents.push( {
 				type: 'mousemove',
 				x: mX,
-				y: mY
+				y: mY,
+				u: u,
+				v: v, 
 			});
 		}.bind(this));
 
