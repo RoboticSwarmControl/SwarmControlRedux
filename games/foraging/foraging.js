@@ -124,7 +124,7 @@ game.setInitCallback( function () {
         this.task.robots.push(body);
     }
 
-    /*
+    
     var contactListener = new Box2D.Dynamics.b2ContactListener;
     contactListener.BeginContact = function(contact, manifold) {
 
@@ -147,8 +147,8 @@ game.setInitCallback( function () {
         contact.m_fixtureB.m_body.foody = contact.m_fixtureA.m_body.GetPosition().y;
        }
     };
-    this._world.SetContactListener(contactListener);
-    */
+    this.world.SetContactListener(contactListener);
+    
     
     // create the goal
     bodyDef.type = phys.body.b2_dynamicBody;
@@ -214,7 +214,6 @@ game.setDrawCallback( function () {
                                     color,angle,this.constants.colorObjectEdge,
                                     this.constants.strokeWidth);
             } else if ( bType == 'contact') {
-                /*
                 var radius = f.GetShape().GetRadius();
                 var pos = b.GetPosition();
                 if( b.foodx != -1  && b.foody != -1)
@@ -228,7 +227,7 @@ game.setDrawCallback( function () {
                 //draw a robot with a food particle inside
                 drawutils.drawRobot( 30*pos.x, 30*pos.y,angle, 30*radius, this.constants.colorRobotAtGoal,this.constants.colorRobotEdge); 
                 drawutils.drawRect(30*pos.x, 30*pos.y, 30*0.6, 30 * 0.6, this.constants.colorObjectAtGoal,0,this.constants.colorObjectEdge,this.constants.strokeWidth);
-                */
+                
             } else if ( bType == 'obstacle') {
                 // draw the obstacles
                 var X = f.GetShape().GetVertices()[1].x - f.GetShape().GetVertices()[0].x; 
