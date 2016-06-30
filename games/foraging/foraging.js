@@ -317,6 +317,23 @@ game.setOverviewCallback( function() {
 });
 
 game.setUpdateCallback( function (dt, inputs) {
+    inputs.forEach( function( evt ) {
+        if (evt.type == 'keydown') {
+            switch( evt.key ) {
+                case this.constants.keys.UP: this.keyUp = true; break;
+                case this.constants.keys.DOWN: this.keyDown = true; break;
+                case this.constants.keys.LEFT: this.keyLeft = true; break;
+                case this.constants.keys.RIGHT: this.keyRight = true; break;
+            }
+        } else if (evt.type == 'keyup') {
+            switch( evt.key ) {
+                case this.constants.keys.UP: this.keyUp = false; break;
+                case this.constants.keys.DOWN: this.keyDown = false; break;
+                case this.constants.keys.LEFT: this.keyLeft = false; break;
+                case this.constants.keys.RIGHT: this.keyRight = false; break;
+            }
+        }
+    }.bind(this));
 
 });
 

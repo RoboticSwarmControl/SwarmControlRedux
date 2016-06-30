@@ -34,10 +34,12 @@
 		this._currentState = this.doStateOverview;
 		this._currentFrameStartTime = new Date();
 		this._lastFrameStartTime = this._currentFrameStartTime;
+		this._lastInputTime = this._currentFrameStartTime;
 		this._timeInPause = 0;
 		this._inputEvents = [];
 		this._physSimAcculmulator = 0;
 
+		this.kAllowedTimeWithoutInput = 10*1000;	// 10 seconds before we think the user has abandoned us
 		this.kAllowedTimeInPause = 30*1000; // 30 secs in pause before moving on
 		
 		this._initCallback = function () { };
@@ -52,6 +54,12 @@
 
 
 		this.constants = {};
+		this.constants.keys = {
+			UP: 	38,
+			DOWN: 	40,
+			LEFT: 	37,
+			RIGHT: 	39,
+		}
 		this.constants.colorRobot = "blue";
 	    this.constants.colorRobotEdge = "rgb(50,50,255)";
 	    this.constants.colorRobotGoal = "blue";
@@ -108,39 +116,43 @@
 	};
 
 	GameFramework.prototype.doStateRunning = function ( dt, inputEvents ){
-		this._drawCallback();
-		this._updateCallback( dt, inputEvents );
+		if ( this._currentFrameStartTime -  this._lastInputTime > this.kAllowedTimeWithoutInput) {
+			return this.doStatePaused;
+		} else {
+			this._drawCallback();
+			this._updateCallback( dt, inputEvents );
 
-		// advance the simulation according to the number of steps we have in our DT
-        // this is an *almost correct* hack from http://gafferongames.com/game-physics/fix-your-timestep/
-        // Note that we don't try to fix temporal stuttering
-        var stepSize = 1/60;
-        this._physSimAcculmulator += dt / 1000;
-        while (this._physSimAcculmulator > stepSize) {
-            this.world.Step( stepSize, 10, 10);
-            this._physSimAcculmulator -= stepSize;
-        }
-		this.world.ClearForces();
+			// advance the simulation according to the number of steps we have in our DT
+	        // this is an *almost correct* hack from http://gafferongames.com/game-physics/fix-your-timestep/
+	        // Note that we don't try to fix temporal stuttering
+	        var stepSize = 1/60;
+	        this._physSimAcculmulator += dt / 1000;
+	        while (this._physSimAcculmulator > stepSize) {
+	            this.world.Step( stepSize, 10, 10);
+	            this._physSimAcculmulator -= stepSize;
+	        }
+			this.world.ClearForces();
 
-		return this.doStateRunning;
+			return this.doStateRunning;	
+		}		
 	};
 
 	GameFramework.prototype.doStateAbandoned = function ( dt, inputEvents  ){
 		console.log("abandoned");
-		/* do abandoned screen */
+		
+		/* TODO: draw abandoned screen */
+
 
 		return this.doStateHalted;
 	};
 
 	GameFramework.prototype.doStateHalted = function ( dt, inputEvents  ) {
 		console.log("halted");
-
 		return this.doStateHalted;
 	};
 
-	GameFramework.prototype.doStatePaused = function( dt, inputEvents ) {		
+	GameFramework.prototype.doStatePaused = function( dt, inputEvents ) {
 		console.log("paused");
-
 		this._timeInPause += dt;
 	
 		if (this._timeInPause > this.kAllowedTimeInPause) {
@@ -177,6 +189,8 @@
 		this._inputEvents = [];
 		if (this._currentState !== this.doStateHalted){
 			window.requestAnimationFrame( this.run.bind(this) );
+		} else {
+			this.doStateHalted();
 		}
 	};
 
@@ -194,26 +208,50 @@
 		console.log($canvas);
 
 		$canvas.on('keyup', function _handleKeyUp(evt) {
-			this._inputEvents.push(evt);
+			this._lastInputTime = new Date();
+			evt.preventDefault();
+			evt.stopPropagation();
+			this._inputEvents.push( {
+				type: 'keyup',
+				key: evt.keycode
+			});
 		}.bind(this));
 
 		$canvas.on('keydown', function _handleKeyDown(evt) {
-			this._inputEvents.push(evt)
+			this._lastInputTime = new Date();
+			evt.preventDefault();
+			evt.stopPropagation();
+			this._inputEvents.push( {
+				type: 'keydown',
+				key: evt.keycode
+			});
 		}.bind(this));
 
 		$canvas.on('mousedown', function _handleMouseDown(evt){
+			this._lastInputTime = new Date();
+			evt.preventDefault();
+			evt.stopPropagation();
 			this._inputEvents.push(evt);
 		}.bind(this));
 
 		$canvas.on('mousemove', function _handleMouseMove(evt) {
+			this._lastInputTime = new Date();
+			evt.preventDefault();
+			evt.stopPropagation();
 			this._inputEvents.push(evt);
 		}.bind(this));
 
 		$canvas.on('mouseup', function _handleMouseUp(evt) {
+			this._lastInputTime = new Date();
+			evt.preventDefault();
+			evt.stopPropagation();
 			this._inputEvents.push(evt);
 		}.bind(this));
 
 		$canvas.on('touchmove',  function _handleTouchMove(evt) {
+			this._lastInputTime = new Date();
+			evt.preventDefault();
+			evt.stopPropagation();
 			/*
 			function(e){
 			
@@ -230,6 +268,9 @@
         }.bind(this));
 
         $canvas.on('touchstart', function _handleTouchStart(evt){
+        	this._lastInputTime = new Date();
+        	evt.preventDefault();
+			evt.stopPropagation();
         	/*
         	function(e) {
         	
@@ -245,6 +286,9 @@
         }.bind(this));
 
         $canvas.on('touchend',  function _functionTouchEnd(evt) {
+        	this._lastInputTime = new Date();
+        	evt.preventDefault();
+			evt.stopPropagation();
 		/*
         function (e) {
         	
