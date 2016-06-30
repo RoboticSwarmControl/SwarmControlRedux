@@ -54,6 +54,7 @@
 
 
 		this.constants = {};
+		this.constants.zeroRef = new phys.vec2(0,0);
 		this.constants.keys = {
 			UP: 	38,
 			DOWN: 	40,
@@ -231,27 +232,53 @@
 			this._lastInputTime = new Date();
 			evt.preventDefault();
 			evt.stopPropagation();
-			this._inputEvents.push(evt);
+			this._inputEvents.push({
+				type: 'mousedown'
+			});
 		}.bind(this));
 
 		$canvas.on('mousemove', function _handleMouseMove(evt) {
 			this._lastInputTime = new Date();
 			evt.preventDefault();
 			evt.stopPropagation();
-			this._inputEvents.push(evt);
+			var rect = evt.target.getBoundingClientRect();
+            var left = evt.screenX - rect.left - evt.target.clientLeft + evt.target.scrollLeft;
+            var top = evt.screenY - rect.top - evt.target.clientTop + evt.target.scrollTop;
+
+            var mX = 20 * left/evt.target.width;
+            var mY = 20 * top/evt.target.height -2;
+
+			this._inputEvents.push( {
+				type: 'mousemove',
+				x: mX,
+				y: mY
+			});
 		}.bind(this));
 
 		$canvas.on('mouseup', function _handleMouseUp(evt) {
 			this._lastInputTime = new Date();
 			evt.preventDefault();
 			evt.stopPropagation();
-			this._inputEvents.push(evt);
+			this._inputEvents.push({
+				type: 'mouseup'
+			});
 		}.bind(this));
 
 		$canvas.on('touchmove',  function _handleTouchMove(evt) {
 			this._lastInputTime = new Date();
 			evt.preventDefault();
 			evt.stopPropagation();
+
+			/*
+			var rect = evt.target.getBoundingClientRect();
+            var touch = e.touches[0];
+            var left = touch.pageX - rect.left - evt.target.clientLeft + evt.target.scrollLeft;
+            var top = touch.pageY - rect.top - evt.target.clientTop + evt.target.scrollTop;
+
+            that._mX = 20 * left/evt.target.width;
+            that._mY = 20 * top/evt.target.height -2;
+            */
+
 			/*
 			function(e){
 			
@@ -296,8 +323,67 @@
             that._attracting = false;
             
         }
-        */
+        */        
         }.bind(this) );
+
+        /*
+        window.addEventListener('deviceorientation', function(event) {
+                var yval = -event.beta;  // In degree in the range [-180,180]
+                var xval = -event.gamma; // In degree in the range [-90,90]
+
+                if( !that.useKeyboard ){
+                    //property may change. A value of 0 means portrait view, 
+                    if( window.orientation == -90)
+                    {   //-90 means a the device is landscape rotated to the right,
+                        yval = -event.gamma;
+                        xval = event.beta; 
+                    }else if( window.orientation == 90)
+                    {   //and 90 means the device is landscape rotated to the left.
+                        yval = event.gamma;
+                        xval =-event.beta; 
+                    }else if( window.orientation == 180)
+                    {   //and 90 means the device is landscape rotated to the left.
+                        yval = event.beta;
+                        xval = event.gamma; 
+                    }
+                     
+                    // simple control that maps tilt to keypad values.
+                    var thresh = 5;
+                    if(that._startTime == null)//bigger threshold to start
+                        {thresh = 15;}
+                    that.lastUserInteraction = new Date().getTime();
+         
+                    if( yval > thresh )
+                    {   
+                        that.keyD=null;
+                        if(that.keyU==null){that.keyU = that.lastUserInteraction;} 
+                    }else if ( yval < -thresh )
+                    {   
+                        that.keyU=null;
+                        if(that.keyD==null){that.keyD = that.lastUserInteraction;} 
+                    }else
+                    {that.keyD=null; that.keyU=null;}
+
+                    if( xval > thresh )
+                    {   
+                        that.keyR=null;
+                        if(that.keyL==null){that.keyL = that.lastUserInteraction;} 
+                    }else if ( xval < -thresh )
+                    {   
+                        that.keyL=null;
+                        if(that.keyR==null){that.keyR = that.lastUserInteraction;} 
+                    }else
+                    {that.keyR=null; that.keyL=null;}
+                
+                    //check if this is the first valid keypress, if so, starts the timer
+                    if( that._startTime == null && ( that.keyL != null || that.keyR != null || that.keyU != null || that.keyD != null))
+                    { 
+                        that._startTime = that.lastUserInteraction;
+                        that._runtime = 0.0;
+                    }
+                }
+            });
+        */
 	};
 
 	window.GameFramework = window.GameFramework || GameFramework;

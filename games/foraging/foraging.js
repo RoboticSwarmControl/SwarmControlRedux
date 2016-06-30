@@ -8,6 +8,7 @@ game.setInitCallback( function () {
     this.task = {};
     this.task.modes = ['attractive','repulsive','global'];
     this.task.mode = 'repulsive';
+    this.task.controllerActive = false;
     this.task.repulsing = false;
     this.task.attracting = false;
     this.task.numRobots = 100;
@@ -19,6 +20,7 @@ game.setInitCallback( function () {
     this.task.numBlocksTotal = 50;
     this.mX = 0;
     this.mY = 0;
+    this.impulseV = new phys.vec2(0,0)
 
     $('#button-'+this.task.mode).addClass('btn-success');
     _.each(this.task.modes, function (mode) {
@@ -226,8 +228,7 @@ game.setDrawCallback( function () {
                 }
                 //draw a robot with a food particle inside
                 drawutils.drawRobot( 30*pos.x, 30*pos.y,angle, 30*radius, this.constants.colorRobotAtGoal,this.constants.colorRobotEdge); 
-                drawutils.drawRect(30*pos.x, 30*pos.y, 30*0.6, 30 * 0.6, this.constants.colorObjectAtGoal,0,this.constants.colorObjectEdge,this.constants.strokeWidth);
-                
+                drawutils.drawRect(30*pos.x, 30*pos.y, 30*0.6, 30 * 0.6, this.constants.colorObjectAtGoal,0,this.constants.colorObjectEdge,this.constants.strokeWidth);                
             } else if ( bType == 'obstacle') {
                 // draw the obstacles
                 var X = f.GetShape().GetVertices()[1].x - f.GetShape().GetVertices()[0].x; 
@@ -239,7 +240,6 @@ game.setDrawCallback( function () {
         }
     }
 
-    //*
     if( this.task.mode == 'global')
     {
         //draw arrow
@@ -261,7 +261,6 @@ game.setDrawCallback( function () {
                                     30*(0.2+this._mY)]
                             ],'darkblue',true); //vertical
     }
-    //*/    
 });
 
 
@@ -317,6 +316,15 @@ game.setOverviewCallback( function() {
 
 game.setUpdateCallback( function (dt, inputs) {
     inputs.forEach( function( evt ) {
+
+        switch (evt.type) {
+            case 'mousedown': this.controllerActive = true; break;
+            case 'mouseup' : this.controllerActive = false; break;
+            case 'mousemove' :  this.mX = evt.x;
+                                this.mY = evt.y;
+                                break;
+        }
+        /*
         if (evt.type == 'keydown') {
             switch( evt.key ) {
                 case this.constants.keys.UP: this.keyUp = true; break;
@@ -332,8 +340,23 @@ game.setUpdateCallback( function (dt, inputs) {
                 case this.constants.keys.RIGHT: this.keyRight = false; break;
             }
         }
+        */
     }.bind(this));
 
+    if (this.controllerActive) {
+        _.each( this.task.robots, function(r) { 
+            var rpos = r.GetPosition();             
+            var dx = this.mX - rpos.x;
+            var dy = this.mY - rpos.y;
+            var distSq = dx*dx + dy*dy;
+            var mag = Math.sqrt(distSq);
+            var h2 = 4;
+            var forceM = 100*distSq/Math.pow(distSq + h2,2);
+            this.impulseV.x = 20*dx/mag*forceM || 0;
+            this.impulseV.y = 20*dy/mag*forceM || 0;
+            r.ApplyForce( this.impulseV , r.GetWorldPoint( this.constants.zeroRef ) );
+        }.bind(this) );
+    }
 });
 
 game.setWinTestCallback( function() {
