@@ -129,24 +129,22 @@ game.setInitCallback( function () {
     
     var contactListener = new Box2D.Dynamics.b2ContactListener;
     contactListener.BeginContact = function(contact, manifold) {
-
-       if(   contact.m_fixtureA.m_body.m_userData == 'robot' &&
-             contact.m_fixtureB.m_body.m_userData == 'workpiece')
+        if( contact.m_fixtureA.m_body.m_userData == 'robot' &&
+            contact.m_fixtureB.m_body.m_userData == 'workpiece')
         {
             contact.m_fixtureA.m_body.m_userData = 'contact';
             contact.m_fixtureA.m_shape.m_radius = contact.m_fixtureA.m_shape.m_radius*1.5;
             contact.m_fixtureB.m_body.m_userData = 'empty';
             contact.m_fixtureA.m_body.foodx = contact.m_fixtureB.m_body.GetPosition().x;
             contact.m_fixtureA.m_body.foody = contact.m_fixtureB.m_body.GetPosition().y;
-        }
-       else if( contact.m_fixtureA.m_body.m_userData == 'workpiece' &&
-             contact.m_fixtureB.m_body.m_userData == 'robot') 
-       { 
-        contact.m_fixtureB.m_body.m_userData = 'contact';
-        contact.m_fixtureA.m_body.m_userData = 'empty';
-        contact.m_fixtureB.m_shape.m_radius = contact.m_fixtureB.m_shape.m_radius*1.5;
-        contact.m_fixtureB.m_body.foodx = contact.m_fixtureA.m_body.GetPosition().x;
-        contact.m_fixtureB.m_body.foody = contact.m_fixtureA.m_body.GetPosition().y;
+        } else if(  contact.m_fixtureA.m_body.m_userData == 'workpiece' &&
+                    contact.m_fixtureB.m_body.m_userData == 'robot') 
+       {
+            contact.m_fixtureB.m_body.m_userData = 'contact';
+            contact.m_fixtureA.m_body.m_userData = 'empty';
+            contact.m_fixtureB.m_shape.m_radius = contact.m_fixtureB.m_shape.m_radius*1.5;
+            contact.m_fixtureB.m_body.foodx = contact.m_fixtureA.m_body.GetPosition().x;
+            contact.m_fixtureB.m_body.foody = contact.m_fixtureA.m_body.GetPosition().y;
        }
     };
     this.world.SetContactListener(contactListener);
@@ -236,6 +234,9 @@ game.setDrawCallback( function () {
                 var pos = b.GetPosition();
                 color = this.constants.colorObstacle;
                 drawutils.drawRect(30*pos.x, 30*pos.y, 30* X, 30 * Y, color);
+            } else if (b.GetUserData() == 'empty') {
+                // HACKHACK would be better to do in the update callback, but here we iterate anyways
+                this.world.DestroyBody(b);
             }
         }
     }
@@ -249,9 +250,9 @@ game.setDrawCallback( function () {
         var angle = Math.atan2(this._mY - 10, this._mX-10);
         var pts = [];
         for (var p=0; p<ArrX.length; p+=1) {
-          pts.push([30*(10+Math.cos(angle)*ArrX[p]-Math.sin(angle)*ArrY[p]),30*(10+Math.sin(angle)*ArrX[p]+Math.cos(angle)*ArrY[p])]);
-      }
-      drawutils.drawLine(pts,'rgba(0, 0, 153, 0.5)',true,18,false);
+            pts.push([30*(10+Math.cos(angle)*ArrX[p]-Math.sin(angle)*ArrY[p]),30*(10+Math.sin(angle)*ArrX[p]+Math.cos(angle)*ArrY[p])]);
+        } 
+        drawutils.drawLine(pts,'rgba(0, 0, 153, 0.5)',true,18,false);
     }else{
         // draw controller position.  James asked for this, but the lag behind the cursor position is very noticeable, so I commented it out.
         drawutils.drawLine([ [30*(-0.2+this._mX), 30*this._mY],[30*(0.2+this._mX), 30*this._mY]],'darkblue',true); // minus
@@ -324,38 +325,58 @@ game.setUpdateCallback( function (dt, inputs) {
                                 this.mY = evt.y;
                                 break;
         }
-        /*
-        if (evt.type == 'keydown') {
-            switch( evt.key ) {
-                case this.constants.keys.UP: this.keyUp = true; break;
-                case this.constants.keys.DOWN: this.keyDown = true; break;
-                case this.constants.keys.LEFT: this.keyLeft = true; break;
-                case this.constants.keys.RIGHT: this.keyRight = true; break;
-            }
-        } else if (evt.type == 'keyup') {
-            switch( evt.key ) {
-                case this.constants.keys.UP: this.keyUp = false; break;
-                case this.constants.keys.DOWN: this.keyDown = false; break;
-                case this.constants.keys.LEFT: this.keyLeft = false; break;
-                case this.constants.keys.RIGHT: this.keyRight = false; break;
-            }
-        }
-        */
     }.bind(this));
 
+    var goalPosition = this.task.goals[0].GetPosition();
+    var goalRadius = this.task.goals[0].GetFixtureList().GetShape().GetRadius();
+
+    _.each( this.task.robots, function(r) {
+        r.atGoal = false;
+        if( r.GetUserData() == 'contact'){
+            var roboPosition = r.GetPosition();
+            
+            if( mathutils.lineDistance( goalPosition.x,
+                                        goalPosition.y,
+                                        roboPosition.x,
+                                        roboPosition.y) < goalRadius) { 
+                r.SetUserData('robot');
+                r.atGoal = true;
+                r.GetFixtureList().GetShape().SetRadius(this.task.robotRadius);
+                this.task.numblocksCollected++;
+            }
+        }
+    }.bind(this) );
+
     if (this.controllerActive) {
-        _.each( this.task.robots, function(r) { 
-            var rpos = r.GetPosition();             
-            var dx = this.mX - rpos.x;
-            var dy = this.mY - rpos.y;
-            var distSq = dx*dx + dy*dy;
-            var mag = Math.sqrt(distSq);
-            var h2 = 4;
-            var forceM = 100*distSq/Math.pow(distSq + h2,2);
-            this.impulseV.x = 20*dx/mag*forceM || 0;
-            this.impulseV.y = 20*dy/mag*forceM || 0;
-            r.ApplyForce( this.impulseV , r.GetWorldPoint( this.constants.zeroRef ) );
-        }.bind(this) );
+        if (this.task.mode == "global" ) {
+            var angle = Math.atan2(this.mY - 10, this.mX-10);
+            this.impulseV.x = 40* Math.cos(angle);
+            this.impulseV.y = 40* Math.sin(angle);
+            _.each( this.task.robots, function(r) {                                     
+                r.ApplyForce( this.impulseV, r.GetWorldPoint( this.constants.zeroRef ) );
+            }.bind(this));
+        } else {
+            _.each( this.task.robots, function(r) { 
+                var rpos = r.GetPosition();             
+                var dx = this.mX - rpos.x;
+                var dy = this.mY - rpos.y;
+                var distSq = dx*dx + dy*dy;
+                var mag = Math.sqrt(distSq);
+                var h2 = 4;
+                var forceM = 100*distSq/Math.pow(distSq + h2,2);
+                this.impulseV.x = 20*dx/mag*forceM || 0;
+                this.impulseV.y = 20*dy/mag*forceM || 0;
+                if (this.task.mode =='repulsive') {
+                    this.impulseV.x = -20*dx/mag*forceM || 0;
+                    this.impulseV.y = -20*dy/mag*forceM || 0;                    
+                } else {
+                    this.impulseV.x = 20*dx/mag*forceM || 0;
+                    this.impulseV.y = 20*dy/mag*forceM || 0;
+                }
+                r.ApplyForce( this.impulseV , r.GetWorldPoint( this.constants.zeroRef ) );    
+                
+            }.bind(this) );    
+        }        
     }
 });
 
