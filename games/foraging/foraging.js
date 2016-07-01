@@ -16,7 +16,7 @@ game.setInitCallback( function () {
     this.task.robots = [];          // array of bodies representing the robots
     this.task.goals = [];           // array of goals of form {x,y,w,h}
     this.task.blocks = [];          // array of bodies representing blocks
-    this.task.numblocksCollected = 0;
+    this.task.numBlocksCollected = 0;
     this.task.numBlocksTotal = 50;
     this.mX = 0;
     this.mY = 0;
@@ -164,7 +164,7 @@ game.setDrawCallback( function () {
     drawutils.clearCanvas();
 
     // draw goal zone
-    var collectionProgress = this.task.numblocksCollected / this.task.numBlocksTotal;
+    var collectionProgress = this.task.numBlocksCollected / this.task.numBlocksTotal;
     var color = this.constants.colorGoal;
     _.each(this.task.goals, function (g) { 
         var pos = g.GetPosition();
@@ -342,7 +342,7 @@ game.setUpdateCallback( function (dt, inputs) {
                 r.SetUserData('robot');
                 r.atGoal = true;
                 r.GetFixtureList().GetShape().SetRadius(this.task.robotRadius);
-                this.task.numblocksCollected++;
+                this.task.numBlocksCollected++;
             }
         }
     }.bind(this) );
@@ -382,12 +382,20 @@ game.setUpdateCallback( function (dt, inputs) {
 
 game.setWinTestCallback( function() {
     // players must collect at leaast 90% of blocks to win
-    return (this.task.numblocksCollected / this.task.numblocksTotal ) >= 0.9;
+    return (this.task.numBlocksCollected / this.task.numBlocksTotal ) >= 0.9;
 });
 
 game.setLoseTestCallback( function() {
     // in this game, we can't lose--no time constraints or anything.
     return false;
+});
+
+game.setLostCallback( function() {
+    // TODO, draw lose
+});
+
+game.setWonCallback( function() {
+    // TODO, draw win
 });
 
 $(window).on('load', function () {

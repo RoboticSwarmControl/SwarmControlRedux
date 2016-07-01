@@ -39,6 +39,8 @@
 		this._inputEvents = [];
 		this._physSimAcculmulator = 0;
 
+		this.mobileUserAgent = false;
+
 		this.kAllowedTimeWithoutInput = 10*1000;	// 10 seconds before we think the user has abandoned us
 		this.kAllowedTimeInPause = 30*1000; // 30 secs in pause before moving on
 		
@@ -47,6 +49,8 @@
 		this._pregameCallback = function () { };
 		this._drawCallback = function () { };
 		this._updateCallback = function () { };
+		this._lostCallback = function () { };
+		this._wonCallback = function () { };
 		this._winTestCallback = function () { return false; };
 		this._loseTestCallback = function () { return false; };
 
@@ -104,6 +108,14 @@
 		this._loseTestCallback = lostTestCallback.bind(this);
 	};
 
+	GameFramework.prototype.setLostCallback = function ( lostCb) {
+		this._lostCallback = lostCb;
+	};
+
+	GameFramework.prototype.setWonCallback = function( wonCb ) {
+		this._wonCallback = wonCb;
+	};
+
 	GameFramework.prototype.doStateOverview = function ( dt, inputEvents ){
 		this._drawCallback();
 		this._overviewCallback( dt, inputEvents);
@@ -123,6 +135,15 @@
 			this._drawCallback();
 			this._updateCallback( dt, inputEvents );
 
+			if ( this._loseTestCallback() ) {
+				return this.doStateLost;
+			}
+
+			if ( this._winTestCallback() ) {
+				return this.doStateWon;
+			}
+
+
 			// advance the simulation according to the number of steps we have in our DT
 	        // this is an *almost correct* hack from http://gafferongames.com/game-physics/fix-your-timestep/
 	        // Note that we don't try to fix temporal stuttering
@@ -141,8 +162,9 @@
 	GameFramework.prototype.doStateAbandoned = function ( dt, inputEvents  ){
 		console.log("abandoned");
 		
-		/* TODO: draw abandoned screen */
-
+		var color = "green";
+		drawutils.drawText(300,330, "Reloading...", 2, color, color);
+		location.reload(true);
 
 		return this.doStateHalted;
 	};
@@ -153,7 +175,6 @@
 	};
 
 	GameFramework.prototype.doStatePaused = function( dt, inputEvents ) {
-		console.log("paused");
 		this._timeInPause += dt;
 	
 		if (this._timeInPause > this.kAllowedTimeInPause) {
@@ -165,19 +186,26 @@
 			return this.doStateRunning;
 		} else {
 			// in none of those cases, keep pausing.
+			drawutils.drawRect(300,300, 590,590, 'rgba(200, 200, 200, 0.5)');
+            var color = "green";
+            drawutils.drawText(300,250, "Are you still there?  ", 2, color, color);
+
+            var timeUntilRestart = ( this.kAllowedTimeInPause - this._timeInPause);
+            drawutils.drawText(300, 290, "Restarting in "+ (timeUntilRestart/1000).toFixed(0) +" seconds.", 2, color, color);
+
 			return this.doStatePaused;
 		}
 	};
 
 	GameFramework.prototype.doStateWon = function ( dt, inputEvents  ) {
 		console.log("won");
-		this._winTestCallback();
+		this._wonCallback();
 		return this.doStateHalted;
 	};
 
 	GameFramework.prototype.doStateLost = function ( dt, inputEvents  ) {	
 		console.log("lost");
-		this._loseTestCallback();
+		this._lostCallback();
 		return this.doStateHalted;
 	};
 
@@ -200,6 +228,8 @@
 	};
 
 	GameFramework.prototype.init = function( $canvas ) {
+		this.mobileUserAgent =( /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) );
+
 		drawutils.init();
 
 		this._initCallback();
