@@ -247,7 +247,7 @@ game.setDrawCallback( function () {
         var ArrX = [-1,-1,0.2,0.2,1,0.2,0.2,-1,-1];
         var ArrY = [0,1/4,1/4,1/2,0,-1/2,-1/4,-1/4,0];
         // Add the points from the array to the object
-        var angle = Math.atan2(this._mY - 10, this._mX-10);
+        var angle = Math.atan2(this.mY - 10, this.mX-10);
         var pts = [];
         for (var p=0; p<ArrX.length; p+=1) {
             pts.push([30*(10+Math.cos(angle)*ArrX[p]-Math.sin(angle)*ArrY[p]),30*(10+Math.sin(angle)*ArrX[p]+Math.cos(angle)*ArrY[p])]);
