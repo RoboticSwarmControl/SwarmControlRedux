@@ -249,29 +249,25 @@
 		//$canvas.on('keyup', function _handleKeyUp(evt) {
 		$(document).on('keyup', function _handleKeyUp(evt) {
 			this._lastInputTime = new Date();
-			evt.preventDefault();
-			evt.stopPropagation();
 			this._inputEvents.push( {
 				type: 'keyup',
-				key: evt.keyCode
+				key: evt.which
 			});
 		}.bind(this));
 
 		//$canvas.on('keydown', function _handleKeyDown(evt) {
 		$(document).on('keydown', function _handleKeyDown(evt) {
 			this._lastInputTime = new Date();
-			evt.preventDefault();
-			evt.stopPropagation();
 			this._inputEvents.push( {
 				type: 'keydown',
-				key: evt.keyCode
+				key: evt.which
 			});
 		}.bind(this));
 
 		$canvas.on('mousedown', function _handleMouseDown(evt){
 			this._lastInputTime = new Date();
 			evt.preventDefault();
-			evt.stopPropagation();
+			
 			this._inputEvents.push({
 				type: 'mousedown'
 			});
@@ -280,7 +276,7 @@
 		$canvas.on('mousemove', function _handleMouseMove(evt) {
 			this._lastInputTime = new Date();
 			evt.preventDefault();
-			evt.stopPropagation();
+			
 			var rect = evt.target.getBoundingClientRect();
 			var left = evt.clientX - rect.left;
 			var top = evt.clientY - rect.top;
@@ -305,7 +301,7 @@
 		$canvas.on('mouseup', function _handleMouseUp(evt) {
 			this._lastInputTime = new Date();
 			evt.preventDefault();
-			evt.stopPropagation();
+			
 			this._inputEvents.push({
 				type: 'mouseup'
 			});
@@ -313,8 +309,7 @@
 
 		$canvas.on('touchmove',  function _handleTouchMove(evt) {
 			this._lastInputTime = new Date();
-			evt.preventDefault();
-			evt.stopPropagation();
+			evt.preventDefault();			
 
 			/*
 			var rect = evt.target.getBoundingClientRect();
@@ -344,7 +339,7 @@
         $canvas.on('touchstart', function _handleTouchStart(evt){
         	this._lastInputTime = new Date();
         	evt.preventDefault();
-			evt.stopPropagation();
+
         	/*
         	function(e) {
         	
@@ -362,7 +357,7 @@
         $canvas.on('touchend',  function _functionTouchEnd(evt) {
         	this._lastInputTime = new Date();
         	evt.preventDefault();
-			evt.stopPropagation();
+
 		/*
         function (e) {
         	

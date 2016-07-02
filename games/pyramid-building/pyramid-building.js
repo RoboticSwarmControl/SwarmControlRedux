@@ -11,6 +11,10 @@ game.setInitCallback( function() {
     this.mY = 0;
     this.impulseV = new phys.vec2(0,0)
     this.task.impulse = 50;
+    this.keyUp = false;
+    this.keyDown = false;
+    this.keyLeft = false;
+    this.keyRight = false;
 
     // better: take number * 200% of control power
     //atto meters:  1 nanocar wheel weighs 720 g/mol = 7.2*10^-23 g, assume nanocar is 6 times that = 4.2*10&-22
@@ -251,30 +255,51 @@ game.setOverviewCallback( function() {
 game.setUpdateCallback( function (dt, inputs) {
 
     inputs.forEach( function( evt ) {
+
+        //HACKHACK
+        // Note that this impulse needs to be reset *erry frame*
+        // or the bots give up and go away
         if (evt.type == 'keydown') {
             switch( evt.key ) {
-                case 37 : this.impulseV.x = -this.task.impulse; break;
-                case 39 : this.impulseV.x = this.task.impulse; break;
-                case 38 : this.impulseV.y = -this.task.impulse; break;
-                case 40 : this.impulseV.y = this.task.impulse; break;
-                case 65 : this.impulseV.x = -this.task.impulse; break;
-                case 68 : this.impulseV.x = this.task.impulse; break;
-                case 87 : this.impulseV.y = -this.task.impulse; break;
-                case 83 : this.impulseV.y = this.task.impulse; break;
+                case 37 : this.keyLeft = true; break;
+                case 39 : this.keyRight = true; break;
+                case 38 : this.keyDown = true; break;
+                case 40 : this.keyUp = true; break;
+                case 65 : this.keyLeft = true; break;
+                case 68 : this.keyRight = true; break;
+                case 87 : this.keyDown = true; break;
+                case 83 : this.keyUp = true; break;
             }
         } else if (evt.type == 'keyup') {
             switch( evt.key ) {
-                case 37 : this.impulseV.x = 0; break;
-                case 39 : this.impulseV.x = 0; break;
-                case 38 : this.impulseV.y = 0; break;
-                case 40 : this.impulseV.y = 0; break;
-                case 65 : this.impulseV.x = 0; break;
-                case 68 : this.impulseV.x = 0; break;
-                case 87 : this.impulseV.y = 0; break;
-                case 83 : this.impulseV.y = 0; break;
+                case 37 : this.keyLeft = false; break;
+                case 39 : this.keyRight = false; break;
+                case 38 : this.keyDown = false; break;
+                case 40 : this.keyUp = false; break;
+                case 65 : this.keyLeft = false; break;
+                case 68 : this.keyRight = false; break;
+                case 87 : this.keyDown = false; break;
+                case 83 : this.keyUp = false; break;
             }
         }
     }.bind(this));
+
+    this.impulseV.y = this.impulseV.x = 0;
+
+    if (this.keyUp) {
+        this.impulseV.y = this.task.impulse;
+    }
+    if (this.keyDown) {
+        this.impulseV.y = -this.task.impulse;   
+    }
+
+    if (this.keyLeft) {
+        this.impulseV.x = -this.task.impulse;
+    }
+
+    if (this.keyRight) {
+        this.impulseV.x = this.task.impulse;
+    }
 
 
     // moving at diagonal is no faster than moving sideways or up/down
@@ -293,36 +318,6 @@ game.setUpdateCallback( function (dt, inputs) {
         brownianImpulse.y = mag*Math.sin(ang) + this.impulseV.y ;
         r.ApplyForce( brownianImpulse, r.GetWorldPoint( this.constants.zeroRef ) );
     }.bind(this) );
-
-
-
-    /*
-           document.addEventListener( "keydown", function(e){
-            that.lastUserInteraction = new Date().getTime();
-            switch (e.keyCode) {                
-            }
-        //check if this is the first keypress -- TODO:  this should be shared code.
-        if( that.firstKeyPressed == false && Math.abs(that._impulseV.x) + Math.abs(that._impulseV.y) > 0)
-        { 
-            that.firstKeyPressed  = true;
-            that._startTime = new Date();
-            that._runtime = 0.0;
-        }
-    } , false );
-
-document.addEventListener( "keyup", function(e){
-    that.lastUserInteraction = new Date().getTime();
-    switch (e.keyCode) {
-        case 37 : that._impulseV.x = 0; break;
-        case 39 : that._impulseV.x = 0; break;
-        case 38 : that._impulseV.y = 0; break;
-        case 40 : that._impulseV.y = 0; break;
-        case 65 : that._impulseV.x = 0; break;
-        case 68 : that._impulseV.x = 0; break;
-        case 87 : that._impulseV.y = 0; break;
-        case 83 : that._impulseV.y = 0; break;
-    }} , false );
-}*/
 });
 
 
