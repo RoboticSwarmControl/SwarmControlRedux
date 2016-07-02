@@ -246,23 +246,25 @@
 
 		console.log($canvas);
 
-		$canvas.on('keyup', function _handleKeyUp(evt) {
+		//$canvas.on('keyup', function _handleKeyUp(evt) {
+		$(document).on('keyup', function _handleKeyUp(evt) {
 			this._lastInputTime = new Date();
 			evt.preventDefault();
 			evt.stopPropagation();
 			this._inputEvents.push( {
 				type: 'keyup',
-				key: evt.keycode
+				key: evt.keyCode
 			});
 		}.bind(this));
 
-		$canvas.on('keydown', function _handleKeyDown(evt) {
+		//$canvas.on('keydown', function _handleKeyDown(evt) {
+		$(document).on('keydown', function _handleKeyDown(evt) {
 			this._lastInputTime = new Date();
 			evt.preventDefault();
 			evt.stopPropagation();
 			this._inputEvents.push( {
 				type: 'keydown',
-				key: evt.keycode
+				key: evt.keyCode
 			});
 		}.bind(this));
 
@@ -282,8 +284,6 @@
 			var rect = evt.target.getBoundingClientRect();
 			var left = evt.clientX - rect.left;
 			var top = evt.clientY - rect.top;
-            //var left = evt.screenX - rect.left - evt.target.clientLeft + evt.target.scrollLeft;
-            //var top = evt.screenY - rect.top - evt.target.clientTop + evt.target.scrollTop;
 
             // these are the mouse coordinates in normalized [0,1] canvas space
             var u = left / evt.target.width;
