@@ -24,11 +24,16 @@
 							If no input has occurred for some time in this state, game moves to "abandoned" state.
 							If any input occurs, game is moved back to "running" state.
 
-			- "won"		: Terminal state. The game has finished and the player has won.
+			- "won"		: The game has finished and the player has won.
+								Game moves now to "halted" state.
 
-			- "lost"	: Terminal state. The game has finished and player has lost (failure or timeout).
+			- "lost"	: The game has finished and player has lost (failure or timeout).
+								Game moves now to "halted" state.
 
-			- "abandoned" : Terminal state. Game has not received input and will stop.
+			- "abandoned" : The game has been untouched long enough that the pause state put us here. Draw a message.
+								Game moves now to "halted" state.
+
+			- "halted" : Terminal state. Application stops.
 		*/
 
 		this._currentState = this.doStateOverview;
@@ -36,6 +41,7 @@
 		this._lastFrameStartTime = this._currentFrameStartTime;
 		this._lastInputTime = this._currentFrameStartTime;
 		this._timeInPause = 0;
+		this._timeElapsed = 0
 		this._inputEvents = [];
 		this._physSimAcculmulator = 0;
 
@@ -132,6 +138,7 @@
 		if ( this._currentFrameStartTime -  this._lastInputTime > this.kAllowedTimeWithoutInput) {
 			return this.doStatePaused;
 		} else {
+			this._timeElapsed += dt;
 			this._drawCallback();
 			this._updateCallback( dt, inputEvents );
 
@@ -215,6 +222,7 @@
 		var dt = this._currentFrameStartTime - this._lastFrameStartTime;
 
 		this._currentState = this._currentState(dt, this._inputEvents);
+
 		this._inputEvents = [];
 		if (this._currentState !== this.doStateHalted){
 			window.requestAnimationFrame( this.run.bind(this) );
