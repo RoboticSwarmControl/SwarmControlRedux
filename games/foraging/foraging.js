@@ -255,12 +255,8 @@ game.setDrawCallback( function () {
         drawutils.drawLine(pts,'rgba(0, 0, 153, 0.5)',true,18,false);
     }else{
         // draw controller position.  James asked for this, but the lag behind the cursor position is very noticeable, so I commented it out.
-        drawutils.drawLine([ [30*(-0.2+this._mX), 30*this._mY],[30*(0.2+this._mX), 30*this._mY]],'darkblue',true); // minus
-        drawutils.drawLine([    [   30*(this._mX),
-                                    30*(-0.2+this._mY)],
-                                [   30*(this._mX),
-                                    30*(0.2+this._mY)]
-                            ],'darkblue',true); //vertical
+        drawutils.drawLine([ [30*(-0.2+this.mX), 30*this.mY],[30*(0.2+this.mX), 30*this.mY]],'darkblue',true); // minus
+        drawutils.drawLine([    [   30*(this.mX), 30*(-0.2+this.mY)], [   30*(this.mX), 30*(0.2+this.mY)] ],'darkblue',true); //vertical
     }
 });
 
@@ -317,7 +313,6 @@ game.setOverviewCallback( function() {
 
 game.setUpdateCallback( function (dt, inputs) {
     inputs.forEach( function( evt ) {
-
         switch (evt.type) {
             case 'mousedown': this.controllerActive = true; break;
             case 'mouseup' : this.controllerActive = false; break;
