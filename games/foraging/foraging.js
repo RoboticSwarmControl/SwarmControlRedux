@@ -342,7 +342,7 @@ game.setUpdateCallback( function (dt, inputs) {
     }.bind(this) );
 
     if (this.controllerActive) {
-        if (this.task.mode == "global" ) {
+        if (this.task.mode == 'global' ) {
             var angle = Math.atan2(this.mY - 10, this.mX-10);
             this.impulseV.x = 40* Math.cos(angle);
             this.impulseV.y = 40* Math.sin(angle);
@@ -391,22 +391,22 @@ game.setLostCallback( function() {
 game.setWonCallback( function() {
     //congratulate
     drawutils.drawRect(300,300, 590,590, 'rgba(200, 200, 200, 0.5)');
-    var color = "green";
-    drawutils.drawText(300,250, "You finished in "+ (this._timeElapsed/1000).toFixed(2) +" seconds!", 2, color, color)
-    drawutils.drawText(300,350, "Loading results page...", 2, color, color)
+    var color = 'green';
+    drawutils.drawText(300,250, 'You finished in '+ (this._timeElapsed/1000).toFixed(2) +' seconds!', 2, color, color)
+    drawutils.drawText(300,350, 'Loading results page...', 2, color, color)
 
      // next, post our results to the server.
      /*
-    $.ajax( { type: "POST",
-              url: "/result",
-              dataType: "json",
+    $.ajax( { type: 'POST',
+              url: '/result',
+              dataType: 'json',
               async: false,
               data: {
                         task:this.taskName,
                         mode:this.taskMode,
                         runtime:this._runtime,
                         numrobots:this._numrobots,
-                        participant:"web",
+                        participant:'web',
                         agent: navigator.userAgent,
                         aborted:false
                     }
@@ -415,40 +415,40 @@ game.setWonCallback( function() {
     
     // 1. display plot in a colorbox
     // 2. display buttons for Play Again, all results, task list
-    // 3. display: "you have completed x of 4 tasks.  Play again!" <or> "Level cleared -- you may play again to increase your score"
+    // 3. display: 'you have completed x of 4 tasks.  Play again!' <or> 'Level cleared -- you may play again to increase your score'
     var currTaskName = this.taskName;
 
-    var c = $(".canvas");
-    $.get("/result.json?task="+currTaskName, function( data ) {
+    var c = $('.canvas');
+    $.get('/result.json?task='+currTaskName, function( data ) {
         var data = JSON.parse(data);
         // draw white  box to to give a background for plot
-        drawutils.drawRect(300,300, 590,590, "white");//rgba(200, 200, 200, 0.8)");
+        drawutils.drawRect(300,300, 590,590, 'white');//rgba(200, 200, 200, 0.8)');
         // at this point, we do not reschedule, and the task ends.
         numMyResults = swarmcontrol.results.singlePlot(c,data.results);
-        $(".span8").append('<button class="btn btn-success play-again-button" style="position: relative; left: 100px; top: -110px;" onclick="location.reload(true);"><h3>Play again!</h3></button>');
+        $('.span8').append('<button class='btn btn-success play-again-button' style='position: relative; left: 100px; top: -110px;' onclick='location.reload(true);'><h3>Play again!</h3></button>');
     
         /*
     function drawMeritBadges(divname,numMyResults){
         var numPres = numMyResults;
         var element=  document.getElementById(divname);
         var maxstars = 5;
-        var imgsize = "25";
+        var imgsize = '25';
         if(numPres>5){ 
-            strImage = "/assets/soft_edge_yellow_star.png"
-            $(".span8").append('<img src= '+strImage+' width='+imgsize+' height='+imgsize+' style="position: relative; left: 120px; top: -110px;"><h3 style="position: relative; left: 145px; top: -175px;">x'+numPres+'</h3>');
+            strImage = '/assets/soft_edge_yellow_star.png'
+            $('.span8').append('<img src= '+strImage+' width='+imgsize+' height='+imgsize+' style='position: relative; left: 120px; top: -110px;'><h3 style='position: relative; left: 145px; top: -175px;'>x'+numPres+'</h3>');
         
         }else{
             for( var i = 0; i<maxstars; i++){
-                var strImage = "/assets/soft_edge_empty_star.png";
+                var strImage = '/assets/soft_edge_empty_star.png';
                 if( numPres >i) {
-                    strImage = "/assets/soft_edge_yellow_star.png";
+                    strImage = '/assets/soft_edge_yellow_star.png';
                 }
-                $(".span8").append('<img src= '+strImage+' width='+imgsize+' height='+imgsize+' style="position: relative; left: 120px; top: -110px;">');
+                $('.span8').append('<img src= '+strImage+' width='+imgsize+' height='+imgsize+' style='position: relative; left: 120px; top: -110px;'>');
             }
         }      
     } 
 
-    drawMeritBadges("canvasID",numMyResults);
+    drawMeritBadges('canvasID',numMyResults);
     
 
 
@@ -457,15 +457,15 @@ game.setWonCallback( function() {
     if(nextTask >= k.length) {
         nextTask = 0;
     }
-    newTaskPath = "parent.location='./" + k[nextTask] + "'";
+    newTaskPath = 'parent.location='./' + k[nextTask] + ''';
     console.log(newTaskPath);
 
-    $(".span8").append('<button class="btn btn-success next-Task-button" style="position: relative; left: 140px; top: -110px;" onclick='+newTaskPath+'>► Next Task</button>');
+    $('.span8').append('<button class='btn btn-success next-Task-button' style='position: relative; left: 140px; top: -110px;' onclick='+newTaskPath+'>► Next Task</button>');
     });
     */
 });
 
 $(window).on('load', function () {
-    game.init( $("#canvas") );
+    game.init( $('#canvas') );
     game.run();
 });
