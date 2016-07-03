@@ -7,7 +7,7 @@ game.setPregameCallback( function() {
 game.setInitCallback( function () {
     this.task = {};
     this.task.modes = ['attractive','repulsive','global'];
-    this.task.mode = 'repulsive';
+    this.task.mode = this.task.modes[ Math.ceil( Math.random * this.task.modes.length ) - 1];
     this.task.controllerActive = false;
     this.task.repulsing = false;
     this.task.attracting = false;
@@ -22,6 +22,7 @@ game.setInitCallback( function () {
     this.mY = 0;
     this.impulseV = new phys.vec2(0,0)
 
+    $('.mode-button').prop('disabled',false);
     $('#button-'+this.task.mode).addClass('btn-success');
     _.each(this.task.modes, function (mode) {
         $('#button-' + mode).click(function() {
