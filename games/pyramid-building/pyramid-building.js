@@ -322,14 +322,13 @@ game.setUpdateCallback( function (dt, inputs) {
 
 
 game.setWinTestCallback( function() {
-    var ret = true;
     // need to check if object has been moved into the goal zone
     var blockupied = 0;
     // for each goal, see if it contains a block
     _.each(this.task.blocks, function (b) {
         var blockAABB = b.GetFixtureList().GetAABB();
         _.every(this.task.goals, function (g) {
-            ret = blockAABB.Contains( g.GetFixtureList().GetAABB() );
+            var ret = blockAABB.Contains( g.GetFixtureList().GetAABB() );
             if (ret) {
                 blockupied++;
             }
