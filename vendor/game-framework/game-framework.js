@@ -205,13 +205,11 @@
 	};
 
 	GameFramework.prototype.doStateWon = function ( dt, inputEvents  ) {
-		console.log("won");
 		this._wonCallback();
 		return this.doStateHalted;
 	};
 
 	GameFramework.prototype.doStateLost = function ( dt, inputEvents  ) {	
-		console.log("lost");
 		this._lostCallback();
 		return this.doStateHalted;
 	};
