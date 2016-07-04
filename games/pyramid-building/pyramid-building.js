@@ -1,4 +1,4 @@
-(function($,phys,GameFramework, Box2D, drawutils) {
+(function($,phys,GameFramework, Box2D, drawutils, mathutils) {
     'use strict';
     function URFP( x ) { /* jshint expr:true */ x; }
     URFP(Box2D);
@@ -442,4 +442,4 @@
         game.init( $('#canvas') );
         game.run();
     });
-})($,phys,GameFramework, Box2D, drawutils);
+})($,phys,GameFramework, Box2D, drawutils, mathutils);
