@@ -12,6 +12,7 @@
         this.task.numRobots = Math.floor((Math.random()*10)+1);   // number of robots
         this.task.robots = [];
         this.task.goals = [];
+        this.task.blocks = [];
         this.task.goalsX = [8,7,9,7,8,9,7,9,7,9];                 // x-coord of goals
         this.task.goalsY = [6,7,7,8,8,8,9,9,6,6];                 // y-coord of goals
         this.task.impulse = 50;
