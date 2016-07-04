@@ -308,8 +308,6 @@ function theGame($,phys,GameFramework, Box2D, drawutils, mathutils) {
                     var mag = Math.sqrt(distSq);
                     var h2 = 4;
                     var forceM = 100*distSq/Math.pow(distSq + h2,2);
-                    this.impulseV.x = 20*dx/mag*forceM || 0;
-                    this.impulseV.y = 20*dy/mag*forceM || 0;
                     if (this.task.mode === 'repulsive') {
                         this.impulseV.x = -20*dx/mag*forceM || 0;
                         this.impulseV.y = -20*dy/mag*forceM || 0;                    
