@@ -6,6 +6,7 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "lint": "gulp lint",
+    "lint:games" : "gulp lint:games",
     "build": "gulp default",
     "build-no-lint": "gulp build-no-lint",
     "clean": "gulp clean",
