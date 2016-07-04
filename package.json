@@ -6,9 +6,11 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "lint": "gulp lint",
+    "lint:games" : "gulp lint:games",
     "build": "gulp default",
+    "build-no-lint": "gulp build-no-lint",
     "clean": "gulp clean",
-    "start": "nodejs src/server/server.js",
+    "start": "node server/server.js",
     "build:server": "gulp scripts-server",
     "build:client": "gulp scripts-client"
   },
@@ -23,10 +25,13 @@
   },
   "homepage": "https://github.com/RoboticSwarmControl/SwarmControlRedux",
   "dependencies": {
-    "express": "^4.13.3"
+    "bluebird": "^3.4.0",
+    "ejs": "^2.4.2",
+    "express": "^4.13.3",
+    "pg-promise": "^4.6.2"
   },
   "devDependencies": {
-    "del": "^2.2.0",    
+    "del": "^2.2.0",
     "gulp": "^3.9.0",
     "gulp-cache": "^0.4.1",
     "gulp-concat": "^2.6.0",

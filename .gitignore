@@ -38,3 +38,6 @@ node_modules
 # ignore sublime text droppings
 *.sublime-project
 *.sublime-workspace
+
+# ignore generated/build articfacts
+dist
