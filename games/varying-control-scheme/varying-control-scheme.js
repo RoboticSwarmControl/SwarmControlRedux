@@ -1,6 +1,8 @@
 (function($,phys,GameFramework, Box2D, drawutils, mathutils) {
     'use strict';
     function URFP( x ) { /* jshint expr:true */ x; }
+    URFP(Box2D);
+    URFP(mathutils);
 
     var game = new GameFramework();
 

@@ -1,6 +1,7 @@
 (function($,phys,GameFramework, Box2D, drawutils, mathutils) {
     'use strict';
     function URFP( x ) { /* jshint expr:true */ x; }
+    URFP(Box2D);
 
     var game = new GameFramework();
 
@@ -92,62 +93,46 @@
 
     game.setDrawCallback( function() {
         drawutils.clearCanvas();
-            var countRobotsAtGoal = 0;
-            var colorGoal;
+        var colorGoal;
             
-            //initialize robots to not be at goal
-            this.task.robots.forEach( function(r) {
-                r.atGoal = false;
-            }.bind(this));
+        // draw goals 
+        for (var i = 0; i < this.task.numRobots; i++) {
+            colorGoal = this.constants.colorGoal;                
+            // draw the goal positions
+            // the 30s we see scattered through here are canvas scaling factor -- crertel
+            drawutils.drawCircle(30*this.task.goalsX[i],
+                                30*this.task.goalsY[i],
+                                30*0.5,
+                                colorGoal,
+                                this.constants.strokeWidth);
+        }
 
-            // draw goals 
-            for (var i = 0; i < this.task.numRobots; i++) {
-                colorGoal = this.constants.colorGoal;             
-                this.task.robots.forEach( function(r) {
-                    var roboPosition = r.GetPosition();
-                    if( mathutils.lineDistance( this.task.goalsX[i],
-                                                this.task.goalsY[i],
-                                                roboPosition.x, 
-                                                roboPosition.y) < 0.5) {
-                        colorGoal = this.constants.colorObjectAtGoal; 
-                        r.atGoal = true;
-                        countRobotsAtGoal++;
-                    }
-                }.bind(this));
-                // draw the goal positions
-                // the 30s we see scattered through here are canvas scaling factor -- crertel
-                drawutils.drawCircle(30*this.task.goalsX[i],
-                                    30*this.task.goalsY[i],
-                                    30*0.5,
-                                    colorGoal,
-                                    this.constants.strokeWidth);
-            }
-
-            //draw robots and obstacles
-            for (var b = this.world.GetBodyList() ; b; b = b.GetNext())
-            {
-                var angle = b.GetAngle()*(180/Math.PI);
-                var pos = b.GetPosition();
-                var color = this.constants.colorGoal;
-                for(var f = b.GetFixtureList(); f; f = f.GetNext()) {
-                    if (b.GetUserData() === 'robot') {
-                        // draw the robots
-                        var radius = f.GetShape().GetRadius();                        
-                        if (b.atGoal === true )
-                            {drawutils.drawRobot( 30*pos.x, 30*pos.y,angle, 30*radius, this.constants.colorRobotAtGoal,this.constants.colorRobotEdge); }
-                        else
-                            {drawutils.drawRobot( 30*pos.x, 30*pos.y,angle, 30*radius, this.constants.colorRobot,this.constants.colorRobotEdge); }
+        //draw robots and obstacles
+        for (var b = this.world.GetBodyList() ; b; b = b.GetNext())
+        {
+            var angle = b.GetAngle()*(180/Math.PI);
+            var pos = b.GetPosition();
+            var color = this.constants.colorGoal;
+            for(var f = b.GetFixtureList(); f; f = f.GetNext()) {
+                if (b.GetUserData() === 'robot') {
+                    // draw the robots
+                    var radius = f.GetShape().GetRadius();                        
+                    if (b.atGoal === true ) {
+                        drawutils.drawRobot( 30*pos.x, 30*pos.y,angle, 30*radius, this.constants.colorRobotAtGoal,this.constants.colorRobotEdge);
                     } else {
-                        // draw the obstacles
-                        var X = f.GetShape().GetVertices()[1].x - f.GetShape().GetVertices()[0].x; 
-                        var Y = f.GetShape().GetVertices()[2].y - f.GetShape().GetVertices()[1].y;
-                        if(b.GetUserData() === 'obstacle') {
-                            color = this.constants.colorObstacle;
-                        }
-                        drawutils.drawRect(30*pos.x, 30*pos.y, 30* X, 30 * Y, color);
+                        drawutils.drawRobot( 30*pos.x, 30*pos.y,angle, 30*radius, this.constants.colorRobot,this.constants.colorRobotEdge);
                     }
+                } else {
+                    // draw the obstacles
+                    var X = f.GetShape().GetVertices()[1].x - f.GetShape().GetVertices()[0].x; 
+                    var Y = f.GetShape().GetVertices()[2].y - f.GetShape().GetVertices()[1].y;
+                    if(b.GetUserData() === 'obstacle') {
+                        color = this.constants.colorObstacle;
+                    }
+                    drawutils.drawRect(30*pos.x, 30*pos.y, 30* X, 30 * Y, color);
                 }
             }
+        }
     });
 
     game.setOverviewCallback( function() {
@@ -269,6 +254,21 @@
         this.task.robots.forEach( function(r) { 
             r.ApplyForce( this.impulseV, r.GetWorldPoint( this.constants.zeroRef ) );
         }.bind(this) );
+
+        // find the robot positions.
+        this.task.robots.forEach( function(r) {
+            var roboPosition = r.GetPosition();
+            r.atGoal = false;
+            for ( var i = 0; i <  this.task.goalsX.length; i++ ) {
+                if( mathutils.lineDistance( this.task.goalsX[i],
+                                        this.task.goalsY[i],
+                                        roboPosition.x, 
+                                        roboPosition.y) < 0.5) {                
+                r.atGoal = true;
+                }
+            }
+            
+        }.bind(this));
     });
 
     game.setWinTestCallback( function() {

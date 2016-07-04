@@ -2,6 +2,7 @@
     'use strict';
     var game = new GameFramework();
     function URFP( x ) { /* jshint expr:true */ x; }
+    URFP(mathutils);
 
     game.setInitCallback( function() {
         /*jshint camelcase:false */

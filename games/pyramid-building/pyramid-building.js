@@ -2,6 +2,7 @@
     'use strict';
     function URFP( x ) { /* jshint expr:true */ x; }
     URFP(Box2D);
+    URFP(mathutils);
 
     var game = new GameFramework();
 
