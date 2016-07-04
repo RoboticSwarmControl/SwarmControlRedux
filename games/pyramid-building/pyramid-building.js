@@ -43,50 +43,32 @@ function theGame($,phys,GameFramework, Box2D, drawutils, mathutils) {
         fixDef.friction = 0.5;
         fixDef.restitution = 0.2;  //bouncing value
 
-        function makeBox( world, x, y, xThickness, yThickness) {
-            var fixDef = new phys.fixtureDef();
-            fixDef.density = 20.0;
-            fixDef.friction = 0.5;
-            fixDef.restitution = 0.2;  //bouncing value
-            fixDef.shape = new phys.polyShape();
-            fixDef.shape.SetAsBox(xThickness, yThickness);
-
-            // body definition for obstacles
-            var bodyDef = new phys.bodyDef();
-            bodyDef.userData = 'obstacle';
-            bodyDef.type = phys.body.b2_staticBody;
-            bodyDef.position.Set(x, y);
-        
-            world.CreateBody(bodyDef).CreateFixture(fixDef);
-        }
-
-            // create bottom wall
-        makeBox(    this.world,
+        // create bottom wall
+        phys.makeBox(    this.world,
                     10, 20 - this.constants.obsThick,
                     10, this.constants.obsThick);
 
         // create top wall
-        makeBox(    this.world,
+        phys.makeBox(    this.world,
                     10, this.constants.obsThick,
                     10, this.constants.obsThick);
         
         // create left wall
-        makeBox(    this.world,
+        phys.makeBox(    this.world,
                     this.constants.obsThick, 10,
                     this.constants.obsThick, 10);
 
         // create right wall
-        makeBox(    this.world,
+        phys.makeBox(    this.world,
                     20 - this.constants.obsThick, 10,
                     this.constants.obsThick, 10);
         
         // create pyramid floor
-        makeBox(    this.world,
+        phys.makeBox(    this.world,
                     10, 10,
                     4, this.constants.obsThick);
 
         // create pyramid blocks
-        this._blocks = [];
         var bodyDef = new phys.bodyDef();
         bodyDef.type = phys.body.b2_dynamicBody;
         bodyDef.userData = 'workpiece';

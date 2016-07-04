@@ -54,66 +54,46 @@ function theGame($,phys,GameFramework, Box2D, drawutils, mathutils) {
         //create ground obstacles
         fixDef.shape = new phys.polyShape();
 
-        // reshape fixture def to be horizontal bar
-        fixDef.shape.SetAsBox(10, this.constants.obsThick);
-        
         // create bottom wall
-        bodyDef.position.Set(10, 20-this.constants.obsThick);
-        this.world.CreateBody(bodyDef).CreateFixture(fixDef);
+        phys.makeBox(    this.world,
+                    10, 20 - this.constants.obsThick,
+                    10, this.constants.obsThick);
 
         // create top wall
-        bodyDef.position.Set(10, this.constants.obsThick);
-        this.world.CreateBody(bodyDef).CreateFixture(fixDef);
-
-        // reshape fixture def to be vertical bar
-        fixDef.shape.SetAsBox(this.constants.obsThick, 10);
+        phys.makeBox(    this.world,
+                    10, this.constants.obsThick,
+                    10, this.constants.obsThick);
         
         // create left wall
-        bodyDef.position.Set(this.constants.obsThick, 10);
-        this.world.CreateBody(bodyDef).CreateFixture(fixDef);
+        phys.makeBox(    this.world,
+                    this.constants.obsThick, 10,
+                    this.constants.obsThick, 10);
 
         // create right wall
-        bodyDef.position.Set(20-this.constants.obsThick, 10);
-        this.world.CreateBody(bodyDef).CreateFixture(fixDef);
+        phys.makeBox(    this.world,
+                    20 - this.constants.obsThick, 10,
+                    this.constants.obsThick, 10);
+        
 
         // create short middle wall
-        fixDef.shape.SetAsBox( 4, this.constants.obsThick);
-        bodyDef.position.Set(10, 10);
-        this.world.CreateBody(bodyDef).CreateFixture(fixDef);
+        phys.makeBox(    this.world,
+                    10, 10,
+                    4, this.constants.obsThick);
 
-        // create pyramid blocks
-        bodyDef.type = phys.body.b2_dynamicBody;
-        bodyDef.userData = 'workpiece';
-        fixDef.shape = new phys.polyShape();
-        fixDef.shape.SetAsBox( 0.5, 0.5);
-        fixDef.density = 5.0;
-        fixDef.friction = 0.5;
-        fixDef.restitution = 0.2;  //bouncing value
+        // create pyramid blocks        
         for(i = 0; i < 6; ++i) {
-            bodyDef.position.x = 4.5 + 2*i;
-            bodyDef.position.y = 15;
-            this.task.blocks[i] = this.world.CreateBody(bodyDef);
-            this.task.blocks[i].CreateFixture(fixDef);
-            this.task.blocks[i].m_angularDamping = 5;
-            this.task.blocks[i].m_linearDamping = 5;
+            this.task.blocks.push( phys.makeBlock(this.world, 4.5 + 2*i, 15, 0.5, 0.5, 'workpiece') );
         }
 
         // create some robots
         var xoffset = 8;
-        var yoffset = 4;
-        bodyDef.type = phys.body.b2_dynamicBody;
-        bodyDef.userData = 'robot';
-        fixDef.density = 1.0;
-        fixDef.friction = 0.5;
-        fixDef.restitution = 0.2;  //bouncing value
-        fixDef.shape = new phys.circleShape( 0.5 ); // radius .5 robots
+        var yoffset = 4;        
         for(i = 0; i < this.task.numRobots; ++i) {
-            bodyDef.position.x = (i%4)*1.2 + xoffset;
-            bodyDef.position.y = 1.2*Math.floor( i/4 ) + yoffset;
-            this.task.robots[i] = this.world.CreateBody(bodyDef);
-            this.task.robots[i].CreateFixture(fixDef);
-            this.task.robots[i].m_angularDamping = 10;
-            this.task.robots[i].m_linearDamping = 10;
+            this.task.robots.push( phys.makeRobot(  this.world,
+                                                    (i%4)*1.2 + xoffset,
+                                                    1.2*Math.floor( i/4 ) + yoffset,
+                                                    0.5,
+                                                    'robot'));
         }
 
         // create goals

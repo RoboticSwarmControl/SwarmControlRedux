@@ -65,64 +65,38 @@ function theGame($,phys,GameFramework, Box2D, drawutils, mathutils) {
         //create ground obstacles
         fixDef.shape = new phys.polyShape();
 
-        // reshape fixture def to be horizontal bar
-        fixDef.shape.SetAsBox(10, this.constants.obsThick);
-        
-        // create bottom wall
-        bodyDef.position.Set(10, 20-this.constants.obsThick);
-        this.world.CreateBody(bodyDef).CreateFixture(fixDef);
+         // create bottom wall
+        phys.makeBox(    this.world,
+                    10, 20 - this.constants.obsThick,
+                    10, this.constants.obsThick);
 
         // create top wall
-        bodyDef.position.Set(10, this.constants.obsThick);
-        this.world.CreateBody(bodyDef).CreateFixture(fixDef);
-
-        // reshape fixture def to be vertical bar
-        fixDef.shape.SetAsBox(this.constants.obsThick, 10);
+        phys.makeBox(    this.world,
+                    10, this.constants.obsThick,
+                    10, this.constants.obsThick);
         
         // create left wall
-        bodyDef.position.Set(this.constants.obsThick, 10);
-        this.world.CreateBody(bodyDef).CreateFixture(fixDef);
+        phys.makeBox(    this.world,
+                    this.constants.obsThick, 10,
+                    this.constants.obsThick, 10);
 
         // create right wall
-        bodyDef.position.Set(20-this.constants.obsThick, 10);
-        this.world.CreateBody(bodyDef).CreateFixture(fixDef);
+        phys.makeBox(    this.world,
+                    20 - this.constants.obsThick, 10,
+                    this.constants.obsThick, 10);
 
-        // reshape fixture def to be horizontal bar
-        fixDef.shape.SetAsBox(20, this.constants.obsThick);
+        // create mid lower wall    
+        phys.makeBox(    this.world,
+                    25, 6.66,
+                    20, this.constants.obsThick);
 
-        // create mid lower wall
-        bodyDef.position.Set(25, 6.66);
-        this.world.CreateBody(bodyDef).CreateFixture(fixDef);
-        
         // create mid upper wall
-        bodyDef.position.Set(-5, 13.33);
-        this.world.CreateBody(bodyDef).CreateFixture(fixDef);
+        phys.makeBox(    this.world,
+                    -5, 13.33,
+                    20, this.constants.obsThick);
 
         // create block
-        // This defines a hexagon in CCW order.
-        // http://blog.sethladd.com/2011/09/box2d-and-polygons-for-javascript.html
-        bodyDef.type = phys.body.b2_dynamicBody;
-        bodyDef.userData = 'workpiece';
-        bodyDef.position.Set(10,16.5);
-        fixDef.isSensor = false;
-        var Mpoints = [     {x: 1, y: 0}, 
-                            {x: 1/2, y: Math.sqrt(3)/2}, 
-                            {x: -1/2, y:Math.sqrt(3)/2},
-                            {x: -1, y:0}, 
-                            {x: -1/2, y: -Math.sqrt(3)/2}, 
-                            {x: 1/2, y:-Math.sqrt(3)/2} ];
-        var points = [];
-        for ( i = 0; i < Mpoints.length; i++) {
-            points.push( new phys.vec2(2*Mpoints[i].x, 2*Mpoints[i].y) );
-        }
-        fixDef.shape = new Box2D.Collision.Shapes.b2PolygonShape();
-        fixDef.shape.SetAsArray(points, points.length);
-        
-        this.task.blocks.push( this.world.CreateBody(bodyDef));
-        fixDef.density = 1.0;
-        this.task.blocks[0].CreateFixture(fixDef);
-        this.task.blocks[0].m_angularDamping = 5;
-        this.task.blocks[0].m_linearDamping = 5;
+        this.task.blocks.push( phys.makeHexagon(this.world, 10, 16.5, 'workpiece'));
 
         // create the goal
         bodyDef.type = phys.body.b2_dynamicBody;

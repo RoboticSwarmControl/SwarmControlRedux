@@ -42,27 +42,25 @@ function theGame($,phys,GameFramework, Box2D, drawutils, mathutils) {
         //create ground obstacles
         fixDef.shape = new phys.polyShape();
 
-        // reshape fixture def to be horizontal bar
-        fixDef.shape.SetAsBox(10, this.constants.obsThick);
-        
         // create bottom wall
-        bodyDef.position.Set(10, 20-this.constants.obsThick);
-        this.world.CreateBody(bodyDef).CreateFixture(fixDef);
+        phys.makeBox(    this.world,
+                    10, 20 - this.constants.obsThick,
+                    10, this.constants.obsThick);
 
         // create top wall
-        bodyDef.position.Set(10, this.constants.obsThick);
-        this.world.CreateBody(bodyDef).CreateFixture(fixDef);
-        
-        // reshape fixture def to be vertical bar
-        fixDef.shape.SetAsBox(this.constants.obsThick, 10);
+        phys.makeBox(    this.world,
+                    10, this.constants.obsThick,
+                    10, this.constants.obsThick);
         
         // create left wall
-        bodyDef.position.Set(this.constants.obsThick, 10);
-        this.world.CreateBody(bodyDef).CreateFixture(fixDef);
+        phys.makeBox(    this.world,
+                    this.constants.obsThick, 10,
+                    this.constants.obsThick, 10);
 
         // create right wall
-        bodyDef.position.Set(20-this.constants.obsThick, 10);
-        this.world.CreateBody(bodyDef).CreateFixture(fixDef);
+        phys.makeBox(    this.world,
+                    20 - this.constants.obsThick, 10,
+                    this.constants.obsThick, 10);
 
         // create shaping block
         bodyDef.position.Set(10,10);
