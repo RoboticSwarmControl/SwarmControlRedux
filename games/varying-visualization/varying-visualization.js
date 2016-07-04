@@ -109,23 +109,13 @@ function theGame($,phys,GameFramework, Box2D, drawutils, mathutils) {
 
         // create some robots
         var xoffset = this.task.robotRadius+0.5;
-        var yoffset = 14+this.task.robotRadius;
-        bodyDef.type = phys.body.b2_dynamicBody;
-        bodyDef.userData = 'robot';
-        fixDef.density = 1.0;
-        fixDef.friction = 0.5;
-        fixDef.restitution = 0.2;  //bouncing value
-        fixDef.isSensor = false;
-        fixDef.shape = new phys.circleShape( this.task.robotRadius ); // radius .5 robots
-        for( i = 0; i < this.task.numRobots; ++i) {
-            //random position
-            bodyDef.position.x = xoffset + 7*Math.random();
-            bodyDef.position.y = yoffset +5*Math.random();
-            //place robots in orderly lines
-            this.task.robots[i] = this.world.CreateBody(bodyDef);
-            this.task.robots[i].CreateFixture(fixDef);
-            this.task.robots[i].m_angularDamping = 10;
-            this.task.robots[i].m_linearDamping = 10;
+        var yoffset = 14+this.task.robotRadius;        
+        for(i = 0; i < this.task.numRobots; ++i) {
+            this.task.robots.push( phys.makeRobot(  this.world,
+                                                    xoffset + 7*Math.random(),
+                                                    yoffset +5*Math.random(),
+                                                    this.task.robotRadius,
+                                                    'robot'));
         }
 
     });

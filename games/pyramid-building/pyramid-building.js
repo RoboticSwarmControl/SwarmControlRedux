@@ -37,11 +37,7 @@ function theGame($,phys,GameFramework, Box2D, drawutils, mathutils) {
         // dragster moves 0.014 mm/hr
         // fixture definition for obstacles
         //http://arxiv.org/pdf/cond-mat/0506038.pdf
-        //http://research.chem.ucr.edu/groups/bartels/publications/prl79p697.pdf  (talks about pushing & pulling)
-        var fixDef = new phys.fixtureDef();
-        fixDef.density = 20.0;
-        fixDef.friction = 0.5;
-        fixDef.restitution = 0.2;  //bouncing value
+        //http://research.chem.ucr.edu/groups/bartels/publications/prl79p697.pdf  (talks about pushing & pulling)    
 
         // create bottom wall
         phys.makeBox(    this.world,
@@ -69,55 +65,35 @@ function theGame($,phys,GameFramework, Box2D, drawutils, mathutils) {
                     4, this.constants.obsThick);
 
         // create pyramid blocks
-        var bodyDef = new phys.bodyDef();
-        bodyDef.type = phys.body.b2_dynamicBody;
-        bodyDef.userData = 'workpiece';
-        fixDef.shape = new phys.polyShape();
-        fixDef.shape.SetAsBox( 0.5, 0.5);
-        fixDef.density = 5.0;
-        fixDef.friction = 0.5;
-        fixDef.restitution = 0.2;  //bouncing value
-        for( i = 0; i < 6; ++i) {
-            bodyDef.position.x = 4.5 + 2*i;
-            bodyDef.position.y = 15;
-            var block = this.world.CreateBody(bodyDef);
-            block.CreateFixture(fixDef);
-            block.m_angularDamping = 5;
-            block.m_linearDamping = 5;
-            block.atGoal = false;
-            this.task.blocks.push(block);
+        for( i = 0; i < 6; ++i) {            
+            this.task.blocks.push( phys.makeBlock(this.world,4.5 + 2*i, 15, 0.5, 0.5, 'workpiece' ));
         }
 
         // create some robots
         var xoffset = 8;
         var yoffset = 4;
-        this._robots = [];
-        bodyDef.type = phys.body.b2_dynamicBody;
-        bodyDef.userData = 'robot';
-        fixDef.density = 1.0;
-        fixDef.friction = 0.5;
-        fixDef.restitution = 0.2;  //bouncing value
-        fixDef.shape = new phys.circleShape( 0.5 ); // radius .5 robots
-        for( i = 0; i < this.task.numRobots; ++i) {
-            bodyDef.position.x = (i%4)*1.2 + xoffset;
-            bodyDef.position.y = 1.2*Math.floor( i/4 ) + yoffset;
-            var r = this.world.CreateBody(bodyDef);
-            r.CreateFixture(fixDef);
-            r.m_angularDamping = 10;
-            r.m_linearDamping = 10;
-            this.task.robots.push(r);
+        for(i = 0; i < this.task.numRobots; ++i) {
+            this.task.robots.push( phys.makeRobot(  this.world,
+                                                    (i%4)*1.2 + xoffset,
+                                                    1.2*Math.floor( i/4 ) + yoffset,
+                                                    0.5,
+                                                    'robot'));
         }
 
         // create goals
+
         var goalPositions = [   {x:10.0, y:7.2},
                                 {x:9.5, y:8.2},
                                 {x:10.5, y:8.2},
                                 {x:9, y:9.2},
                                 {x:10.0,y:9.2},
                                 {x:11,y:9.2}];
+        var fixDef = new phys.fixtureDef();
         fixDef.isSensor = true;
         fixDef.shape = new phys.polyShape();
         fixDef.shape.SetAsBox( 0.2, 0.2);
+        
+        var bodyDef = new phys.bodyDef();        
         bodyDef.type = phys.body.b2_dynamicBody;
         bodyDef.userData = 'goal';
         goalPositions.forEach( function (gp) {
