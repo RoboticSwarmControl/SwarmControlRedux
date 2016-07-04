@@ -14,7 +14,7 @@
 
         this.task = {};
         this.task.modes = ['attractive','repulsive','global'];
-        this.task.mode = this.task.modes[ Math.ceil( Math.random * this.task.modes.length ) - 1];
+        this.task.mode = this.task.modes[ Math.ceil( Math.random() * this.task.modes.length ) - 1];
         this.task.controllerActive = false;
         this.task.repulsing = false;
         this.task.attracting = false;
