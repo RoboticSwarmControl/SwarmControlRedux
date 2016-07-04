@@ -1,4 +1,8 @@
-(function($,phys,GameFramework, Box2D, drawutils, mathutils) {
+/* jshint unused:false */
+/* ^ done because we export */
+
+function theGame($,phys,GameFramework, Box2D, drawutils, mathutils) {
+    /* jshint unused:true */
     'use strict';
     var game = new GameFramework();
     function URFP( x ) { /* jshint expr:true */ x; }
@@ -387,4 +391,4 @@
         game.init( $('#canvas') );
         game.run();
     });
-})($,phys,GameFramework, Box2D, drawutils, mathutils);
+}
