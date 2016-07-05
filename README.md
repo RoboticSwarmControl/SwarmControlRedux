@@ -89,6 +89,8 @@ The `displayName` string is the pretty name that will be shown on the task index
 
 This file is used to populate the instructions section in the sidebar.
 
+In our example:
+
 ```
 <h2> How To Play </h2>
 
@@ -100,6 +102,8 @@ This file is used to populate the instructions section in the sidebar.
 ### science.html.ejs
 
 This file is used to populate the science section in the sidebar.
+
+In our example:
 
 ```
 <h2> The Science </h2>
@@ -119,6 +123,8 @@ It helps to make a screenshot that shows the game mid-task, so it gives a cleare
 ### example-game.js
 
 The actual game that the user will run.
+
+In our example:
 
 ```
 /* jshint unused:false */
