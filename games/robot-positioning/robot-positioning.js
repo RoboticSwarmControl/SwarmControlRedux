@@ -9,7 +9,7 @@ function theGame($,phys,GameFramework, Box2D, drawutils, mathutils) {
 
     var game = new GameFramework();
 
-    game.setInitCallback( function() {
+    game.setSpawnWorldCallback( function () {
         /*jshint camelcase:false */
         /* ^ we do this because the Box2D bindings are fugly. */
 
@@ -18,15 +18,6 @@ function theGame($,phys,GameFramework, Box2D, drawutils, mathutils) {
         this.task.robots = [];
         this.task.goals = [];
         this.task.blocks = [];
-        this.task.goalsX = [8,7,9,7,8,9,7,9,7,9];                 // x-coord of goals
-        this.task.goalsY = [6,7,7,8,8,8,9,9,6,6];                 // y-coord of goals
-        this.task.impulse = 50;
-        this.impulseV = new phys.vec2(0,0);
-        this.keyUp = false;
-        this.keyDown = false;
-        this.keyLeft = false;
-        this.keyRight = false;
-        this.impulseStart = null;
 
         // fixture definition for obstacles
         var fixDef = new phys.fixtureDef();
@@ -67,14 +58,7 @@ function theGame($,phys,GameFramework, Box2D, drawutils, mathutils) {
         fixDef.shape.SetAsBox(0.5,0.5);
         this.world.CreateBody(bodyDef).CreateFixture(fixDef);
 
-        //create some robots
-        var strRobotGoal = this.task.numRobots + ' robots (blue) to goals (outlined).';
-        if(this.task.numRobots === 1)
-            { strRobotGoal = ' robot (blue) to the goal (outlined)';}
-        this.instructions = 'Use arrow keys (&#8592;,&#8593;,&#8595;,&#8594;) to move ' + strRobotGoal ;
-        if(this.mobileUserAgent){
-            this.instructions = ' Tilt the screen (&#8592;,&#8593;,&#8595;,&#8594;) to move ' + strRobotGoal;
-        }
+        //create some robots        
         bodyDef.type = phys.body.b2_dynamicBody;
         bodyDef.userData = 'robot';
         fixDef.density = 1.0;
@@ -91,6 +75,18 @@ function theGame($,phys,GameFramework, Box2D, drawutils, mathutils) {
             this.task.robots[i].m_linearDamping = 10;
             this.task.robots[i].atGoal = false;
         }
+    });
+
+    game.setInitTaskCallback( function() {
+        this.task.goalsX = [8,7,9,7,8,9,7,9,7,9];                 // x-coord of goals
+        this.task.goalsY = [6,7,7,8,8,8,9,9,6,6];                 // y-coord of goals
+        this.task.impulse = 50;
+        this.impulseV = new phys.vec2(0,0);
+        this.keyUp = false;
+        this.keyDown = false;
+        this.keyLeft = false;
+        this.keyRight = false;
+        this.impulseStart = null;        
     });
 
     game.setDrawCallback( function() {

@@ -12,16 +12,11 @@ function theGame($,phys,GameFramework, Box2D, drawutils, mathutils) {
         $('.mode-button').prop('disabled',true);
     });
 
-    game.setInitCallback( function () {
+    game.setSpawnWorldCallback( function () {
         /*jshint camelcase:false */
         /* ^ we do this because the Box2D bindings are fugly. */
-
+        
         this.task = {};
-        this.task.modes = ['attractive','repulsive','global'];
-        this.task.mode = this.task.modes[ Math.ceil( Math.random() * this.task.modes.length ) - 1];
-        this.task.controllerActive = false;
-        this.task.repulsing = false;
-        this.task.attracting = false;
         this.task.numRobots = 100;
         this.task.robotRadius=  0.5;
         this.task.robots = [];          // array of bodies representing the robots
@@ -29,24 +24,11 @@ function theGame($,phys,GameFramework, Box2D, drawutils, mathutils) {
         this.task.blocks = [];          // array of bodies representing blocks
         this.task.numBlocksCollected = 0;
         this.task.numBlocksTotal = 50;
-        this.mX = 0;
-        this.mY = 0;
-        this.impulseV = new phys.vec2(0,0);
 
         var i;
         var body;
 
-        $('.mode-button').prop('disabled',false);
-        $('#button-'+this.task.mode).addClass('btn-success');
-        this.task.modes.forEach( function (mode) {
-            $('#button-' + mode).click(function() {
-                this.task.mode = mode;
-                $('.mode-button').removeClass('btn-success');
-                $('#button-'+mode).addClass('btn-success');
-            }.bind(this));
-        }.bind(this));
-     
-        // create bottom wall
+         // create bottom wall
         phys.makeBox(    this.world,
                     10, 20 - this.constants.obsThick,
                     10, this.constants.obsThick);
@@ -153,7 +135,28 @@ function theGame($,phys,GameFramework, Box2D, drawutils, mathutils) {
         this.task.goals.push( this.world.CreateBody(bodyDef) );
         fixDef.isSensor = true;
         fixDef.shape = new phys.circleShape(3.25); 
-        this.task.goals[0].CreateFixture(fixDef);    
+        this.task.goals[0].CreateFixture(fixDef);
+    });
+
+    game.setInitTaskCallback( function () {
+        this.task.modes = ['attractive','repulsive','global'];
+        this.task.mode = this.task.modes[ Math.ceil( Math.random() * this.task.modes.length ) - 1];
+        this.task.controllerActive = false;
+        this.task.repulsing = false;
+        this.task.attracting = false;        
+        this.mX = 0;
+        this.mY = 0;
+        this.impulseV = new phys.vec2(0,0);
+    
+        $('.mode-button').prop('disabled',false);
+        $('#button-'+this.task.mode).addClass('btn-success');
+        this.task.modes.forEach( function (mode) {
+            $('#button-' + mode).click(function() {
+                this.task.mode = mode;
+                $('.mode-button').removeClass('btn-success');
+                $('#button-'+mode).addClass('btn-success');
+            }.bind(this));
+        }.bind(this));
     });
 
     game.setDrawCallback( function () {

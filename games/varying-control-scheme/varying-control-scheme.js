@@ -10,35 +10,16 @@ function theGame($,phys,GameFramework, Box2D, drawutils, mathutils) {
 
     var game = new GameFramework();
 
-    game.setInitCallback( function() {
+    game.setSpawnWorldCallback( function() {
         /*jshint camelcase:false */
         /* ^ we do this because the Box2D bindings are fugly. */
+        var i;
 
         this.task = {};
-        this.task.modes = ['attractive','repulsive','global'];
-        this.task.mode = this.task.modes[ Math.ceil( Math.random() * this.task.modes.length ) - 1];
         this.task.numRobots = 16;           // number of robots
         this.task.robots = [];              // array of bodies representing the robots
         this.task.blocks = [];              // array of bodies representing blocks
         this.task.goals = [];               // array of goals of form {x,y,w,h}
-        this.task.impulse =  50;            // impulse to move robots by
-        this.impulseV = new phys.vec2(0,0); // global impulse to control all robots
-        this.mX = 0;
-        this.mY = 0;
-        
-        this.controllerActive = false;
-
-        $('.mode-button').prop('disabled',false);
-        $('#button-'+this.task.mode).addClass('btn-success');
-        this.task.modes.forEach( function (mode) {
-            $('#button-' + mode).click(function() {
-                this.task.mode = mode;
-                $('.mode-button').removeClass('btn-success');
-                $('#button-'+mode).addClass('btn-success');
-            }.bind(this));
-        }.bind(this));
-
-        var i;
 
         // fixture definition for obstacles
         var fixDef = new phys.fixtureDef();
@@ -112,6 +93,28 @@ function theGame($,phys,GameFramework, Box2D, drawutils, mathutils) {
             body.CreateFixture(fixDef);
             this.task.goals.push(body);
         }.bind(this));
+
+    });
+
+    game.setInitTaskCallback( function() {
+        this.task.modes = ['attractive','repulsive','global'];
+        this.task.mode = this.task.modes[ Math.ceil( Math.random() * this.task.modes.length ) - 1];        
+        this.task.impulse =  50;            // impulse to move robots by
+        this.impulseV = new phys.vec2(0,0); // global impulse to control all robots
+        this.mX = 0;
+        this.mY = 0;
+        
+        this.controllerActive = false;
+
+        $('.mode-button').prop('disabled',false);
+        $('#button-'+this.task.mode).addClass('btn-success');
+        this.task.modes.forEach( function (mode) {
+            $('#button-' + mode).click(function() {
+                this.task.mode = mode;
+                $('.mode-button').removeClass('btn-success');
+                $('#button-'+mode).addClass('btn-success');
+            }.bind(this));
+        }.bind(this));        
     });
 
     game.setPregameCallback( function() {

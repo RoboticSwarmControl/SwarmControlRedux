@@ -144,7 +144,7 @@ function theGame($,phys,GameFramework, Box2D, drawutils, mathutils) {
         */
     });
 
-    game.setInitCallback( function () {
+    game.setSpawnWorldCallback( function () {
         /*jshint camelcase:false */
         /* ^ we do this because the Box2D bindings are fugly. */
 
@@ -152,9 +152,22 @@ function theGame($,phys,GameFramework, Box2D, drawutils, mathutils) {
         this.task.robots = [];          // array of bodies representing the robots
         this.task.goals = [];           // array of goals of form {x,y,w,h}
         this.task.blocks = [];          // array of bodies representing blocks
+
+        /*
+            This function is where you'd create all the bodies in the world, workpieces and robots and such.
+
+            Positioning of those needs to occur in the init task callback, so they can be reset between games.
+        */
+    });
+
+    game.setInitTaskCallback( function () {
         this.mX = 0;
         this.mY = 0;
         this.impulseV = new phys.vec2(0,0);
+
+        /*
+            This function is where you would setup click handlers and move everything to its starting position.
+        */
     });
 
     game.setDrawCallback( function () {

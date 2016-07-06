@@ -8,48 +8,17 @@ function theGame($,phys,GameFramework, Box2D, drawutils, mathutils) {
     function URFP( x ) { /* jshint expr:true */ x; }
     URFP(mathutils);
 
-    game.setInitCallback( function() {
+    game.setSpawnWorldCallback( function() {
         /*jshint camelcase:false */
         /* ^ we do this because the Box2D bindings are fugly. */
 
         this.task = {};
-        this.task.modes = ['full-state', 'convex-hull', 'mean & variance', 'mean'];
-        this.task.mode = this.task.modes[ Math.ceil( Math.random() * this.task.modes.length ) - 1];
         this.task.numRobots = 100;          // number of robots
         this.task.robotRadius = 0.5*4.0/Math.sqrt(this.task.numRobots);
         this.task.robots = [];              // array of bodies representing the robots
         this.task.goals = [];               // array of goals of form {x,y,w,h}
-        this.task.blocks = [];              // array of bodies representing blocks                                          // number of robots
-        this.impulseStart = null;
-        this.task.impulse = 40;
-        this.impulseV = new phys.vec2(0,0);
-        this.keyUp = false;
-        this.keyDown = false;
-        this.keyLeft = false;
-        this.keyRight = false;
+        this.task.blocks = [];              // array of bodies representing blocks
         var i;
-
-        $('.mode-button').prop('disabled',false);
-        
-        //set the inital mode
-        var curMode = this.task.mode;
-        if( curMode === 'mean & variance') {
-            curMode = 'mean±var';
-        }
-        $('#button-'+curMode).addClass('btn-success');
-        //add click functionality
-        this.task.modes.forEach( function (m) {
-            var curMode = m;
-            if( curMode === 'mean & variance') {
-                curMode = 'mean±var';
-            }
-            $('#button-'+curMode).click(function() {
-                $('.mode-button').removeClass('btn-success');
-                $('#button-'+curMode).addClass('btn-success');
-                this.task.mode = m;
-            }.bind(this));
-        }.bind(this));
-        
 
         // fixture definition for obstacles
         var fixDef = new phys.fixtureDef();
@@ -117,7 +86,41 @@ function theGame($,phys,GameFramework, Box2D, drawutils, mathutils) {
                                                     this.task.robotRadius,
                                                     'robot'));
         }
+    });
 
+    game.setInitTaskCallback( function() {
+        this.task.modes = ['full-state', 'convex-hull', 'mean & variance', 'mean'];
+        this.task.mode = this.task.modes[ Math.ceil( Math.random() * this.task.modes.length ) - 1];
+        
+        this.impulseStart = null;
+        this.task.impulse = 40;
+        this.impulseV = new phys.vec2(0,0);
+        this.keyUp = false;
+        this.keyDown = false;
+        this.keyLeft = false;
+        this.keyRight = false;
+        
+
+        $('.mode-button').prop('disabled',false);
+        
+        //set the inital mode
+        var curMode = this.task.mode;
+        if( curMode === 'mean & variance') {
+            curMode = 'mean±var';
+        }
+        $('#button-'+curMode).addClass('btn-success');
+        //add click functionality
+        this.task.modes.forEach( function (m) {
+            var curMode = m;
+            if( curMode === 'mean & variance') {
+                curMode = 'mean±var';
+            }
+            $('#button-'+curMode).click(function() {
+                $('.mode-button').removeClass('btn-success');
+                $('#button-'+curMode).addClass('btn-success');
+                this.task.mode = m;
+            }.bind(this));
+        }.bind(this));
     });
 
     game.setDrawCallback( function() {

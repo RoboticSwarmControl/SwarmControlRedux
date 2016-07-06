@@ -11,6 +11,11 @@
 		/*
 			A game exists in one of the following states:
 
+			- "spawnWorld" : The game is setting up all the physics, input handlers, etc.
+								The game moves to "initTask" state.
+			- "initTask" : The game is setting the positions of all the tasks, resetting counters, so forth.
+								The game moves to to "overview" state.
+
 			- "overview" : The game is showing it's instruction diagram.
 							Any input moves it to "running".
 			- "running" : The game is running the simulation and accepting input.
@@ -36,21 +41,17 @@
 			- "halted" : Terminal state. Application stops.
 		*/
 
-		this._currentState = this.doStateOverview;
-		this._currentFrameStartTime = new Date();
-		this._lastFrameStartTime = this._currentFrameStartTime;
-		this._lastInputTime = this._currentFrameStartTime;
-		this._timeInPause = 0;
-		this._timeElapsed = 0
-		this._inputEvents = [];
-		this._physSimAcculmulator = 0;
+		this._currentState = this.doStateSpawnWorld;
+		
+		this.world = null;
 
 		this.mobileUserAgent = false;
 
 		this.kAllowedTimeWithoutInput = 10*1000;	// 10 seconds before we think the user has abandoned us
 		this.kAllowedTimeInPause = 30*1000; // 30 secs in pause before moving on
 		
-		this._initCallback = function () { };
+		this._spawnWorldCallback = function () { };
+		this._initTaskCallback = function () { };
 		this._overviewCallback = function () { };
 		this._pregameCallback = function () { };
 		this._drawCallback = function () { };
@@ -58,10 +59,7 @@
 		this._lostCallback = function () { };
 		this._wonCallback = function () { };
 		this._winTestCallback = function () { return false; };
-		this._loseTestCallback = function () { return false; };
-
-		this.world = new phys.world( new phys.vec2(0, 0), true );    // physics world to contain sim
-
+		this._loseTestCallback = function () { return false; };	
 
 		this.constants = {};
 		this.constants.zeroRef = new phys.vec2(0,0);
@@ -86,8 +84,11 @@
 	    this.constants.obsThick = 0.2;						//thickness of obstacles at edges and internally
 	};	
 
-	GameFramework.prototype.setInitCallback = function ( initFunctionCb ) {
-		this._initCallback = initFunctionCb.bind(this);
+	GameFramework.prototype.setSpawnWorldCallback = function ( spawnWorldCb ) {
+		this._spawnWorldCallback = spawnWorldCb.bind(this);
+	};
+	GameFramework.prototype.setInitTaskCallback = function ( initTaskCb ) {
+		this._initTaskCallback = initTaskCb.bind(this);
 	};
 
 	GameFramework.prototype.setOverviewCallback = function ( overviewFunctionCb ) {
@@ -120,6 +121,25 @@
 
 	GameFramework.prototype.setWonCallback = function( wonCb ) {
 		this._wonCallback = wonCb;
+	};
+
+	GameFramework.prototype.doStateSpawnWorld = function ( dt, inputEvents ){
+		this.world = new phys.world( new phys.vec2(0, 0), true );    // physics world to contain sim		
+		this._spawnWorldCallback();
+		return this.doStateInitTask;
+	};
+
+	GameFramework.prototype.doStateInitTask = function ( dt, inputEvents ){
+		this._currentFrameStartTime = new Date();
+		this._lastFrameStartTime = this._currentFrameStartTime;
+		this._lastInputTime = this._currentFrameStartTime;
+		this._timeInPause = 0;
+		this._timeElapsed = 0;
+		this._inputEvents = [];
+		this._physSimAcculmulator = 0;
+
+		this._initTaskCallback();
+		return this.doStateOverview;
 	};
 
 	GameFramework.prototype.doStateOverview = function ( dt, inputEvents ){
@@ -237,8 +257,6 @@
 		this.mobileUserAgent =( /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) );
 
 		drawutils.init();
-
-		this._initCallback();
 
 		this._$canvas = $canvas;
 

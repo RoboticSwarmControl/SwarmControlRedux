@@ -11,27 +11,18 @@ function theGame($,phys,GameFramework, Box2D, drawutils, mathutils) {
 
     var game = new GameFramework();
 
-    game.setInitCallback( function() {
-        /*jshint camelcase:false */
-        /* ^ we do this because the Box2D bindings are fugly. */
-
-        var i;
-
+    game.setSpawnWorldCallback( function () {
         this.task = {};
-        this.task.noise =(10*Math.random()).toFixed(1);  //add some noise: 0.0 to 10.0
+        
         this.task.numRobots = 8;
         this.task.robots = [];          // array of bodies representing the robots
         this.task.goals = [];           // array of goals of form {x,y,w,h}
-        this.task.blocks = [];          // array of bodies representing blocks                                          // number of robots
-        this.mX = 0;
-        this.mY = 0;
-        this.impulseV = new phys.vec2(0,0);
-        this.task.impulse = 50;
-        this.keyUp = false;
-        this.keyDown = false;
-        this.keyLeft = false;
-        this.keyRight = false;
+        this.task.blocks = [];          // array of bodies representing blocks
 
+        var i;
+
+        /*jshint camelcase:false */
+        /* ^ we do this because the Box2D bindings are fugly. */
         // better: take number * 200% of control power
         //atto meters:  1 nanocar wheel weighs 720 g/mol = 7.2*10^-23 g, assume nanocar is 6 times that = 4.2*10&-22
         // dragster moves 0.014 mm/hr
@@ -103,6 +94,19 @@ function theGame($,phys,GameFramework, Box2D, drawutils, mathutils) {
             body.CreateFixture(fixDef);
             this.task.goals.push(body);
         }.bind(this));
+    });
+        
+
+    game.setInitTaskCallback( function() {    
+        this.task.noise =(10*Math.random()).toFixed(1);  //add some noise: 0.0 to 10.0        
+        this.mX = 0;
+        this.mY = 0;
+        this.impulseV = new phys.vec2(0,0);
+        this.task.impulse = 50;
+        this.keyUp = false;
+        this.keyDown = false;
+        this.keyLeft = false;
+        this.keyRight = false;        
     });
 
 

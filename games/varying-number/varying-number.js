@@ -8,7 +8,7 @@ function theGame($,phys,GameFramework, Box2D, drawutils, mathutils) {
     function URFP( x ) { /* jshint expr:true */ x; }
     URFP(mathutils);
 
-    game.setInitCallback( function() {
+    game.setSpawnWorldCallback( function() {
         /*jshint camelcase:false */
         /* ^ we do this because the Box2D bindings are fugly. */
 
@@ -17,13 +17,9 @@ function theGame($,phys,GameFramework, Box2D, drawutils, mathutils) {
         this.task.robotRadius = 0.5*4.0/Math.sqrt(this.task.numRobots);
         this.task.robots = [];              // array of bodies representing the robots
         this.task.goals = [];               // array of goals of form {x,y,w,h}
-        this.task.blocks = [];              // array of bodies representing blocks                                          // number of robots
-
-        this.task.impulse = 20;             // impulse to move robots by
-        this.impulseV = new phys.vec2(0,0); // global impulse to control all robots
+        this.task.blocks = [];              // array of bodies representing blocks
 
         var i;
-
         var fixDef = new phys.fixtureDef();
         fixDef.density = 10.0;
         fixDef.friction = 0.5;
@@ -91,7 +87,11 @@ function theGame($,phys,GameFramework, Box2D, drawutils, mathutils) {
                                                     this.task.robotRadius,
                                                     'robot'));
         }
+    });
 
+    game.setInitTaskCallback( function() {
+        this.task.impulse = 20;             // impulse to move robots by
+        this.impulseV = new phys.vec2(0,0); // global impulse to control all robots
     });
 
     game.setDrawCallback( function() {
