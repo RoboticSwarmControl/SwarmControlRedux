@@ -1,5 +1,6 @@
 DROP TABLE IF EXISTS results CASCADE;
 CREATE TABLE results (
+	id SERIAL NOT NULL UNIQUE,							-- index of the result
 	task TEXT NOT NULL,									-- which task was undertaken
 	participant TEXT NOT NULL,							-- a unique identifier for the participant
 	runtime TEXT,										-- the runtime of the task
