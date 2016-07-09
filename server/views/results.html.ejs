@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html itemscope itemtype="http://schema.org/CreativeWork">
+	<head>
+		<%- include('partials/app-common-head.html.ejs') %>
+		<%- include('partials/common-scripts.html.ejs') %>
+	</head>
+	<body>
+
+	<%- include('partials/navbar.html.ejs') %>
+
+ 	<div id="fb-root"></div>
+	 <script>(function(d, s, id) {
+	  var js, fjs = d.getElementsByTagName(s)[0];
+	  if (d.getElementById(id)) return;
+	  js = d.createElement(s); js.id = id;
+	  js.src = "//connect.facebook.net/en_US/all.js#xfbml=1&status=0";
+	  fjs.parentNode.insertBefore(js, fjs);
+	}(document, 'script', 'facebook-jssdk'));</script>
+
+	<div class="container">
+	    <h2>SwarmControl: Results</h2>
+	    <span class="btn-group">
+	    	<a class="btn btn-mini btn-info" href="/results?download=csv" target="_blank">As CSV</a>
+	    	<a class="btn btn-mini btn-info" href="/results?download=json" target="_blank">As JSON</a>
+    	</span>
+	    <hr>
+	    <div class="row">		  
+	    </div>
+	    
+		<%- include('partials/footer.html.ejs') %>
+		<%- include('partials/user-voice.html.ejs') %>
+	</body>
+</html>
+

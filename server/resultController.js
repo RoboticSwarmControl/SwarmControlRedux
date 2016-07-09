@@ -3,6 +3,7 @@ function URFP( x ) { /* jshint expr:true */ x; }
 var express = require('express');
 var router = express.Router();
 
+var util = require('./util.js');
 var db = require('./database.js');
 var csv = require('fast-csv');
 
@@ -10,26 +11,28 @@ router.get('/', function _renderResultsIndex( req, res ) {
 	URFP(req);
 	db.getResults()
 	.then( function( results ) {
-		// helpful trick from http://expressjs.com/en/4x/api.html#res.format
-		res.format({			
-			'text/csv': function() {
-				csv.writeToString(	results,
-									{ headers: true},
-									function (err, data) {
-											if (err ){
-												res.status(500).send( err.toString() );
-											} else {
-												res.status(200).send( data );
-											}
-									});
-			},
-			'text/json': function() {
-				res.status(200).json( {res:results} );
-			},
-			'default': function () {
-				res.sendStatus(406); // bad MIME type requested
-			}
-		});		
+		switch (req.query.download) {
+			case 'csv': 	csv.writeToString(	results,
+												{ headers: true},
+												function (err, data) {
+														if (err ){
+															res.status(500).send( err.toString() );
+														} else {
+															res.type('text/csv').status(200).send( data );
+														}
+												});
+							break;
+			case 'json': 	
+							res.status(200).json( {res:results} );
+							break;
+			default: 		util.renderPage('results.html.ejs')
+							.then( function (page) {
+								res.status(200).send(page);
+							})
+							.catch(function (err) {
+								res.status(500).send(err.toString());
+							});
+		}
 	})
 	.catch( function ( err ) {
 		console.log( err.toString() );
@@ -40,26 +43,28 @@ router.get('/', function _renderResultsIndex( req, res ) {
 router.get('/:resultID', function _renderResultsIndex( req, res ) {	
 	db.getResultsForTask( req.params.resultID)
 	.then( function( results ) {
-		// helpful trick from http://expressjs.com/en/4x/api.html#res.format
-		res.format({			
-			'text/csv': function() {
-				csv.writeToString(	results,
-									{ headers: true},
-									function (err, data) {
-											if (err ){
-												res.status(500).send( err.toString() );
-											} else {
-												res.status(200).send( data );
-											}
-									});
-			},
-			'text/json': function() {
-				res.status(200).json( {res:results} );
-			},
-			'default': function () {
-				res.sendStatus(406); // bad MIME type requested
-			}
-		});		
+		switch (req.query.download) {
+			case 'csv': 	csv.writeToString(	results,
+												{ headers: true},
+												function (err, data) {
+														if (err ){
+															res.status(500).send( err.toString() );
+														} else {
+															res.type('text/csv').status(200).send( data );
+														}
+												});
+							break;
+			case 'json': 	
+							res.status(200).json( {res:results} );
+							break;
+			default: 		util.renderPage('results.html.ejs')
+							.then( function (page) {
+								res.status(200).send(page);
+							})
+							.catch(function (err) {
+								res.status(500).send(err.toString());
+							});
+		}
 	})
 	.catch( function ( err ) {
 		console.log( err.toString() );
