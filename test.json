@@ -1,0 +1,7 @@
+{
+  "task" : "test task",
+  "mode" : "test mode",
+  "numrobots" : 32,
+  "runtime":  43.23,
+  "aborted": true
+}
