@@ -11,3 +11,13 @@ CREATE TABLE results (
 	agent TEXT NOT NULL,										-- the user agent of the user performing the task
 	robot_count INTEGER NOT NULL DEFAULT 0						-- the number of roboots involved in the task.
 );
+
+DROP INDEX IF EXISTS results_tasks_idx;
+CREATE INDEX results_tasks_idx ON results(task);
+
+DROP INDEX IF EXISTS results_tasks_with_mode_idx;
+CREATE INDEX results_tasks_with_mode_idx ON results(task,mode);
+
+DROP INDEX IF EXISTS results_participant_idx;
+CREATE INDEX results_participant_idx ON results(participant);
+

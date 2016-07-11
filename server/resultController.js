@@ -1,4 +1,6 @@
 'use strict';
+
+
 function URFP( x ) { /* jshint expr:true */ x; }
 var express = require('express');
 var router = express.Router();
@@ -13,8 +15,9 @@ router.get('/', function _renderResultsIndex( req, res ) {
 	.then( function( results ) {
 		// fix date to be formatted usefully
 		results = results.map( function _fixupDates( r ){
-			r["created_at"] = r["created_at"].toISOString();
-			r["updated_at"] = r["updated_at"].toISOString();
+			/* jshint sub:true */
+			r['created_at'] = r['created_at'].toISOString();
+			r['updated_at'] = r['updated_at'].toISOString();
 			return r;
 		});
 
@@ -52,8 +55,9 @@ router.get('/:resultID', function _renderResultsIndex( req, res ) {
 	.then( function( results ) {
 		// fix date to be formatted usefully
 		results = results.map( function _fixupDates( r ){
-			r["created_at"] = r["created_at"].toISOString();
-			r["updated_at"] = r["updated_at"].toISOString();
+			/* jshint sub:true */
+			r['created_at'] = r['created_at'].toISOString();
+			r['updated_at'] = r['updated_at'].toISOString();
 			return r;
 		});
 
@@ -87,11 +91,12 @@ router.get('/:resultID', function _renderResultsIndex( req, res ) {
 });
 
 router.post('/', function _renderResultsIndex( req, res ) {
+	/* jshint sub:true */
 	try{
 		console.log('\n---\n', JSON.stringify(req.body), '\n---\n');
 		var info = {
 			task: req.body.task,
-			participant: req.cookies['task_sig'] || "unknown",
+			participant: req.cookies['task_sig'] || 'unknown',
 			runtime: req.body.runtime,
 			mode: req.body.mode,
 			agent: req.body.agent || req.header('user-agent'),

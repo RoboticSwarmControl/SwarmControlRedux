@@ -25,6 +25,7 @@ var kTwentyYears = 1000 * 60 * 60 * 24 * 365 * 20;
 app.use( cookieParser() );
 app.use( bodyParser.json() );
 app.use( function _addTaskSig( req, res, next ) {
+	/* jshint sub:true */
 	if (!req.cookies['task_sig']) {
 		res.cookie( 'task_sig',
 					crypto.randomBytes(16).toString('hex'),
