@@ -11,6 +11,13 @@ router.get('/', function _renderResultsIndex( req, res ) {
 	URFP(req);
 	db.getResults()
 	.then( function( results ) {
+		// fix date to be formatted usefully
+		results = results.map( function _fixupDates( r ){
+			r["created_at"] = r["created_at"].toISOString();
+			r["updated_at"] = r["updated_at"].toISOString();
+			return r;
+		});
+
 		switch (req.query.download) {
 			case 'csv': 	csv.writeToString(	results,
 												{ headers: true},
@@ -43,6 +50,13 @@ router.get('/', function _renderResultsIndex( req, res ) {
 router.get('/:resultID', function _renderResultsIndex( req, res ) {	
 	db.getResultsForTask( req.params.resultID)
 	.then( function( results ) {
+		// fix date to be formatted usefully
+		results = results.map( function _fixupDates( r ){
+			r["created_at"] = r["created_at"].toISOString();
+			r["updated_at"] = r["updated_at"].toISOString();
+			return r;
+		});
+
 		switch (req.query.download) {
 			case 'csv': 	csv.writeToString(	results,
 												{ headers: true},
@@ -73,8 +87,31 @@ router.get('/:resultID', function _renderResultsIndex( req, res ) {
 });
 
 router.post('/', function _renderResultsIndex( req, res ) {
-	URFP(req);
-	res.status(201).send('Created result!');
+	try{
+		console.log('\n---\n', JSON.stringify(req.body), '\n---\n');
+		var info = {
+			task: req.body.task,
+			participant: req.cookies['task_sig'] || "unknown",
+			runtime: req.body.runtime,
+			mode: req.body.mode,
+			agent: req.body.agent || req.header('user-agent'),
+			robotCount: req.body.numrobots,
+			ending: req.body.aborted ? 'aborted' : 'won'
+		};
+
+		db.saveResult(info)
+		.then( function() {
+			res.status(201).json(info);
+		})
+		.catch( function(err) {
+			console.log( err.toString() );
+			res.status(500).json({ error: err});
+		});
+	} catch (err) {
+		console.log( err.toString() );
+		res.status(500).send( err.toString() );
+	}
+	
 });
 
 module.exports = router;

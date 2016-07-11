@@ -19,14 +19,15 @@ function getResultsForTask( task ) {
 }
 
 function saveResult( result ) {
-	return db.none('INSERT INTO results(task, participant, runtime, mode, agent, robot_count) VALUES ($1, $2, $3, $4, $5, $6);',
+	return db.none('INSERT INTO results(task, participant, runtime, mode, agent, robot_count, ending) VALUES ($1, $2, $3, $4, $5, $6, $7);',
 					[
 						result.task,
 						result.participant,
 						result.runtime,
 						result.mode,
 						result.agent,
-						result.robotCount
+						result.robotCount,
+						result.ending
 					]);
 }
 
