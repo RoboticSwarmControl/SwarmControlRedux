@@ -406,6 +406,14 @@ function theGame($,phys,GameFramework, Box2D, drawutils, mathutils) {
         */
     });
 
+    game.setResultsCallback( function() {
+        return {
+            numRobots: this.task.numRobots,
+            task: 'pyramid-building',
+            mode: this.task.noise
+        };
+    });
+
     $(window).on('load', function () {
         game.init( $('#canvas') );
         game.run();

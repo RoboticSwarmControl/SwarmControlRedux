@@ -483,6 +483,14 @@ function theGame($,phys,GameFramework, Box2D, drawutils, mathutils) {
     */
     });
 
+    game.setResultsCallback( function() {
+        return {
+            numRobots: this.task.numRobots,
+            task: 'varying-visualization',
+            mode: this.task.mode
+        };
+    });
+
     $(window).on('load', function () {
         game.init( $('#canvas') );
         game.run();
