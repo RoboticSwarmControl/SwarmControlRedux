@@ -93,15 +93,14 @@ router.get('/:resultID', function _renderResultsIndex( req, res ) {
 router.post('/', function _renderResultsIndex( req, res ) {
 	/* jshint sub:true */
 	try{
-		console.log('\n---\n', JSON.stringify(req.body), '\n---\n');
 		var info = {
 			task: req.body.task,
 			participant: req.cookies['task_sig'] || 'unknown',
 			runtime: req.body.runtime,
 			mode: req.body.mode,
 			agent: req.body.agent || req.header('user-agent'),
-			robotCount: req.body.numrobots,
-			ending: req.body.aborted ? 'aborted' : 'won'
+			robotCount: req.body.numRobots,
+			ending: req.body.ending
 		};
 
 		db.saveResult(info)

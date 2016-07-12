@@ -376,6 +376,14 @@ function theGame($,phys,GameFramework, Box2D, drawutils, mathutils) {
         */
     });
 
+    game.setResultsCallback( function() {
+        return {
+            numRobots: this.task.numRobots,
+            task: 'robot-positioning',
+            mode: 'default'
+        };
+    });
+
     $(window).on('load', function () {
         game.init( $('#canvas') );
         game.run();

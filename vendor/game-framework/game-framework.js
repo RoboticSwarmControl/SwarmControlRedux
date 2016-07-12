@@ -47,6 +47,8 @@
 
 		this.mobileUserAgent = false;
 
+		this.ending = 'aborted';
+
 		this.kAllowedTimeWithoutInput = 10*1000;	// 10 seconds before we think the user has abandoned us
 		this.kAllowedTimeInPause = 30*1000; // 30 secs in pause before moving on
 		
@@ -60,6 +62,7 @@
 		this._wonCallback = function () { };
 		this._winTestCallback = function () { return false; };
 		this._loseTestCallback = function () { return false; };	
+		this._submitResultsCallback = function () { return {} };
 
 		this.constants = {};
 		this.constants.zeroRef = new phys.vec2(0,0);
@@ -116,12 +119,16 @@
 	};
 
 	GameFramework.prototype.setLostCallback = function ( lostCb) {
-		this._lostCallback = lostCb;
+		this._lostCallback = lostCb.bind(this);
 	};
 
 	GameFramework.prototype.setWonCallback = function( wonCb ) {
-		this._wonCallback = wonCb;
+		this._wonCallback = wonCb.bind(this);
 	};
+
+	GameFramework.prototype.setResultsCallback = function ( resultsCb ) {
+		this._submitResultsCallback = resultsCb.bind(this);
+	}
 
 	GameFramework.prototype.doStateSpawnWorld = function ( dt, inputEvents ){
 		this.world = new phys.world( new phys.vec2(0, 0), true );    // physics world to contain sim		
@@ -170,7 +177,6 @@
 				return this.doStateWon;
 			}
 
-
 			// advance the simulation according to the number of steps we have in our DT
 	        // this is an *almost correct* hack from http://gafferongames.com/game-physics/fix-your-timestep/
 	        // Note that we don't try to fix temporal stuttering
@@ -187,17 +193,28 @@
 	};
 
 	GameFramework.prototype.doStateAbandoned = function ( dt, inputEvents  ){
-		console.log("abandoned");
-		
 		var color = "green";
 		drawutils.drawText(300,330, "Reloading...", 2, color, color);
-		location.reload(true);
-
+		this.ending = 'aborted';	
 		return this.doStateHalted;
 	};
 
 	GameFramework.prototype.doStateHalted = function ( dt, inputEvents  ) {
 		console.log("halted");
+		var results = this._submitResultsCallback();
+		results.ending = this.ending;
+		results.runtime = (this._timeElapsed/1000).toFixed(2); 
+
+		var req = new XMLHttpRequest();
+		req.open('POST', '/results', true);		
+		// req.onreadystatechange = function() { };
+		req.setRequestHeader('Content-Type','application/json');
+		req.send( JSON.stringify( results ) );
+
+		if (this.ending === 'abandoned') {
+			location.reload(true);
+		}
+
 		return this.doStateHalted;
 	};
 
@@ -226,11 +243,13 @@
 
 	GameFramework.prototype.doStateWon = function ( dt, inputEvents  ) {
 		this._wonCallback();
+		this.ending = 'won';
 		return this.doStateHalted;
 	};
 
 	GameFramework.prototype.doStateLost = function ( dt, inputEvents  ) {	
 		this._lostCallback();
+		this.ending = 'lost';
 		return this.doStateHalted;
 	};
 
@@ -259,8 +278,6 @@
 		drawutils.init();
 
 		this._$canvas = $canvas;
-
-		console.log($canvas);
 
 		//$canvas.on('keyup', function _handleKeyUp(evt) {
 		$(document).on('keyup', function _handleKeyUp(evt) {
