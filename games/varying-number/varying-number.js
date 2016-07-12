@@ -92,6 +92,8 @@ function theGame($,phys,GameFramework, Box2D, drawutils, mathutils) {
     game.setInitTaskCallback( function() {
         this.task.impulse = 20;             // impulse to move robots by
         this.impulseV = new phys.vec2(0,0); // global impulse to control all robots
+
+        $('#task-mode-count').html(this.task.numRobots);
     });
 
     game.setDrawCallback( function() {
