@@ -342,63 +342,49 @@
 
 		$canvas.on('touchmove',  function _handleTouchMove(evt) {
 			this._lastInputTime = new Date();
-			evt.preventDefault();			
-
-			/*
-			var rect = evt.target.getBoundingClientRect();
-            var touch = e.touches[0];
-            var left = touch.pageX - rect.left - evt.target.clientLeft + evt.target.scrollLeft;
-            var top = touch.pageY - rect.top - evt.target.clientTop + evt.target.scrollTop;
-
-            that._mX = 20 * left/evt.target.width;
-            that._mY = 20 * top/evt.target.height -2;
-            */
-
-			/*
-			function(e){
+			evt.preventDefault();
 			
-            e.preventDefault();
-            var rect = this.getBoundingClientRect();
-            var touch = e.touches[0];
-            var left = touch.pageX - rect.left - this.clientLeft + this.scrollLeft;
-            var top = touch.pageY - rect.top - this.clientTop + this.scrollTop;
+			var rect = evt.target.getBoundingClientRect();
+			var touch = e.touches[0];
+			var left = touch.clientX - rect.left;
+			var top = touch.clientY - rect.top;
 
-            that._mX = 20 * left/this.width;
-            that._mY = 20 * top/this.height -2; //
-            
-        } */
+            // these are the mouse coordinates in normalized [0,1] canvas space
+            var u = left / evt.target.width;
+            var v = top / evt.target.height;
+
+            // these are the mouse coordinates in world space
+            var mX = 20 * left/evt.target.width;
+            var mY = 20 * top/evt.target.height; // -2
+
+			this._inputEvents.push( {
+				type: 'mousemove',
+				x: mX,
+				y: mY,
+				u: u,
+				v: v, 
+			});
+
         }.bind(this));
 
         $canvas.on('touchstart', function _handleTouchStart(evt){
         	this._lastInputTime = new Date();
-        	evt.preventDefault();
-
-        	/*
-        	function(e) {
-        	
-            that._attracting = true;
-            //check if this is the first valid keypress, if so, starts the timer
-            if( that._startTime == null )
-            { 
-                that.lastUserInteraction = new Date().getTime();
-                that._startTime = that.lastUserInteraction;
-                that._runtime = 0.0;
-            }           
-        } */
+			evt.preventDefault();
+			
+			// we treat touch starts as mouse downs
+			this._inputEvents.push({
+				type: 'mousedown'
+			});
         }.bind(this));
 
         $canvas.on('touchend',  function _functionTouchEnd(evt) {
         	this._lastInputTime = new Date();
-        	evt.preventDefault();
+			evt.preventDefault();
 
-		/*
-        function (e) {
-        	
-            that.lastUserInteraction = new Date().getTime();
-            that._attracting = false;
-            
-        }
-        */        
+			// we treat touch ends as mouse ups
+			this._inputEvents.push({
+				type: 'mouseup'
+			});
         }.bind(this) );
 
         /*
