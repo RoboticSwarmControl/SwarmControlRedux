@@ -46,6 +46,7 @@
 		this.world = null;
 
 		this.mobileUserAgent = false;
+		this.useKeyboard = false; // updated as soon as keyboard events occur
 
 		this.ending = 'aborted';
 
@@ -62,7 +63,7 @@
 		this._wonCallback = function () { };
 		this._winTestCallback = function () { return false; };
 		this._loseTestCallback = function () { return false; };	
-		this._submitResultsCallback = function () { return {} };
+		this._submitResultsCallback = function () { return {}; };
 
 		this.constants = {};
 		this.constants.zeroRef = new phys.vec2(0,0);
@@ -71,21 +72,22 @@
 			DOWN: 	40,
 			LEFT: 	37,
 			RIGHT: 	39,
-		}
-		this.constants.colorRobot = "blue";
-	    this.constants.colorRobotEdge = "rgb(50,50,255)";
-	    this.constants.colorRobotGoal = "blue";
-	    this.constants.colorRobotAtGoal = "lightblue";
-	    this.constants.colorObstacle = "rgb(95,96,98)";
-	    this.constants.colorGoalArrow = "rgb(0,110,0)";
-	    this.constants.colorGoal = "green";  				// color of unclocked button (middle) "green",
-	    this.constants.colorObject = "green";  				// color of clicked button,  "green" = 0,128,0,
-	    this.constants.colorObjectEdge = "darkgreen";		// color of clicked button border "darkgreen",
-	    this.constants.colorObjectAtGoal = "lightgreen";
+		};
+
+		this.constants.colorRobot = 'blue';
+	    this.constants.colorRobotEdge = 'rgb(50,50,255)';
+	    this.constants.colorRobotGoal = 'blue';
+	    this.constants.colorRobotAtGoal = 'lightblue';
+	    this.constants.colorObstacle = 'rgb(95,96,98)';
+	    this.constants.colorGoalArrow = 'rgb(0,110,0)';
+	    this.constants.colorGoal = 'green';  				// color of unclocked button (middle) "green",
+	    this.constants.colorObject = 'green';  				// color of clicked button,  "green" = 0,128,0,
+	    this.constants.colorObjectEdge = 'darkgreen';		// color of clicked button border "darkgreen",
+	    this.constants.colorObjectAtGoal = 'lightgreen';
 	    this.constants.strokeWidth = 2;
 	    this.constants.strokeWidthThick = 4;
 	    this.constants.obsThick = 0.2;						//thickness of obstacles at edges and internally
-	};	
+	}
 
 	GameFramework.prototype.setSpawnWorldCallback = function ( spawnWorldCb ) {
 		this._spawnWorldCallback = spawnWorldCb.bind(this);
@@ -108,7 +110,7 @@
 
 	GameFramework.prototype.setDrawCallback = function ( drawCb ) {
 		this._drawCallback = drawCb.bind(this);
-	}
+	};
 
 	GameFramework.prototype.setWinTestCallback = function ( winTestCallback ) {
 		this._winTestCallback = winTestCallback.bind(this);
@@ -128,7 +130,7 @@
 
 	GameFramework.prototype.setResultsCallback = function ( resultsCb ) {
 		this._submitResultsCallback = resultsCb.bind(this);
-	}
+	};
 
 	GameFramework.prototype.doStateSpawnWorld = function ( dt, inputEvents ){
 		this.world = new phys.world( new phys.vec2(0, 0), true );    // physics world to contain sim		
@@ -278,10 +280,12 @@
 		drawutils.init();
 
 		this._$canvas = $canvas;
+		this.useKeyboard = false; // updated as soon as keyboard events occur
 
 		//$canvas.on('keyup', function _handleKeyUp(evt) {
 		$(document).on('keyup', function _handleKeyUp(evt) {
 			this._lastInputTime = new Date();
+			this.useKeyboard = true;
 			this._inputEvents.push( {
 				type: 'keyup',
 				key: evt.which
@@ -291,6 +295,7 @@
 		//$canvas.on('keydown', function _handleKeyDown(evt) {
 		$(document).on('keydown', function _handleKeyDown(evt) {
 			this._lastInputTime = new Date();
+			this.useKeyboard = true;
 			this._inputEvents.push( {
 				type: 'keydown',
 				key: evt.which
@@ -387,64 +392,84 @@
 			});
         }.bind(this) );
 
-        /*
-        window.addEventListener('deviceorientation', function(event) {
-                var yval = -event.beta;  // In degree in the range [-180,180]
-                var xval = -event.gamma; // In degree in the range [-90,90]
+        this.tiltX = 0; // -1 left, 0 none, 1 right
+        this.tiltY = 0; // -1 down, 0 none, 1 up
 
-                if( !that.useKeyboard ){
-                    //property may change. A value of 0 means portrait view, 
-                    if( window.orientation == -90)
-                    {   //-90 means a the device is landscape rotated to the right,
-                        yval = -event.gamma;
-                        xval = event.beta; 
-                    }else if( window.orientation == 90)
-                    {   //and 90 means the device is landscape rotated to the left.
-                        yval = event.gamma;
-                        xval =-event.beta; 
-                    }else if( window.orientation == 180)
-                    {   //and 90 means the device is landscape rotated to the left.
-                        yval = event.beta;
-                        xval = event.gamma; 
-                    }
-                     
-                    // simple control that maps tilt to keypad values.
-                    var thresh = 5;
-                    if(that._startTime == null)//bigger threshold to start
-                        {thresh = 15;}
-                    that.lastUserInteraction = new Date().getTime();
-         
-                    if( yval > thresh )
-                    {   
-                        that.keyD=null;
-                        if(that.keyU==null){that.keyU = that.lastUserInteraction;} 
-                    }else if ( yval < -thresh )
-                    {   
-                        that.keyU=null;
-                        if(that.keyD==null){that.keyD = that.lastUserInteraction;} 
-                    }else
-                    {that.keyD=null; that.keyU=null;}
+        $(window).on('deviceorientation', function _functionOrientationChange(evt){
+        	this._lastInputTime = new Date();
+			evt.preventDefault();
 
-                    if( xval > thresh )
-                    {   
-                        that.keyR=null;
-                        if(that.keyL==null){that.keyL = that.lastUserInteraction;} 
-                    }else if ( xval < -thresh )
-                    {   
-                        that.keyL=null;
-                        if(that.keyR==null){that.keyR = that.lastUserInteraction;} 
-                    }else
-                    {that.keyR=null; that.keyL=null;}
-                
-                    //check if this is the first valid keypress, if so, starts the timer
-                    if( that._startTime == null && ( that.keyL != null || that.keyR != null || that.keyU != null || that.keyD != null))
-                    { 
-                        that._startTime = that.lastUserInteraction;
-                        that._runtime = 0.0;
-                    }
+            var yval = -evt.beta;  // In degree in the range [-180,180]
+            var xval = -evt.gamma; // In degree in the range [-90,90]
+
+            if( !this.useKeyboard ){
+                //property may change. A value of 0 means portrait view, 
+                if( window.orientation == -90)
+                {   //-90 means a the device is landscape rotated to the right,
+                    yval = -evt.gamma;
+                    xval = evt.beta; 
+                }else if( window.orientation == 90)
+                {   //and 90 means the device is landscape rotated to the left.
+                    yval = evt.gamma;
+                    xval =-evt.beta; 
+                }else if( window.orientation == 180)
+                {   //and 90 means the device is landscape rotated to the left.
+                    yval = evt.beta;
+                    xval = evt.gamma; 
                 }
-            });
-        */
+                 
+                // simple control that maps tilt to keypad values.
+                var thresh = 5;
+                //{thresh = 15;}
+
+                var newTiltX = 0; // -1 left, 0 none, 1 right
+                var newTiltY = 0; // -1 down, 0 none, 1 up
+
+                if ( Math.abs(xval) > thresh) {
+                	newTiltX = ( xval > 0 ) ? 1 : -1;
+                }
+
+                if ( Math.abs(yval) > thresh) {
+                	newTiltY = ( yval > 0 ) ? 1 : -1;
+                }                
+
+                // resolve events
+                if (newTiltX != this.tiltX) {
+                	// send emulated keyup
+                	switch( this.tiltX ) {
+                		case -1: this._inputEvents.push( { type: 'keyup', key: this.constants.keys.LEFT }); break;
+                		case 0: break;
+                		case 1: this._inputEvents.push( { type: 'keyup', key: this.constants.keys.RIGHT }); break;
+                	}
+
+                	// send emulated keydown
+                	switch( newTickX ) {
+                		case -1: this._inputEvents.push( { type: 'keydown', key: this.constants.keys.LEFT }); break;
+                		case 0: break;
+                		case 1: this._inputEvents.push( { type: 'keydown', key: this.constants.keys.RIGHT }); break;
+                	}
+
+                	this.tiltX = newTickX;
+                }
+                if (newTiltY != this.tiltY) {
+                	// send emulated keyup
+                	switch( this.tiltY ) {
+                		case -1: this._inputEvents.push( { type: 'keyup', key: this.constants.keys.DOWN }); break;
+                		case 0: break;
+                		case 1: this._inputEvents.push( { type: 'keyup', key: this.constants.keys.UP }); break;
+                	}
+
+                	// send emulated keydown
+                	switch( newTickY ) {
+                		case -1: this._inputEvents.push( { type: 'keydown', key: this.constants.keys.DOWN }); break;
+                		case 0: break;
+                		case 1: this._inputEvents.push( { type: 'keydown', key: this.constants.keys.UP }); break;
+                	}
+
+                	this.tiltY = newTickY;
+                }
+            }
+        }.bind(this));
 	};
 
 	window.GameFramework = window.GameFramework || GameFramework;
