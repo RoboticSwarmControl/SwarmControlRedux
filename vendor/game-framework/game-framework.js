@@ -4,41 +4,45 @@
 	This framework is meant to give a unified interface for handling rendering, game lifecycle, and  so forth.
 */
 
-(function _setupGameFramework( box2D, jQuery ) {
+(function _setupGameFramework( box2D, $, drawutils, phys ) {
+	'use strict';
+	function URFP( x ) { /* jshint expr:true */ x; }
+
+	URFP(box2D);
 
 	function GameFramework() {
 
 		/*
 			A game exists in one of the following states:
 
-			- "spawnWorld" : The game is setting up all the physics, input handlers, etc.
-								The game moves to "initTask" state.
-			- "initTask" : The game is setting the positions of all the tasks, resetting counters, so forth.
-								The game moves to to "overview" state.
+			- 'spawnWorld' : The game is setting up all the physics, input handlers, etc.
+								The game moves to 'initTask' state.
+			- 'initTask' : The game is setting the positions of all the tasks, resetting counters, so forth.
+								The game moves to to 'overview' state.
 
-			- "overview" : The game is showing it's instruction diagram.
-							Any input moves it to "running".
-			- "running" : The game is running the simulation and accepting input.
-							If no input has occurred in some time, game moves to "paused" state.
-							If game is tabbed away from, game moves to "paused" state.
-							If win condition met, game moves to "won" state.
-							If failure condition met, game moves to "lost" state.
-							By default, game moves to "running" state.
+			- 'overview' : The game is showing it's instruction diagram.
+							Any input moves it to 'running'.
+			- 'running' : The game is running the simulation and accepting input.
+							If no input has occurred in some time, game moves to 'paused' state.
+							If game is tabbed away from, game moves to 'paused' state.
+							If win condition met, game moves to 'won' state.
+							If failure condition met, game moves to 'lost' state.
+							By default, game moves to 'running' state.
 
-			- "paused" : The game is asking the user if they've got input or have forgotten about it.
-							If no input has occurred for some time in this state, game moves to "abandoned" state.
-							If any input occurs, game is moved back to "running" state.
+			- 'paused' : The game is asking the user if they've got input or have forgotten about it.
+							If no input has occurred for some time in this state, game moves to 'abandoned' state.
+							If any input occurs, game is moved back to 'running' state.
 
-			- "won"		: The game has finished and the player has won.
-								Game moves now to "halted" state.
+			- 'won'		: The game has finished and the player has won.
+								Game moves now to 'halted' state.
 
-			- "lost"	: The game has finished and player has lost (failure or timeout).
-								Game moves now to "halted" state.
+			- 'lost'	: The game has finished and player has lost (failure or timeout).
+								Game moves now to 'halted' state.
 
-			- "abandoned" : The game has been untouched long enough that the pause state put us here. Draw a message.
-								Game moves now to "halted" state.
+			- 'abandoned' : The game has been untouched long enough that the pause state put us here. Draw a message.
+								Game moves now to 'halted' state.
 
-			- "halted" : Terminal state. Application stops.
+			- 'halted' : Terminal state. Application stops.
 		*/
 
 		this._currentState = this.doStateSpawnWorld;
@@ -80,9 +84,9 @@
 	    this.constants.colorRobotAtGoal = 'lightblue';
 	    this.constants.colorObstacle = 'rgb(95,96,98)';
 	    this.constants.colorGoalArrow = 'rgb(0,110,0)';
-	    this.constants.colorGoal = 'green';  				// color of unclocked button (middle) "green",
-	    this.constants.colorObject = 'green';  				// color of clicked button,  "green" = 0,128,0,
-	    this.constants.colorObjectEdge = 'darkgreen';		// color of clicked button border "darkgreen",
+	    this.constants.colorGoal = 'green';  				// color of unclocked button (middle) 'green',
+	    this.constants.colorObject = 'green';  				// color of clicked button,  'green' = 0,128,0,
+	    this.constants.colorObjectEdge = 'darkgreen';		// color of clicked button border 'darkgreen',
 	    this.constants.colorObjectAtGoal = 'lightgreen';
 	    this.constants.strokeWidth = 2;
 	    this.constants.strokeWidthThick = 4;
@@ -133,12 +137,18 @@
 	};
 
 	GameFramework.prototype.doStateSpawnWorld = function ( dt, inputEvents ){
+		URFP( dt );
+		URFP( inputEvents );
+
 		this.world = new phys.world( new phys.vec2(0, 0), true );    // physics world to contain sim		
 		this._spawnWorldCallback();
 		return this.doStateInitTask;
 	};
 
 	GameFramework.prototype.doStateInitTask = function ( dt, inputEvents ){
+		URFP( dt );
+		URFP( inputEvents );
+
 		this._currentFrameStartTime = new Date();
 		this._lastFrameStartTime = this._currentFrameStartTime;
 		this._lastInputTime = this._currentFrameStartTime;
@@ -195,14 +205,20 @@
 	};
 
 	GameFramework.prototype.doStateAbandoned = function ( dt, inputEvents  ){
-		var color = "green";
-		drawutils.drawText(300,330, "Reloading...", 2, color, color);
+		URFP( dt );
+		URFP( inputEvents );
+
+		var color = 'green';
+		drawutils.drawText(300,330, 'Reloading...', 2, color, color);
 		this.ending = 'aborted';	
 		return this.doStateHalted;
 	};
 
 	GameFramework.prototype.doStateHalted = function ( dt, inputEvents  ) {
-		console.log("halted");
+		URFP( dt );
+		URFP( inputEvents );
+
+		console.log('halted');
 		var results = this._submitResultsCallback();
 		results.ending = this.ending;
 		results.runtime = (this._timeElapsed/1000).toFixed(2); 
@@ -233,23 +249,29 @@
 		} else {
 			// in none of those cases, keep pausing.
 			drawutils.drawRect(300,300, 590,590, 'rgba(200, 200, 200, 0.5)');
-            var color = "green";
-            drawutils.drawText(300,250, "Are you still there?  ", 2, color, color);
+            var color = 'green';
+            drawutils.drawText(300,250, 'Are you still there?  ', 2, color, color);
 
             var timeUntilRestart = ( this.kAllowedTimeInPause - this._timeInPause);
-            drawutils.drawText(300, 290, "Restarting in "+ (timeUntilRestart/1000).toFixed(0) +" seconds.", 2, color, color);
+            drawutils.drawText(300, 290, 'Restarting in '+ (timeUntilRestart/1000).toFixed(0) +' seconds.', 2, color, color);
 
 			return this.doStatePaused;
 		}
 	};
 
 	GameFramework.prototype.doStateWon = function ( dt, inputEvents  ) {
+		URFP( dt );
+		URFP( inputEvents );
+
 		this._wonCallback();
 		this.ending = 'won';
 		return this.doStateHalted;
 	};
 
 	GameFramework.prototype.doStateLost = function ( dt, inputEvents  ) {	
+		URFP( dt );
+		URFP( inputEvents );
+
 		this._lostCallback();
 		this.ending = 'lost';
 		return this.doStateHalted;
@@ -277,7 +299,7 @@
 	GameFramework.prototype.init = function( $canvas ) {
 		this.mobileUserAgent =( /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) );
 
-		drawutils.init();
+		drawutils.init($('#canvas'));
 
 		this._$canvas = $canvas;
 		this.useKeyboard = false; // updated as soon as keyboard events occur
@@ -350,7 +372,7 @@
 			evt.preventDefault();
 			
 			var rect = evt.target.getBoundingClientRect();
-			var touch = e.touches[0];
+			var touch = evt.touches[0];
 			var left = touch.clientX - rect.left;
 			var top = touch.clientY - rect.top;
 
@@ -404,15 +426,15 @@
 
             if( !this.useKeyboard ){
                 //property may change. A value of 0 means portrait view, 
-                if( window.orientation == -90)
+                if( window.orientation === -90)
                 {   //-90 means a the device is landscape rotated to the right,
                     yval = -evt.gamma;
                     xval = evt.beta; 
-                }else if( window.orientation == 90)
+                }else if( window.orientation === 90)
                 {   //and 90 means the device is landscape rotated to the left.
                     yval = evt.gamma;
                     xval =-evt.beta; 
-                }else if( window.orientation == 180)
+                }else if( window.orientation === 180)
                 {   //and 90 means the device is landscape rotated to the left.
                     yval = evt.beta;
                     xval = evt.gamma; 
@@ -434,7 +456,7 @@
                 }                
 
                 // resolve events
-                if (newTiltX != this.tiltX) {
+                if (newTiltX !== this.tiltX) {
                 	// send emulated keyup
                 	switch( this.tiltX ) {
                 		case -1: this._inputEvents.push( { type: 'keyup', key: this.constants.keys.LEFT }); break;
@@ -443,15 +465,15 @@
                 	}
 
                 	// send emulated keydown
-                	switch( newTickX ) {
+                	switch( newTiltX ) {
                 		case -1: this._inputEvents.push( { type: 'keydown', key: this.constants.keys.LEFT }); break;
                 		case 0: break;
                 		case 1: this._inputEvents.push( { type: 'keydown', key: this.constants.keys.RIGHT }); break;
                 	}
 
-                	this.tiltX = newTickX;
+                	this.tiltX = newTiltX;
                 }
-                if (newTiltY != this.tiltY) {
+                if (newTiltY !== this.tiltY) {
                 	// send emulated keyup
                 	switch( this.tiltY ) {
                 		case -1: this._inputEvents.push( { type: 'keyup', key: this.constants.keys.DOWN }); break;
@@ -460,17 +482,17 @@
                 	}
 
                 	// send emulated keydown
-                	switch( newTickY ) {
+                	switch( newTiltY ) {
                 		case -1: this._inputEvents.push( { type: 'keydown', key: this.constants.keys.DOWN }); break;
                 		case 0: break;
                 		case 1: this._inputEvents.push( { type: 'keydown', key: this.constants.keys.UP }); break;
                 	}
 
-                	this.tiltY = newTickY;
+                	this.tiltY = newTiltY;
                 }
             }
         }.bind(this));
 	};
 
 	window.GameFramework = window.GameFramework || GameFramework;
-})(Box2D, $);
+})(window.Box2D, window.$, window.drawutils, window.phys);
