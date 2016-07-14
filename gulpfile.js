@@ -58,7 +58,10 @@ gulp.task('build:client-vendor', function() {
 });
 
 gulp.task('lint:games', function() {
-    return gulp.src('games/**/*.js')
+    return gulp.src([
+                        'games/**/*.js',
+                        'vendor/game-framework/**/*.js'
+                    ])
                 .pipe(jshint('client.jshintrc'))
                 .pipe(jshint.reporter('default'))
                 .pipe(jshint.reporter('fail'));

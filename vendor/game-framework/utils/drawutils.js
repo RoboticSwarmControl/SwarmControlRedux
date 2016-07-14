@@ -6,11 +6,11 @@
   of canvas code. This is hugely useful.
   */
 
-  var drawutils = (function(){
+  window.drawutils = (function(){
+    'use strict';
+    function URFP( x ) { /* jshint expr:true */ x; }
 
-    var context = null;
     var $canvas = null;
-
 
     var drawCircle = function (x,y,radius,color,strokeWidth) {
       strokeWidth = typeof strokeWidth !== 'undefined' ? strokeWidth : 4;
@@ -35,6 +35,7 @@
 
     
     var drawRobot = function (x,y,theta,radius,colorFill,colorEdge) {
+      URFP(theta); // TODO: one day, show robot orientation
       $canvas.drawArc({
         fillStyle: colorFill,
         strokeStyle: colorEdge,
@@ -78,7 +79,6 @@ var drawEmptyRect = function (x,y,w,h,color,angle,strokeWidth) {
       strokeStyle:color,
       strokeWidth: strokeWidth,
       x: x, y: y,
-      strokeWidth: 2,
       width: w, height: h, cornerRadius: 0, rotate: angle
     });
   };
@@ -108,40 +108,41 @@ var drawEmptyRect = function (x,y,w,h,color,angle,strokeWidth) {
     function getDistant(cpt, bl) {
       var Vy = bl[1][0] - bl[0][0];
       var Vx = bl[0][1] - bl[1][1];
-      return (Vx * (cpt[0] - bl[0][0]) + Vy * (cpt[1] -bl[0][1]))
-    };
+      return (Vx * (cpt[0] - bl[0][0]) + Vy * (cpt[1] -bl[0][1]));
+    }
 
 
     function findMostDistantPointFromBaseLine(baseLine, points) {
       var maxD = 0;
-      var maxPt = new Array();
-      var newPoints = new Array();
+      var maxPt = [];
+      var newPoints = [];
       for (var idx in points) {
-        var pt = points[idx];
-        var d = getDistant(pt, baseLine);
+        if ( points.hasOwnProperty(idx) ){
+          var pt = points[idx];
+          var d = getDistant(pt, baseLine);
 
-        if ( d > 0) {
-          newPoints.push(pt);
-        } else {
-          continue;
-        }
+          if ( d > 0) {
+            newPoints.push(pt);
+          } else {
+            continue;
+          }
 
-        if ( d > maxD ) {
-          maxD = d;
-          maxPt = pt;
+          if ( d > maxD ) {
+            maxD = d;
+            maxPt = pt;
+          }
         }
-        
       } 
-      return {'maxPoint':maxPt, 'newPoints':newPoints}
-    };
+      return {'maxPoint':maxPt, 'newPoints':newPoints};
+    }
 
-    var allBaseLines = new Array();
+    var allBaseLines = [];
     function buildConvexHull(baseLine, points) {
 
-      allBaseLines.push(baseLine)
-      var convexHullBaseLines = new Array();
+      allBaseLines.push(baseLine);
+      var convexHullBaseLines = [];
       var t = findMostDistantPointFromBaseLine(baseLine, points);
-        if (t.maxPoint.length) { // if there is still a point "outside" the base line
+        if (t.maxPoint.length) { // if there is still a point 'outside' the base line
           convexHullBaseLines = 
         convexHullBaseLines.concat( 
           buildConvexHull( [baseLine[0],t.maxPoint], t.newPoints) 
@@ -151,35 +152,36 @@ var drawEmptyRect = function (x,y,w,h,color,angle,strokeWidth) {
           buildConvexHull( [t.maxPoint,baseLine[1]], t.newPoints) 
           );
         return convexHullBaseLines;
-        } else {  // if there is no more point "outside" the base line, the current base line is part of the convex hull
+        } else {  // if there is no more point 'outside' the base line, the current base line is part of the convex hull
         return [baseLine];
       }    
-    };
+    }
 
     var getConvexHull = function(points) {
         //find first baseline
         var maxX, minX;
         var maxPt, minPt;
         for (var idx in points) {
-          var pt = points[idx];
-          if (pt[0] > maxX || !maxX) {
-            maxPt = pt;
-            maxX = pt[0];
-          }
-          if (pt[0] < minX || !minX) {
-            minPt = pt;
-            minX = pt[0];
+          if (points.hasOwnProperty(idx)){
+            var pt = points[idx];
+            if (pt[0] > maxX || !maxX) {
+              maxPt = pt;
+              maxX = pt[0];
+            }
+            if (pt[0] < minX || !minX) {
+              minPt = pt;
+              minX = pt[0];
+            }
           }
         }
-        var ch = [].concat(buildConvexHull([minPt, maxPt], points),
-         buildConvexHull([maxPt, minPt], points))
+        var ch = [].concat( buildConvexHull([minPt, maxPt], points),
+                            buildConvexHull([maxPt, minPt], points));
         return ch;
       };
 
 
-      var init = function () {
-        context = $("#canvas")[0].getContext('2d');
-        $canvas = $("#canvas");
+      var init = function ( $canvasElement) {
+        $canvas = $canvasElement;
       };
 
       var clearCanvas = function() {
@@ -191,7 +193,7 @@ var drawEmptyRect = function (x,y,w,h,color,angle,strokeWidth) {
         angle = typeof angle !== 'undefined' ? angle : 0;
         $canvas.drawText({
           fillStyle: colorEdge,
-          fontSize: "40pts",
+          fontSize: '40pts',
           strokeStyle: colorFill,
           scale: scale,
           strokeWidth: 1,
