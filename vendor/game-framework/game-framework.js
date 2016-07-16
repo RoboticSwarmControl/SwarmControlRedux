@@ -4,7 +4,7 @@
 	This framework is meant to give a unified interface for handling rendering, game lifecycle, and  so forth.
 */
 
-(function _setupGameFramework( box2D, $, drawutils, phys ) {
+(function _setupGameFramework( box2D, $, drawutils, phys, resultutils ) {
 	'use strict';
 	function URFP( x ) { /* jshint expr:true */ x; }
 
@@ -229,9 +229,54 @@
 		req.setRequestHeader('Content-Type','application/json');
 		req.send( JSON.stringify( results ) );
 
-		if (this.ending === 'abandoned') {
-			location.reload(true);
-		}
+		// 1. display plot in a colorbox
+        // 2. display buttons for Play Again, all results, task list
+        // 3. display: 'you have completed x of 4 tasks.  Play again!' <or> 'Level cleared -- you may play again to increase your score'
+        var currTaskName = this.taskName;
+
+        var c = $('.canvas');
+        $.get('/results/'+currTaskName+'?download=json', function( rawData ) {
+        	var data = JSON.parse(rawData);
+            
+            // draw white  box to to give a background for plot            
+            drawutils.drawRect(300,300, 590,590, 'white');//rgba(200, 200, 200, 0.8)');
+            
+            // at this point, we do not reschedule, and the task ends.
+            var numMyResults = resultutils.singlePlot(c,data.results);
+            $('.span8').append('<button class="btn btn-success play-again-button" style="position: relative; left: 100px; top: -110px;" onclick="location.reload(true);"><h3>Play again!</h3></button>');
+        
+            var numPres = numMyResults;            
+            var maxstars = 5;
+            var imgsize = '25';
+            var strImage;
+            if(numPres>5){ 
+                strImage = '/assets/soft_edge_yellow_star.png';
+                $('.span8').append('<img src="'+strImage+'" width="'+imgsize+'" height="'+imgsize+'" style="position: relative; left: 120px; top: -110px;"><h3 style="position: relative; left: 145px; top: -175px;">x'+numPres+'</h3>');
+            
+            }else{
+                for( var i = 0; i<maxstars; i++){
+                    strImage = '/assets/soft_edge_empty_star.png';
+                    if( numPres >i) {
+                        strImage = '/assets/soft_edge_yellow_star.png';
+                    }
+                    $('.span8').append('<img src="'+strImage+'" width="'+imgsize+'" height="'+imgsize+'" style="position: relative; left: 120px; top: -110px;">');
+                }
+            }
+
+            /*
+            // Add button for next task
+	        var k =_.keys(swarmcontrol.prettyTaskNames);
+	        var nextTask = k.indexOf(currTaskName) + 1;
+	        if(nextTask >= k.length) {
+	            nextTask = 0;
+	        }
+	        newTaskPath = 'parent.location='./' + k[nextTask] + ''';
+	        console.log(newTaskPath);
+
+	        $('.span8').append('<button class='btn btn-success next-Task-button' style='position: relative; left: 140px; top: -110px;' onclick='+newTaskPath+'>► Next Task</button>');
+	        */
+        });
+        
 
 		return this.doStateHalted;
 	};
@@ -495,4 +540,4 @@
 	};
 
 	window.GameFramework = window.GameFramework || GameFramework;
-})(window.Box2D, window.$, window.drawutils, window.phys);
+})(window.Box2D, window.$, window.drawutils, window.phys, window.resultutils);

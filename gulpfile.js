@@ -100,6 +100,7 @@ gulp.task('build:games-vendor', function() {
                         'vendor/game-framework/utils/mathutils.js',
                         'vendor/game-framework/utils/miscutils.js',
                         'vendor/game-framework/utils/physutils.js',
+                        'vendor/game-framework/utils/resultutils.js',
                         'vendor/game-framework/game-framework.js'
                     ])
                 .pipe(concat('main-games-vendor.js'))
