@@ -37,7 +37,6 @@ window.results = (function ($,_, Flotr, prettyTaskNames) {
         return y;
     }
 
-
     function plotTask($container,$task,k, results){
         // plots one task, returns the number of times participant played.
         var myParticipant =  document.cookie.slice(document.cookie.indexOf('task_sig')+('task_sig').length+1); //substring starting at task_sig 
@@ -230,6 +229,7 @@ window.results = (function ($,_, Flotr, prettyTaskNames) {
             plotTask($container,$task,k,results);
         });
     }
+
     function singlePlot( $container, taskResults) {
         // makes a plot for the task 'taskResults'
         // returns the number of times participant has played

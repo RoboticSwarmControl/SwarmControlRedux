@@ -249,14 +249,13 @@
             var maxstars = 5;
             var imgsize = '25';
             var strImage;
-            if(numPres>5){ 
+            if(numPres > 5) { 
                 strImage = '/assets/soft_edge_yellow_star.png';
-                $('.span8').append('<img src="'+strImage+'" width="'+imgsize+'" height="'+imgsize+'" style="position: relative; left: 120px; top: -110px;"><h3 style="position: relative; left: 145px; top: -175px;">x'+numPres+'</h3>');
-            
-            }else{
+                $('.span8').append('<img src="'+strImage+'" width="'+imgsize+'" height="'+imgsize+'" style="position: relative; left: 120px; top: -110px;"><h3 style="position: relative; left: 145px; top: -175px;">x'+numPres+'</h3>');            
+            } else {
                 for( var i = 0; i<maxstars; i++){
                     strImage = '/assets/soft_edge_empty_star.png';
-                    if( numPres >i) {
+                    if( numPres > i) {
                         strImage = '/assets/soft_edge_yellow_star.png';
                     }
                     $('.span8').append('<img src="'+strImage+'" width="'+imgsize+'" height="'+imgsize+'" style="position: relative; left: 120px; top: -110px;">');
