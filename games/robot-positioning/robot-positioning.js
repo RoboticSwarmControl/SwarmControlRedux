@@ -257,7 +257,7 @@ function theGame($,phys,GameFramework, Box2D, drawutils, mathutils) {
         this.task.robots.forEach( function(r) {
             var roboPosition = r.GetPosition();
             r.atGoal = false;
-            for ( var i = 0; i <  this.task.goalsX.length; i++ ) {
+            for ( var i = 0; i <  this.task.numRobots; i++ ) {
                 if( mathutils.lineDistance( this.task.goalsX[i],
                                         this.task.goalsY[i],
                                         roboPosition.x, 
@@ -274,7 +274,7 @@ function theGame($,phys,GameFramework, Box2D, drawutils, mathutils) {
 
         this.task.robots.forEach( function(r) {
             var roboPosition = r.GetPosition();
-            for ( var  i = 0; i < this.task.goalsX.length; i++ ){
+            for ( var  i = 0; i <  this.task.numRobots; i++ ){
                 if( mathutils.lineDistance( this.task.goalsX[i],
                                             this.task.goalsY[i],
                                             roboPosition.x,
