@@ -6,7 +6,7 @@ This is the Node reimplementation of the SwarmControl website.
 
 ## Installation
 
-First, you'll need to make sure that you've got NodeJS 5.10.0 [from here](https://nodejs.org/en/blog/release/v0.5.10/).
+First, you'll need to make sure that you've got NodeJS 5.10.0 [from here](https://nodejs.org/en/blog/release/v0.5.10/). or here for mac OS: https://nodejs.org/dist/latest-v5.x/
 
 Next, you'll need to download the repo:
 
@@ -14,7 +14,7 @@ Next, you'll need to download the repo:
 $ git clone https://github.com/RoboticSwarmControl/SwarmControlRedux.git
 ```
 
-Then, you need to install the application.
+Then, you need to install the application, go to the folder you have cloned, and install:
 
 ```
 $ npm install
