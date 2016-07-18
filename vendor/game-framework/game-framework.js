@@ -42,7 +42,7 @@
 			- 'abandoned' : The game has been untouched long enough that the pause state put us here. Draw a message.
 								Game moves now to 'halted' state.
 
-			- 'halted' : Terminal state. Application stops.
+			- 'halted' : Terminal state. Application stops. Results are submitted and graphs drawn.
 		*/
 
 		this._currentState = this.doStateSpawnWorld;
@@ -237,7 +237,7 @@
         // 3. display: 'you have completed x of 4 tasks.  Play again!' <or> 'Level cleared -- you may play again to increase your score'
         var c = $('.canvas');
         $.get('/results/'+this.taskName+'?download=json', function( rawData ) {
-        	var data = JSON.parse(rawData);
+        	var data = rawData;
             
             // draw white  box to to give a background for plot            
             drawutils.drawRect(300,300, 590,590, 'white');//rgba(200, 200, 200, 0.8)');
@@ -246,7 +246,11 @@
             resultutils.plot(c, this.xAxisLabel, this.pretyTaskName, data.results, []);
             $('.span8').append('<button class="btn btn-success play-again-button" style="position: relative; left: 100px; top: -110px;" onclick="location.reload(true);"><h3>Play again!</h3></button>');
         
-        	var numMyResults = 3;
+
+        	/*
+        	Draw stars 
+
+        	var numMyResults = 3; //FIXFIX
             var numPres = numMyResults;            
             var maxstars = 5;
             var imgsize = '25';
@@ -263,6 +267,7 @@
                     $('.span8').append('<img src="'+strImage+'" width="'+imgsize+'" height="'+imgsize+'" style="position: relative; left: 120px; top: -110px;">');
                 }
             }
+            */
 
             /*
             // Add button for next task

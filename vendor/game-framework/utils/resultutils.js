@@ -1,5 +1,7 @@
-window.results = (function ($,_, Flotr, prettyTaskNames) {
+window.resultutils = (function ($,_, Flotr) {
     'use strict';
+    function URFP( x ) { /* jshint expr:true */ x; }
+
     function trendline( pts ){
         var sx    = 0,
             sy    = 0,
@@ -37,7 +39,10 @@ window.results = (function ($,_, Flotr, prettyTaskNames) {
         return y;
     }
 
-    function plotTask($container, $task, xAxisLabel, taskResults, userResults, isHistogram){
+    function plotTask($container, $task, prettyTaskName, xAxisLabel, taskResults, userResults, isHistogram){
+
+        URFP(userResults);
+
         $container.append($task);
         var res = taskResults;
 
@@ -55,7 +60,6 @@ window.results = (function ($,_, Flotr, prettyTaskNames) {
         var ymin=Number.MAX_VALUE;
         var xmax=Number.MIN_VALUE;
         var xmin=Number.MAX_VALUE;
-        var xAxisLabel = '';
 
         var modes = _.groupBy( res, function (m) { return m.mode;} );
         var modekeys = _.keys(modes);
@@ -92,14 +96,14 @@ window.results = (function ($,_, Flotr, prettyTaskNames) {
                 xmin = xmin > x ? x : xmin;
 
                 points.push( [x, y] );
-                if( r.participant === myParticipant) {
-                    mypoints.push( [x, y] );
-                }
+                //if( r.participant === myParticipant) {
+                    //mypoints.push( [x, y] );
+                //}
                 if( mostRecentTime === null || r.createdAt > mostRecentTime){
                     mostRecentTime = r.createdAt;
                     mostRecentx = x;
                     mostRecenty = y;
-                    mostRecentIsParticipant = ( r.participant === myParticipant);
+                    mostRecentIsParticipant = false; //( r.participant === myParticipant);
                 }
             }
         });
@@ -115,7 +119,7 @@ window.results = (function ($,_, Flotr, prettyTaskNames) {
         var yrange = ymax-ymin;
 
         var robotCounts = _.groupBy( res, function (m) { return m.robotCount;} );
-        var mtitle = prettyTaskNames[ res[0].task ];
+        var mtitle = prettyTaskName;
         if( mypoints.length === 1){
             mtitle = mtitle + ' -- Play again to get a trendline!';
         }
@@ -143,10 +147,12 @@ window.results = (function ($,_, Flotr, prettyTaskNames) {
                 if( !isNaN(yVal) ){
                     xCounts[ind] = xCounts[ind]+1;
                     yMeans[ind] = yMeans[ind] + yVal;
+                    /*
                     if( r.participant === myParticipant) {
                         myxCounts[ind] = myxCounts[ind]+1;
                         myyMeans[ind] = myyMeans[ind] + yVal;
                     }
+                    */
                  }
             });
             d2.length = 0; // clear the array, and fill with new 
@@ -209,16 +215,17 @@ window.results = (function ($,_, Flotr, prettyTaskNames) {
 
 
     function plot( $container, xAxisLabel, taskPrettyName, taskResults, userResults) {
+        URFP( taskPrettyName );
         var $task = $('<div style="width:500px;height:500px"></div>');
 
         var isHistogram = taskResults[0].task === 'varying_control' ||
                         taskResults[0].task === 'forage' ||
                         taskResults[0].task === 'varying_visualization';
 
-        plotTask( $container, $task, xAxisLabel, taskResults, userResults, isHistogram);
+        plotTask( $container, $task, taskPrettyName, xAxisLabel, taskResults, userResults, isHistogram);
     }
 
     return {
         plot: plot
     };
-})( window.$, window._, window.Flotr, window.prettyTaskNames);
+})( window.$, window._, window.Flotr);
