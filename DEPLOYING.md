@@ -10,7 +10,7 @@
 
 # Local install
 
-You'll need a Postgres console and an administrator account.
+You'll need a Postgres console and an administrator account. For Mac OS, the [postgresapp](http://postgresapp.com/) works.
 
 Create a swarm control database, a user, and privileges for that user on the database.
 
