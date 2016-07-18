@@ -31,7 +31,7 @@ Verify the user and the database are created:
 Next, run the schema SQL file:
 
 ```
-psql -h localhost -d swarm -U swarmcontrol --password -p 5433 -f database/schema.sql
+psql -h localhost -d swarm -U swarmcontrol --password -p 5432 -f database/schema.sql
 ```
 
 Enter the passwword when prompted, and then check that the schema worked:
