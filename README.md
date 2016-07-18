@@ -28,7 +28,7 @@ This is also when linting will occur.
 $ npm run-script build
 ```
 
-Lastly, run the application.
+Lastly, run the application. This assumes you have a running PostgreSQL server running, see [Deploy](https://github.com/RoboticSwarmControl/SwarmControlRedux/blob/master/DEPLOYING.md).
 
 ```
 $ npm start
