@@ -10,9 +10,12 @@
 
 # Local install
 
-You'll need a Postgres console and an administrator account. For Mac OS, the [postgresapp](http://postgresapp.com/) works.
+You'll need a Postgres console and an administrator account. For Mac OS, use [homebrew](http://brew.sh/) and install a postgres.
+```
+$ brew install postgresql
+```
 
-Create a swarm control database, a user, and privileges for that user on the database.
+Do this one time from the SQL server: create a swarm control database, a user, and privileges for that user on the database.
 
 ```
 CREATE DATABASE swarm;
