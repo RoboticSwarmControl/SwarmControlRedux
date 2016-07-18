@@ -2,11 +2,11 @@
 
 [![Build Status](https://travis-ci.org/RoboticSwarmControl/SwarmControlRedux.svg?branch=master)](https://travis-ci.org/RoboticSwarmControl/SwarmControlRedux)
 
-This is the Node reimplementation of the SwarmControl website.
+This is the Node reimplementation of the [SwarmControl](http://www.swarmcontrol.net/) website.
 
 ## Installation
 
-First, you'll need to make sure that you've got NodeJS 5.10.0 [from here](https://nodejs.org/en/blog/release/v0.5.10/). or here for mac OS: https://nodejs.org/dist/latest-v5.x/
+First, you'll need to make sure that you've got NodeJS 5.10.0 [from here](https://nodejs.org/en/blog/release/v0.5.10/), or [here](https://nodejs.org/dist/latest-v5.x/) for Mac OS.
 
 Next, you'll need to download the repo:
 
