@@ -2,11 +2,11 @@
 
 [![Build Status](https://travis-ci.org/RoboticSwarmControl/SwarmControlRedux.svg?branch=master)](https://travis-ci.org/RoboticSwarmControl/SwarmControlRedux)
 
-This is the Node reimplementation of the SwarmControl website.
+This is the Node reimplementation of the [SwarmControl](http://www.swarmcontrol.net/) website.
 
 ## Installation
 
-First, you'll need to make sure that you've got NodeJS 5.10.0 [from here](https://nodejs.org/en/blog/release/v0.5.10/).
+First, you'll need to make sure that you've got NodeJS 5.10.0 [from here](https://nodejs.org/en/blog/release/v0.5.10/), or [here](https://nodejs.org/dist/latest-v5.x/) for Mac OS.
 
 Next, you'll need to download the repo:
 
@@ -14,7 +14,7 @@ Next, you'll need to download the repo:
 $ git clone https://github.com/RoboticSwarmControl/SwarmControlRedux.git
 ```
 
-Then, you need to install the application.
+Then, you need to install the application, go to the folder you have cloned, and install:
 
 ```
 $ npm install
@@ -28,11 +28,12 @@ This is also when linting will occur.
 $ npm run-script build
 ```
 
-Lastly, run the application.
+Lastly, run the application. This assumes you have a running PostgreSQL server running, see [Deploy](https://github.com/RoboticSwarmControl/SwarmControlRedux/blob/master/DEPLOYING.md).
 
 ```
-$ npm start
+$ DB_STRING="postgresql://swarmcontrol:test@localhost:5432/swarm" npm start
 ```
+Open a webbrowser and navigate to [localhost:3000](http://localhost:3000/games).
 
 ## Useful scripts
 

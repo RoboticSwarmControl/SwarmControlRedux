@@ -10,9 +10,10 @@
 
 # Local install
 
-You'll need a Postgres console and an administrator account.
+You'll need a Postgres console and an administrator account. For Mac OS, use [instruction here](https://launchschool.com/blog/how-to-install-postgresql-on-a-mac)
 
-Create a swarm control database, a user, and privileges for that user on the database.
+
+Do this one time from the SQL server: create a swarm control database, a user, and privileges for that user on the database.
 
 ```
 CREATE DATABASE swarm;
@@ -30,7 +31,7 @@ Verify the user and the database are created:
 Next, run the schema SQL file:
 
 ```
-psql -h localhost -d swarm -U swarmcontrol --password -p 5433 -f database/schema.sql
+psql -h localhost -d swarm -U swarmcontrol --password -p 5432 -f database/schema.sql
 ```
 
 Enter the passwword when prompted, and then check that the schema worked:
