@@ -33,7 +33,7 @@ Lastly, run the application. This assumes you have a running PostgreSQL server r
 ```
 $ DB_STRING="postgresql://swarmcontrol:test@localhost:5432/swarm" npm start
 ```
-Open a webbrowser and navigate to [http://localhost:3000/games].
+Open a webbrowser and navigate to [localhost:3000](http://localhost:3000/games).
 
 ## Useful scripts
 
