@@ -31,7 +31,7 @@ $ npm run-script build
 Lastly, run the application. This assumes you have a running PostgreSQL server running, see [Deploy](https://github.com/RoboticSwarmControl/SwarmControlRedux/blob/master/DEPLOYING.md).
 
 ```
-$ npm start
+$ DB_STRING="postgresql://swarmcontrol:test@localhost:5432/swarm" npm start
 ```
 
 ## Useful scripts
