@@ -9,7 +9,7 @@ function theGame($,phys,GameFramework, Box2D, drawutils, mathutils) {
     URFP(Box2D);
     URFP(mathutils);
 
-    var game = new GameFramework();
+    var game = new GameFramework('pyramid-building', 'Pyramid Building', 'Noise (% control power)');
 
     game.setSpawnWorldCallback( function () {
         this.task = {};

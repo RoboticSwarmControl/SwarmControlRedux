@@ -6,7 +6,7 @@ function theGame($,phys,GameFramework, Box2D, drawutils, mathutils) {
     'use strict';
     function URFP( x ) { /* jshint expr:true */ x; }
     
-    var game = new GameFramework();
+    var game = new GameFramework('foraging','Foraging', 'Control type');
 
     game.setPregameCallback( function() {
         $('.mode-button').prop('disabled',true);

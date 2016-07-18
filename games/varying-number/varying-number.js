@@ -4,7 +4,7 @@
 function theGame($,phys,GameFramework, Box2D, drawutils, mathutils) {
     /* jshint unused:true */
     'use strict';
-    var game = new GameFramework();
+    var game = new GameFramework('varying-number', 'Varying Number','Number of robots');
     function URFP( x ) { /* jshint expr:true */ x; }
     URFP(mathutils);
 

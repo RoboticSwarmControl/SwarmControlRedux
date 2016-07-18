@@ -1,5 +1,5 @@
 {
 	"name" : "foraging",
-	"xAxisLabel" : "Number of robots",
-	"displayName": "Foraging (TODO)"
+	"xAxisLabel" : "Control type",
+	"displayName": "Foraging"
 }

@@ -10,7 +10,7 @@
 
 	URFP(box2D);
 
-	function GameFramework() {
+	function GameFramework( taskName, prettyTaskName, xAxisLabel ) {
 
 		/*
 			A game exists in one of the following states:
@@ -46,6 +46,10 @@
 		*/
 
 		this._currentState = this.doStateSpawnWorld;
+
+		this.taskName = taskName || 'unnamed-task';
+		this.prettyTaskName = prettyTaskName || this.taskName;
+		this.xAxisLabel = xAxisLabel || 'unknown label';
 		
 		this.world = null;
 
@@ -218,7 +222,6 @@
 		URFP( dt );
 		URFP( inputEvents );
 
-		console.log('halted');
 		var results = this._submitResultsCallback();
 		results.ending = this.ending;
 		results.runtime = (this._timeElapsed/1000).toFixed(2); 
@@ -232,19 +235,18 @@
 		// 1. display plot in a colorbox
         // 2. display buttons for Play Again, all results, task list
         // 3. display: 'you have completed x of 4 tasks.  Play again!' <or> 'Level cleared -- you may play again to increase your score'
-        var currTaskName = this.taskName;
-
         var c = $('.canvas');
-        $.get('/results/'+currTaskName+'?download=json', function( rawData ) {
+        $.get('/results/'+this.taskName+'?download=json', function( rawData ) {
         	var data = JSON.parse(rawData);
             
             // draw white  box to to give a background for plot            
             drawutils.drawRect(300,300, 590,590, 'white');//rgba(200, 200, 200, 0.8)');
             
             // at this point, we do not reschedule, and the task ends.
-            var numMyResults = resultutils.singlePlot(c,data.results);
+            resultutils.plot(c, this.xAxisLabel, this.pretyTaskName, data.results, []);
             $('.span8').append('<button class="btn btn-success play-again-button" style="position: relative; left: 100px; top: -110px;" onclick="location.reload(true);"><h3>Play again!</h3></button>');
         
+        	var numMyResults = 3;
             var numPres = numMyResults;            
             var maxstars = 5;
             var imgsize = '25';
@@ -274,7 +276,7 @@
 
 	        $('.span8').append('<button class='btn btn-success next-Task-button' style='position: relative; left: 140px; top: -110px;' onclick='+newTaskPath+'>► Next Task</button>');
 	        */
-        });
+        }.bind(this));
         
 
 		return this.doStateHalted;

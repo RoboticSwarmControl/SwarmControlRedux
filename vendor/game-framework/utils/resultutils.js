@@ -37,17 +37,13 @@ window.results = (function ($,_, Flotr, prettyTaskNames) {
         return y;
     }
 
-    function plotTask($container,$task,k, results){
-        // plots one task, returns the number of times participant played.
-        var myParticipant =  document.cookie.slice(document.cookie.indexOf('task_sig')+('task_sig').length+1); //substring starting at task_sig 
-        myParticipant = myParticipant.substr(0,myParticipant.indexOf(';')); //trim any extra info off the string
-
+    function plotTask($container, $task, xAxisLabel, taskResults, userResults, isHistogram){
         $container.append($task);
-        var res = results[k];
+        var res = taskResults;
 
-        var d2 = [], // A regression line for the scatterplot. 
-            dme = [], //regression line of my data
-            x,y;
+        var d2 = [],    // A regression line for the scatterplot. 
+            dme = [],   //regression line of my data
+            x, y;
 
         // two tasks where the number of robots is varied: maze_positioning, robot_positioning 
         // varying_control, forage, varying_visualization  x-axis is the mode (string) (these are bar charts?)
@@ -55,7 +51,10 @@ window.results = (function ($,_, Flotr, prettyTaskNames) {
         // ...and add the data points for the graph...
         var points = [];  //all data points
         var mypoints = []; //my data points
-        var ymax=Number.MIN_VALUE, ymin=Number.MAX_VALUE, xmax=Number.MIN_VALUE, xmin=Number.MAX_VALUE;
+        var ymax=Number.MIN_VALUE;
+        var ymin=Number.MAX_VALUE;
+        var xmax=Number.MIN_VALUE;
+        var xmin=Number.MAX_VALUE;
         var xAxisLabel = '';
 
         var modes = _.groupBy( res, function (m) { return m.mode;} );
@@ -69,20 +68,20 @@ window.results = (function ($,_, Flotr, prettyTaskNames) {
             y = parseTime(r.runtime);
                                 
             if (r.task === 'maze_positioning' || r.task === 'robot_positioning'){
-                xAxisLabel = 'Number of robots';
+                //xAxisLabel = 'Number of robots';
                 x = r.robotCount;
             }else if (r.task ==='varying_control' || r.task === 'forage' ){
-                xAxisLabel = 'Control type';
+                //xAxisLabel = 'Control type';
                 x = _.indexOf(modekeys, r.mode);
             }else if(r.task === 'varying_visualization'){
-                xAxisLabel = 'Visualization Method';
+                //xAxisLabel = 'Visualization Method';
                 x = _.indexOf(modekeys, r.mode);
             }else if(r.task === 'pyramid_building'){
-                xAxisLabel = 'Noise (% control power)';
+                //xAxisLabel = 'Noise (% control power)';
                 x = 20*parseFloat(r.mode);
             }else{
                 // error in database
-                xAxisLabel = 'Unknown';
+                //xAxisLabel = 'Unknown';
                 x = r.robotCount;
             }
 
@@ -125,7 +124,7 @@ window.results = (function ($,_, Flotr, prettyTaskNames) {
         // ...and then append the graph. 
         var margins = 0.05;   
         var myTicks = null;
-        if(res[0].task === 'varying_control' || res[0].task === 'forage' || res[0].task === 'varying_visualization') {
+        if(isHistogram) {
             myTicks = [];
             var xCounts = [];
             var yMeans = [];
@@ -208,45 +207,18 @@ window.results = (function ($,_, Flotr, prettyTaskNames) {
         return mypoints.length;
     }
 
-    function init( $container, taskResults) {
-        // uses flotr2 at http://www.humblesoftware.com/flotr2/#!basic-axis
-        // TODO:
-        // * add axis-labels (DONE, ATB)
-        // * add legend (Done, ATB)
-        // * plot tasks with modes with the modes along the x-axis (DONE, ATB)
-        // * add a trendline (DONE, ATB)
-        // * color points from the user in red, give user a trend line  (participant) (DONE, ATB)
-        // * allow user to switch between candle and scatter plots
-        // * add a delete key so user can assign all user's data to an anonymous value
-        // group results by task
-        var results = _.groupBy( taskResults, function (res) { return res.task;} );
 
-        // for each task...
-        _.each( _.keys(results), function (k) {
-            // ...init the graph it'll go into...            
-            //var $task = $("<div style='width:500px;height:500px' class='.-chart-"+k+"'></div>");
-            var $task = $('.-chart-'+k);
-            plotTask($container,$task,k,results);
-        });
+    function plot( $container, xAxisLabel, taskPrettyName, taskResults, userResults) {
+        var $task = $('<div style="width:500px;height:500px"></div>');
+
+        var isHistogram = taskResults[0].task === 'varying_control' ||
+                        taskResults[0].task === 'forage' ||
+                        taskResults[0].task === 'varying_visualization';
+
+        plotTask( $container, $task, xAxisLabel, taskResults, userResults, isHistogram);
     }
 
-    function singlePlot( $container, taskResults) {
-        // makes a plot for the task 'taskResults'
-        // returns the number of times participant has played
-        var results = _.groupBy( taskResults, function (res) { return res.task;} );
-        var numParticipantResults = 0;
-        // for each task...
-        _.each( _.keys(results), function (k) {
-            // ...init the graph it'll go into...            
-            var $task = $('<div style="width:500px;height:500px" class=".-chart-'+k+'"></div>');
-            //var $task = $(".-chart-"+k);
-            numParticipantResults = plotTask($container,$task,k,results);
-        });
-        return numParticipantResults;
-    }
-
-    return { 
-        init: init,
-        singlePlot: singlePlot
+    return {
+        plot: plot
     };
 })( window.$, window._, window.Flotr, window.prettyTaskNames);

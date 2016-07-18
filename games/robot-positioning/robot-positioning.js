@@ -7,7 +7,7 @@ function theGame($,phys,GameFramework, Box2D, drawutils, mathutils) {
     function URFP( x ) { /* jshint expr:true */ x; }
     URFP(Box2D);
 
-    var game = new GameFramework();
+    var game = new GameFramework('robot-positioning', 'Robot positioning', 'Number of robots');
 
     game.setSpawnWorldCallback( function () {
         /*jshint camelcase:false */

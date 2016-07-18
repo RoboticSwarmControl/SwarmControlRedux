@@ -8,7 +8,7 @@ function theGame($,phys,GameFramework, Box2D, drawutils, mathutils) {
     URFP(Box2D);
     URFP(mathutils);
 
-    var game = new GameFramework();
+    var game = new GameFramework('varying-control-scheme', 'Varying Control Scheme', 'Control type');
 
     game.setSpawnWorldCallback( function() {
         /*jshint camelcase:false */
