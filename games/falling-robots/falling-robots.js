@@ -55,7 +55,7 @@ function theGame($,phys,GameFramework, Box2D, drawutils, mathutils) {
 
         // create shaping block
         bodyDef.position.Set(10,10);
-        fixDef.shape.SetAsBox(0.5,0.5);
+        fixDef.shape.SetAsBox(5,5);
         this.world.CreateBody(bodyDef).CreateFixture(fixDef);
 
         //create some robots        
