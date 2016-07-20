@@ -1,5 +1,5 @@
 {
 	"name" : "pyramid-building",
-	"xAxisLabel" : "Number of robots",
-	"displayName": "Pyramid Building (TODO)"
+	"xAxisLabel" : "Noise (% control power)",
+	"displayName": "Pyramid Building"
 }

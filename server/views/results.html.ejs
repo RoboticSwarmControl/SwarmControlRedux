@@ -2,11 +2,12 @@
 <html itemscope itemtype="http://schema.org/CreativeWork">
 	<head>
 		<%- include('partials/app-common-head.html.ejs') %>
-		<%- include('partials/common-scripts.html.ejs') %>
+		<%- include('partials/common-scripts.html.ejs') %>		
 	</head>
 	<body>
-
+	<script src="/assets/js/main-results-vendor.min.js"></script>
 	<%- include('partials/navbar.html.ejs') %>
+
 
  	<div id="fb-root"></div>
 	 <script>(function(d, s, id) {
@@ -24,11 +25,46 @@
 	    	<a class="btn btn-mini btn-info" href="/results?download=json" target="_blank">As JSON</a>
     	</span>
 	    <hr>
-	    <div class="row">		  
+	    <div>
+	    	<button class="btn btn-info" id="get-results-button">Get results!</button>
 	    </div>
-	    
-		<%- include('partials/footer.html.ejs') %>
-		<%- include('partials/user-voice.html.ejs') %>
+	    <div id="results-container">
+	    </div>
+	</div>
+
+	<script>
+	$(window).on('load',function() {
+		var $resultsContainer = $('#results-container');
+
+		var $resultsButton = $('#get-results-button');
+		$resultsButton.prop('disabled', false); // firefox sometimes needs this between pageloads
+
+		$resultsButton.on('click', function(){
+			$resultsButton.html('Loading results...');
+			$resultsButton.prop('disabled', true);
+
+			$.get('/results/'+this.taskName+'?download=json', function( rawData ) {
+	        	var data = rawData;
+	        	$resultsButton.hide();
+
+	        	$resultsContainer.append('<h1>Results</h1>');
+
+	        	var organizedResults = data.results.reduce( function( acc, el) {
+	        		acc[el.task] = acc[el.task] || [];
+	        		acc[el.task].push(el);
+	        		return acc;
+	        	}, {});
+	        	console.log(organizedResults);
+
+	            // at this point, we do not reschedule, and the task ends.
+	            resultutils.plot(c, this.xAxisLabel, this.pretyTaskName, data.results, []);
+	        });
+		});
+	});
+	</script>
+
+	<%- include('partials/footer.html.ejs') %>
+	<%- include('partials/user-voice.html.ejs') %>
 	</body>
 </html>
 

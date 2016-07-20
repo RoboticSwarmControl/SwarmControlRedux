@@ -33,7 +33,7 @@ router.get('/', function _renderResultsIndex( req, res ) {
 												});
 							break;
 			case 'json': 	
-							res.status(200).json( {res:results} );
+							res.status(200).json( {results:results} );
 							break;
 			default: 		util.renderPage('results.html.ejs')
 							.then( function (page) {
@@ -73,7 +73,7 @@ router.get('/:resultID', function _renderResultsIndex( req, res ) {
 												});
 							break;
 			case 'json': 	
-							res.status(200).json( {res:results} );
+							res.status(200).json( {results:results} );
 							break;
 			default: 		util.renderPage('results.html.ejs')
 							.then( function (page) {

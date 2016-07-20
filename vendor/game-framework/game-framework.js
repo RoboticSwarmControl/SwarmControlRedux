@@ -4,13 +4,13 @@
 	This framework is meant to give a unified interface for handling rendering, game lifecycle, and  so forth.
 */
 
-(function _setupGameFramework( box2D, $, drawutils, phys ) {
+(function _setupGameFramework( box2D, $, drawutils, phys, resultutils ) {
 	'use strict';
 	function URFP( x ) { /* jshint expr:true */ x; }
 
 	URFP(box2D);
 
-	function GameFramework() {
+	function GameFramework( taskName, prettyTaskName, xAxisLabel ) {
 
 		/*
 			A game exists in one of the following states:
@@ -42,10 +42,14 @@
 			- 'abandoned' : The game has been untouched long enough that the pause state put us here. Draw a message.
 								Game moves now to 'halted' state.
 
-			- 'halted' : Terminal state. Application stops.
+			- 'halted' : Terminal state. Application stops. Results are submitted and graphs drawn.
 		*/
 
 		this._currentState = this.doStateSpawnWorld;
+
+		this.taskName = taskName || 'unnamed-task';
+		this.prettyTaskName = prettyTaskName || this.taskName;
+		this.xAxisLabel = xAxisLabel || 'unknown label';
 		
 		this.world = null;
 
@@ -218,7 +222,6 @@
 		URFP( dt );
 		URFP( inputEvents );
 
-		console.log('halted');
 		var results = this._submitResultsCallback();
 		results.ending = this.ending;
 		results.runtime = (this._timeElapsed/1000).toFixed(2); 
@@ -229,9 +232,57 @@
 		req.setRequestHeader('Content-Type','application/json');
 		req.send( JSON.stringify( results ) );
 
-		if (this.ending === 'abandoned') {
-			location.reload(true);
-		}
+		// 1. display plot in a colorbox
+        // 2. display buttons for Play Again, all results, task list
+        // 3. display: 'you have completed x of 4 tasks.  Play again!' <or> 'Level cleared -- you may play again to increase your score'
+        var c = $('.canvas');
+        $.get('/results/'+this.taskName+'?download=json', function( rawData ) {
+        	var data = rawData;
+            
+            // draw white  box to to give a background for plot            
+            drawutils.drawRect(300,300, 590,590, 'white');//rgba(200, 200, 200, 0.8)');
+            
+            // at this point, we do not reschedule, and the task ends.
+            resultutils.plot(c, this.xAxisLabel, this.pretyTaskName, data.results, []);
+            $('.span8').append('<button class="btn btn-success play-again-button" style="position: relative; left: 100px; top: -110px;" onclick="location.reload(true);"><h3>Play again!</h3></button>');
+        
+
+        	/*
+        	Draw stars 
+
+        	var numMyResults = 3; //FIXFIX
+            var numPres = numMyResults;            
+            var maxstars = 5;
+            var imgsize = '25';
+            var strImage;
+            if(numPres > 5) { 
+                strImage = '/assets/soft_edge_yellow_star.png';
+                $('.span8').append('<img src="'+strImage+'" width="'+imgsize+'" height="'+imgsize+'" style="position: relative; left: 120px; top: -110px;"><h3 style="position: relative; left: 145px; top: -175px;">x'+numPres+'</h3>');            
+            } else {
+                for( var i = 0; i<maxstars; i++){
+                    strImage = '/assets/soft_edge_empty_star.png';
+                    if( numPres > i) {
+                        strImage = '/assets/soft_edge_yellow_star.png';
+                    }
+                    $('.span8').append('<img src="'+strImage+'" width="'+imgsize+'" height="'+imgsize+'" style="position: relative; left: 120px; top: -110px;">');
+                }
+            }
+            */
+
+            /*
+            // Add button for next task
+	        var k =_.keys(swarmcontrol.prettyTaskNames);
+	        var nextTask = k.indexOf(currTaskName) + 1;
+	        if(nextTask >= k.length) {
+	            nextTask = 0;
+	        }
+	        newTaskPath = 'parent.location='./' + k[nextTask] + ''';
+	        console.log(newTaskPath);
+
+	        $('.span8').append('<button class='btn btn-success next-Task-button' style='position: relative; left: 140px; top: -110px;' onclick='+newTaskPath+'>► Next Task</button>');
+	        */
+        }.bind(this));
+        
 
 		return this.doStateHalted;
 	};
@@ -495,4 +546,4 @@
 	};
 
 	window.GameFramework = window.GameFramework || GameFramework;
-})(window.Box2D, window.$, window.drawutils, window.phys);
+})(window.Box2D, window.$, window.drawutils, window.phys, window.resultutils);

@@ -87,7 +87,19 @@ gulp.task('build:games-images', function () {
 gulp.task('build:games-scripts', function () {
     return gulp.src('games/**/*.js', { base:'games' })
             .pipe(gulp.dest('dist/games'))
-            .pipe(notify({ message: 'Built client images.' }));
+            .pipe(notify({ message: 'Built game scripts.' }));
+});
+
+gulp.task('build:results-vendor', function() {
+return gulp.src([
+                        'vendor/flotr2/flotr2.min.js',
+                        'vendor/game-framework/utils/resultutils.js',
+                    ])
+                .pipe(concat('main-results-vendor.js'))
+                .pipe(gulp.dest('dist/js'))
+                .pipe(rename({suffix: '.min'}))
+                .pipe(gulp.dest('dist/js'))
+                .pipe(notify({ message: 'Built result page vendor scripts.' }));
 });
 
 gulp.task('build:games-vendor', function() {
@@ -100,6 +112,7 @@ gulp.task('build:games-vendor', function() {
                         'vendor/game-framework/utils/mathutils.js',
                         'vendor/game-framework/utils/miscutils.js',
                         'vendor/game-framework/utils/physutils.js',
+                        'vendor/game-framework/utils/resultutils.js',
                         'vendor/game-framework/game-framework.js'
                     ])
                 .pipe(concat('main-games-vendor.js'))
@@ -126,6 +139,7 @@ gulp.task('build-no-lint', ['clean'], function() {
                         'build:games-images',
                         'build:games-scripts',
                         'build:games-vendor',
+                        'build:results-vendor',
                         'build:server');
 });
 
