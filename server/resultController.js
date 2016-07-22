@@ -9,6 +9,8 @@ var util = require('./util.js');
 var db = require('./database.js');
 var csv = require('fast-csv');
 
+var games = require('./gameController.js')._swarm_.mountedGames;
+
 router.get('/', function _renderResultsIndex( req, res ) {
 	URFP(req);
 	db.getResults()
@@ -33,7 +35,7 @@ router.get('/', function _renderResultsIndex( req, res ) {
 												});
 							break;
 			case 'json': 	
-							res.status(200).json( {results:results} );
+							res.status(200).json( {results:results, taskInfo: games} );
 							break;
 			default: 		util.renderPage('results.html.ejs')
 							.then( function (page) {
@@ -73,7 +75,7 @@ router.get('/:resultID', function _renderResultsIndex( req, res ) {
 												});
 							break;
 			case 'json': 	
-							res.status(200).json( {results:results} );
+							res.status(200).json( {results:results, taskInfo: games} );
 							break;
 			default: 		util.renderPage('results.html.ejs')
 							.then( function (page) {

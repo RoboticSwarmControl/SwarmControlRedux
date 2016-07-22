@@ -1,15 +1,17 @@
 .results-chart-container
 {
-    margin: 0px;
+	/*
+    margin: 5px;
     padding: 5px;
     display: inline-block;
+    */
 }
 
 .results-chart
 {
     background-color: #eee;
-    width: 450px;
-    height: 450px;
+    width: 500px;
+    height: 500px;
 }
 
 .results-page

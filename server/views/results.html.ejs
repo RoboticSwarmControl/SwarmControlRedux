@@ -26,9 +26,10 @@
     	</span>
 	    <hr>
 	    <div>
+	    	<h1>Results</h1>
 	    	<button class="btn btn-info" id="get-results-button">Get results!</button>
-	    </div>
-	    <div id="results-container">
+	    	<div class="results-page" id="results-container">
+	    	</div>
 	    </div>
 	</div>
 
@@ -43,21 +44,35 @@
 			$resultsButton.html('Loading results...');
 			$resultsButton.prop('disabled', true);
 
-			$.get('/results/'+this.taskName+'?download=json', function( rawData ) {
+			$.get('/results?download=json', function( rawData ) {
 	        	var data = rawData;
 	        	$resultsButton.hide();
 
-	        	$resultsContainer.append('<h1>Results</h1>');
-
 	        	var organizedResults = data.results.reduce( function( acc, el) {
-	        		acc[el.task] = acc[el.task] || [];
-	        		acc[el.task].push(el);
+	        		// make sure the result is for a game we have available.
+	        		if (data.taskInfo[el.task]){
+		        		acc[el.task] = acc[el.task] || [];
+		        		acc[el.task].push(el);
+	        		}
 	        		return acc;
 	        	}, {});
 	        	console.log(organizedResults);
 
-	            // at this point, we do not reschedule, and the task ends.
-	            resultutils.plot(c, this.xAxisLabel, this.pretyTaskName, data.results, []);
+	        	Object.keys(organizedResults).forEach( function (taskName) {
+	        		var taskInfo = data.taskInfo[taskName];
+
+	        		var $resultGraph = $('<div></div>');
+	        		$resultsContainer.append($resultGraph);
+	        		
+	        		// at this point, we do not reschedule, and the task ends.
+		            resultutils.plot(	$resultGraph,
+		            					taskInfo.xAxisLabel,
+		            					taskInfo.pretyTaskName,
+		            					organizedResults[taskName],
+		            					[]);
+		            $resultsContainer.append('<button onclick="location=\'' + taskInfo.url +'\'">Play game!</button>');
+	        	});
+	            
 	        });
 		});
 	});
