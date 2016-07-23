@@ -40,7 +40,7 @@ window.resultutils = (function ($,_, Flotr) {
     }
 
     function plotTask($container, $task, prettyTaskName, xAxisLabel, taskResults, userResults, isHistogram){
-
+        console.log(arguments);
         URFP(userResults);
 
         $container.append($task);
@@ -215,13 +215,13 @@ window.resultutils = (function ($,_, Flotr) {
 
 
     function plot( $container, xAxisLabel, taskPrettyName, taskResults, userResults) {
-        URFP( taskPrettyName );
+        
         //var $task = $('<div style="width:500px;height:500px"></div>');
         var $task = $('<div class="results-chart"></div>');
 
-        var isHistogram = taskResults[0].task === 'varying_control' ||
-                        taskResults[0].task === 'forage' ||
-                        taskResults[0].task === 'varying_visualization';
+        var isHistogram =   taskResults[0].task === 'varying_control' ||
+                            taskResults[0].task === 'forage' ||
+                            taskResults[0].task === 'varying_visualization';
 
         plotTask( $container, $task, taskPrettyName, xAxisLabel, taskResults, userResults, isHistogram);
     }

@@ -50,12 +50,14 @@
 
 	        	var organizedResults = data.results.reduce( function( acc, el) {
 	        		// make sure the result is for a game we have available.
-	        		if (data.taskInfo[el.task]){
+	        		// we only care about won tasks for now
+	        		if ( data.taskInfo[el.task] && el.ending === 'won'){
 		        		acc[el.task] = acc[el.task] || [];
 		        		acc[el.task].push(el);
 	        		}
 	        		return acc;
 	        	}, {});
+
 	        	console.log(organizedResults);
 
 	        	Object.keys(organizedResults).forEach( function (taskName) {
@@ -67,7 +69,7 @@
 	        		// at this point, we do not reschedule, and the task ends.
 		            resultutils.plot(	$resultGraph,
 		            					taskInfo.xAxisLabel,
-		            					taskInfo.pretyTaskName,
+		            					taskInfo.displayName,
 		            					organizedResults[taskName],
 		            					[]);
 		            $resultsContainer.append('<button onclick="location=\'' + taskInfo.url +'\'">Play game!</button>');
