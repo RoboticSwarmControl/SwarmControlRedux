@@ -10,12 +10,20 @@ function init( connectionString ) {
 	db = pgp( connectionString );
 }
 
+
+var getAllResultsQuery =	'SELECT'
+							+ ' agent, created_at as "createdAt", ending, id, mode, participant, robot_count as "robotCount", runtime, task '
+							+' FROM results;';
+var getResultsForTaskQuery = 'SELECT'
+							+ ' agent, created_at as "createdAt", ending, id, mode, participant, robot_count as "robotCount", runtime, task '
+							+' FROM results WHERE task = $1;';
+
 function getResults() {
-	return db.any('SELECT * FROM results;');
+	return db.any( getAllResultsQuery );
 }
 
 function getResultsForTask( task ) {
-	return db.any('SELECT * FROM results WHERE task = $1;', [task] );
+	return db.any( getResultsForTaskQuery, [task] );
 }
 
 function saveResult( result ) {

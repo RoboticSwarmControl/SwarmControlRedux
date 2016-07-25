@@ -18,8 +18,7 @@ router.get('/', function _renderResultsIndex( req, res ) {
 		// fix date to be formatted usefully
 		results = results.map( function _fixupDates( r ){
 			/* jshint sub:true */
-			r['created_at'] = r['created_at'].toISOString();
-			r['updated_at'] = r['updated_at'].toISOString();
+			r.createdAt = r.createdAt.toISOString();
 			return r;
 		});
 
@@ -58,8 +57,7 @@ router.get('/:resultID', function _renderResultsIndex( req, res ) {
 		// fix date to be formatted usefully
 		results = results.map( function _fixupDates( r ){
 			/* jshint sub:true */
-			r['created_at'] = r['created_at'].toISOString();
-			r['updated_at'] = r['updated_at'].toISOString();
+			r.createdAt = r.createdAt.toISOString();
 			return r;
 		});
 
