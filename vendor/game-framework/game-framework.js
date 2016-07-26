@@ -237,13 +237,16 @@
         // 3. display: 'you have completed x of 4 tasks.  Play again!' <or> 'Level cleared -- you may play again to increase your score'
         var c = $('.canvas');
         $.get('/results/'+this.taskName+'?download=json', function( rawData ) {
+
         	var data = rawData;
+        	var taskInfo = data.taskInfo[this.taskName];
+        	//console.log(taskInfo);
             
             // draw white  box to to give a background for plot            
             drawutils.drawRect(300,300, 590,590, 'white');//rgba(200, 200, 200, 0.8)');
             
             // at this point, we do not reschedule, and the task ends.
-            resultutils.plot(c, this.xAxisLabel, this.pretyTaskName, data.results, []);
+            resultutils.plot(c, taskInfo.xAxisLabel, taskInfo.displayName, data.results, []);
             $('.span8').append('<button class="btn btn-success play-again-button" style="position: relative; left: 100px; top: -110px;" onclick="location.reload(true);"><h3>Play again!</h3></button>');
         
 
