@@ -4,7 +4,6 @@ window.resultutils = (function ($,_, Flotr) {
 
     var myParticipant = '';
 
-    ///*
     function trendline( pts ){
         var sx    = 0,
             sy    = 0,
@@ -32,7 +31,6 @@ window.resultutils = (function ($,_, Flotr) {
         alpha = ymean - (beta * xmean);
         return [alpha,beta];
     }
-    //*/
 
     function parseTime( input ){  //convert time to number, do some error checking
         var y = Number.parseFloat(input);

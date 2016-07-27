@@ -30,12 +30,16 @@
                     
                 </div>
                 <div class="col-md-8", align="center">
-                    <div class="canvas" id="canvasID">
-                        <canvas class="pull-right" id="canvas" width="600" height="600" style="background-color:#EEEEEE;" >
+                    <div id="canvasID" style="width:600px; height:600px; margin: 0px; padding: 0px;">
+                        <canvas id="canvas" width="600px" height="600px" style="background-color: #fff">
                         </canvas>
+                        <div id="resultsCanvas" style="position:absolute; width:600px; height:600px; top:0px; margin-left:25; margin-right:25px; margin-top:5px">
+                        </div>
+                        <div class="row" id="buttonBar" style="position:absolute; bottom:0px; margin-left:25; margin-right:25px;">
+                        </div>
                     </div>
-                    <div class="float" >     
-                        <div class="task-buttons, pull-right">
+                    <div class="row" >     
+                        <div class="task-buttons pull-right">
                             <button id="-play-again-button" class="btn btn-success" onClick="window.location.reload()">Restart</button>
                             <button id="-tasks-button" class="btn btn-success" onClick="parent.location='../'">Main Menu</button>
                         </div>
