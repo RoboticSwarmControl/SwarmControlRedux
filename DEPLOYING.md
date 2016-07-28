@@ -2,7 +2,33 @@
 
 ## Inital dependencies
 
+You'll need an installation of PostgreSQL (available [here](https://www.postgresql.org/download/)). Make note of the password for the `postgres` user, because you'll need it later when setting up the database.
+
+You'll need an installation of Node 5.10 (available [here](https://nodejs.org/dist/latest-v5.x/)).
+
 # Local install
+
+First, you'll need to make sure that you've got NodeJS 5.10.0 [from here](https://nodejs.org/dist/latest-v5.x/), or [here](https://nodejs.org/dist/latest-v5.x/) for Mac OS.
+
+Next, you'll need to download the repo:
+
+```
+$ git clone https://github.com/RoboticSwarmControl/SwarmControlRedux.git
+```
+
+Then, you need to install the application, go to the folder you have cloned, and install:
+
+```
+$ npm install
+```
+
+After, you need to build the client resources. This will copy around the vendor scripts and compile the games.
+
+This is also when linting will occur.
+
+```
+$ npm run-script build
+```
 
 # Heroku install
 
@@ -28,19 +54,18 @@ Verify the user and the database are created:
 \du
 ```
 
-Next, run the schema SQL file:
+Next, run the schema SQL file from your command line:
 
 ```
-psql -h localhost -d swarm -U swarmcontrol --password -p 5432 -f database/schema.sql
+$ psql -h localhost -d swarm -U swarmcontrol --password -p 5432 -f database/schema.sql
 ```
 
-Enter the passwword when prompted, and then check that the schema worked:
+Enter the password when prompted, and then check that the schema worked:
 
 ```
 \connect swarm
 \dt
 ```
-
 
 # Heroku install
 
