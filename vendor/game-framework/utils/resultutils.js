@@ -75,16 +75,17 @@ window.resultutils = (function ($,_, Flotr) {
         var mostRecentIsParticipant = false;
 
 
+        console.log(res);
         _.each( res, function (r) {
             y = parseTime(r.runtime);
             
-            if (r.task === 'maze_positioning' || r.task === 'robot_positioning'){
+            if (r.task === 'varying-number' || r.task === 'robot-positioning'){
                 x = r.robotCount;
-            }else if (r.task ==='varying_control' || r.task === 'forage' ){
+            }else if (r.task ==='varying-control-scheme' || r.task === 'foraging' ){
                 x = _.indexOf(modekeys, r.mode);
-            }else if(r.task === 'varying_visualization'){
+            }else if(r.task === 'varying-visualization'){
                 x = _.indexOf(modekeys, r.mode);
-            }else if(r.task === 'pyramid_building'){
+            }else if(r.task === 'pyramid-building'){
                 x = 10*parseFloat(r.mode);
             }else{
                 x = r.robotCount;
@@ -226,9 +227,9 @@ window.resultutils = (function ($,_, Flotr) {
     function plot( $container, xAxisLabel, taskPrettyName, taskResults, userResults) {        
         var $task = $('<div class="results-chart"></div>');
 
-        var isHistogram =   taskResults[0].task === 'varying_control' ||
-                            taskResults[0].task === 'forage' ||
-                            taskResults[0].task === 'varying_visualization';
+        var isHistogram =   taskResults[0].task === 'varying-control-scheme' ||
+                            taskResults[0].task === 'foraging' ||
+                            taskResults[0].task === 'varying-visualization';
 
         plotTask( $container, $task, taskPrettyName, xAxisLabel, taskResults, userResults, isHistogram);
     }
