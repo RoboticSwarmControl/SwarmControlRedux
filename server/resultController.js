@@ -9,6 +9,8 @@ var util = require('./util.js');
 var db = require('./database.js');
 var csv = require('fast-csv');
 
+var games = require('./gameController.js')._swarm_.mountedGames;
+
 router.get('/', function _renderResultsIndex( req, res ) {
 	URFP(req);
 	db.getResults()
@@ -16,8 +18,7 @@ router.get('/', function _renderResultsIndex( req, res ) {
 		// fix date to be formatted usefully
 		results = results.map( function _fixupDates( r ){
 			/* jshint sub:true */
-			r['created_at'] = r['created_at'].toISOString();
-			r['updated_at'] = r['updated_at'].toISOString();
+			r.createdAt = r.createdAt.toISOString();
 			return r;
 		});
 
@@ -33,7 +34,7 @@ router.get('/', function _renderResultsIndex( req, res ) {
 												});
 							break;
 			case 'json': 	
-							res.status(200).json( {results:results} );
+							res.status(200).json( {results:results, taskInfo: games} );
 							break;
 			default: 		util.renderPage('results.html.ejs')
 							.then( function (page) {
@@ -56,8 +57,7 @@ router.get('/:resultID', function _renderResultsIndex( req, res ) {
 		// fix date to be formatted usefully
 		results = results.map( function _fixupDates( r ){
 			/* jshint sub:true */
-			r['created_at'] = r['created_at'].toISOString();
-			r['updated_at'] = r['updated_at'].toISOString();
+			r.createdAt = r.createdAt.toISOString();
 			return r;
 		});
 
@@ -73,7 +73,7 @@ router.get('/:resultID', function _renderResultsIndex( req, res ) {
 												});
 							break;
 			case 'json': 	
-							res.status(200).json( {results:results} );
+							res.status(200).json( {results:results, taskInfo: games} );
 							break;
 			default: 		util.renderPage('results.html.ejs')
 							.then( function (page) {

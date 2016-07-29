@@ -8,6 +8,11 @@ var path = require('path');
 
 var mountedGames = [];
 
+//HACKHACK...this makes the mounted games visible elsewhere
+router._swarm_ = {
+	mountedGames: {}
+};
+
 function loadGames() {
 	var gameDirectory = util.getGameDirectory();
 	var games = fs.readdirSync( gameDirectory );
@@ -30,7 +35,14 @@ function loadGames() {
 			fs.statSync( manifest.paths.instructions );
 			fs.statSync( manifest.paths.science );
 
-			router.get('/' + manifest.name , function _renderGame( req, res) {	
+			router._swarm_.mountedGames[gameName] = {
+				name: manifest.name,
+				displayName: manifest.displayName,
+				url: '/tasks/' + encodeURIComponent(manifest.name),
+				xAxisLabel: manifest.xAxisLabel
+			};
+
+			router.get('/' + encodeURIComponent(manifest.name) , function _renderGame( req, res) {	
 				URFP(req);				
 
 				util.renderPage('game.html.ejs',
@@ -48,7 +60,7 @@ function loadGames() {
 				});
 			});
 
-			mountedGames.push(manifest);
+			mountedGames.push(manifest);			
 		} catch(e) {
 			console.log( 'Unable to load game '+ gameName + ':\n\t', e.toString() );
 		}		
