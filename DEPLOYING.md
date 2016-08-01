@@ -6,7 +6,7 @@ You'll need an installation of PostgreSQL (available [here](https://www.postgres
 
 You'll need an installation of Node 5.10 (available [here](https://nodejs.org/dist/latest-v5.x/)).
 
-# Local install
+### Local install
 
 First, you'll need to make sure that you've got NodeJS 5.10.0 [from here](https://nodejs.org/dist/latest-v5.x/), or [here](https://nodejs.org/dist/latest-v5.x/) for Mac OS.
 
@@ -30,11 +30,9 @@ This is also when linting will occur.
 $ npm run-script build
 ```
 
-# Heroku install
-
 ## Setting up the database
 
-# Local install
+### Local install
 
 You'll need a Postgres console and an administrator account. For Mac OS, use [instruction here](https://launchschool.com/blog/how-to-install-postgresql-on-a-mac)
 
@@ -66,7 +64,3 @@ Enter the password when prompted, and then check that the schema worked:
 \connect swarm
 \dt
 ```
-
-# Heroku install
-
-## Setting up the game
