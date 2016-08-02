@@ -30,6 +30,10 @@ This is also when linting will occur.
 $ npm run-script build
 ```
 
+### Heroku install
+
+Make sure that you have the [Heroku toolbelt](https://toolbelt.heroku.com/debian) installed.
+
 ## Setting up the database
 
 ### Local install
@@ -63,4 +67,32 @@ Enter the password when prompted, and then check that the schema worked:
 ```
 \connect swarm
 \dt
+```
+
+### Heroku install
+
+First, make sure that you've authenticated with Heroku via the toolbelt:
+
+```
+$ heroku auth:login 
+```
+
+You'll be prompted for your email and password; once finished, you'll be able to issue further commands to your instance.
+
+Next, we make a backup of the current status of the database.
+
+```
+$ heroku pg:backups capture --app swarmcontrol
+```
+
+Then, download the backup:
+
+```
+$ curl -o latest.dump `heroku pg:backups public-url --app swarmcontrol`
+```
+
+Next, run the schema file on the database server (run this from the root of the installation):
+
+```
+$ cat database/schema.sql | heroku pg:sql --app swarmcontrol 
 ```
