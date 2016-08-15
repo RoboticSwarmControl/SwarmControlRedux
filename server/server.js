@@ -15,9 +15,9 @@ var bodyParser = require('body-parser');
 var listenPort = process.env.LISTEN_PORT || 3000;
 
 console.log('Listening on port ', listenPort);
-console.log('Connecting to database ', process.env.DB_STRING);
+console.log('Connecting to database ', process.env.DB_STRING || process.env.DATABASE_URL);
 
-db.init( process.env.DB_STRING);
+db.init( process.env.DB_STRING || process.env.DATABASE_URL);
 
 var kTwentyYears = 1000 * 60 * 60 * 24 * 365 * 20;
 
