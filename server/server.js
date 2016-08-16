@@ -12,7 +12,7 @@ var appRouter = require('./appController.js');
 var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
 
-var listenPort = process.env.LISTEN_PORT || 3000;
+var listenPort = process.env.PORT || 3000;
 
 console.log('Listening on port ', listenPort);
 console.log('Connecting to database ', process.env.DB_STRING);
