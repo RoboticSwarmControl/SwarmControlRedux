@@ -9,7 +9,8 @@
     "build": "gulp default",
     "build-no-lint": "gulp build-no-lint",
     "clean": "gulp clean",
-    "start": "node server/server.js"
+    "start": "node server/server.js",
+    "postinstall": "npm run-script build"
   },
   "repository": {
     "type": "git",

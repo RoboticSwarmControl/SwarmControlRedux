@@ -13,7 +13,7 @@ var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
 
 var listenPort = process.env.PORT || 3000;
-var kDatabaseConnection = process.env.DATABASE_URL || processs.env.DB_STRING;
+var kDatabaseConnection = process.env.DATABASE_URL || process.env.DB_STRING;
 
 console.log('Listening on port ', listenPort);
 console.log('Connecting to database ', kDatabaseConnection );
