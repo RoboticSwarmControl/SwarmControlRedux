@@ -12,12 +12,13 @@ var appRouter = require('./appController.js');
 var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
 
-var listenPort = process.env.LISTEN_PORT || 3000;
+var listenPort = process.env.PORT || 3000;
+var kDatabaseConnection = process.env.DATABASE_URL || process.env.DB_STRING;
 
 console.log('Listening on port ', listenPort);
-console.log('Connecting to database ', process.env.DATABASE_URL);
+console.log('Connecting to database ', kDatabaseConnection );
 
-db.init( process.env.DATABASE_URL);
+db.init( kDatabaseConnection );
 
 var kTwentyYears = 1000 * 60 * 60 * 24 * 365 * 20;
 
