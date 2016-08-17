@@ -263,9 +263,9 @@
                 $starBar.append('<img src="'+strImage+'" width="'+imgsize+'" height="'+imgsize+'"><h3>x'+numPres+'</h3>');
             } else {
                 for( var i = 0; i<maxstars; i++){
-                    strImage = '/assets/soft_edge_empty_star.png';
+                    strImage = '/assets/images/soft_edge_empty_star.png';
                     if( numPres > i) {
-                        strImage = '/assets/soft_edge_yellow_star.png';
+                        strImage = '/assets/images/soft_edge_yellow_star.png';
                     }
                     $starBar.append('<img src="'+strImage+'" width="'+imgsize+'" height="'+imgsize+'">');
                 }
