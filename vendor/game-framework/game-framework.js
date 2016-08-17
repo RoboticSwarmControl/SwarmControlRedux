@@ -248,7 +248,7 @@
             resultutils.plot(c, taskInfo.xAxisLabel, taskInfo.displayName, data.results, []);
             //var $buttonBar = $('<div class="row"></div>');
             var $buttonBar = $('#buttonBar');
-            var $playAgainButton = $('<div class="col-md-3"><button class="btn btn-success play-again-button" onclick="location.reload(true);"><h3>Play again!</h3></button></div>');
+            var $playAgainButton = $('<div class="col-md-3"><button class="btn btn-success play-again-button" onclick="location.reload(true);"> <strong>Play again! </strong></button></div>');
             $buttonBar.append($playAgainButton);
             
 
