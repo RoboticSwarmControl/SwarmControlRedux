@@ -204,6 +204,10 @@
 	        }
 			this.world.ClearForces();
 
+			// render the task time
+    		var string = '<strong>Time:</strong> ' + (this._timeElapsed/1000).toFixed(2) + 's';
+    		this._$feedback.html(string);
+
 			return this.doStateRunning;	
 		}		
 	};
@@ -289,6 +293,11 @@
 	};
 
 	GameFramework.prototype.doStatePaused = function( dt, inputEvents ) {
+
+		// render the task time
+    	var string = '<strong>Time:</strong> PAUSED at ' + (this._timeElapsed/1000).toFixed(2) + 's';
+    	this._$feedback.html(string);
+
 		this._timeInPause += dt;
 	
 		if (this._timeInPause > this.kAllowedTimeInPause) {
@@ -352,6 +361,8 @@
 		this.mobileUserAgent =( /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) );
 
 		drawutils.init($('#canvas'));
+
+		this._$feedback = $('#taskFeedback');
 
 		this._$canvas = $canvas;
 		this.useKeyboard = false; // updated as soon as keyboard events occur
