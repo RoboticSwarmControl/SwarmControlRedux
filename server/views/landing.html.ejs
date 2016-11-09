@@ -18,66 +18,71 @@
 	}(document, 'script', 'facebook-jssdk'));</script>
 
 	<div class="container">
+		<div class="pull-right">
+	        <div class="g-plusone" data-size="medium" data-href="http://www.swarmcontrol.net/"></div>
+	        <script type="text/javascript">
+	        (function() {
+	            var po = document.createElement('script'); po.type = 'text/javascript'; po.async = true;
+	            po.src = 'https://apis.google.com/js/plusone.js';
+	            var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(po, s);
+	        })();
+	        </script>
+	        <div class="fb-like" style="top:-4px;" data-href="http://www.swarmcontrol.net" data-width="50" data-layout="button_count" data-show-faces="true" data-send="true"></div>
+	    </div>
+
 	    <h1>SwarmControl: Massive Manipulation 
 	        <!-- Place this tag where you want the +1 button to render. -->
-	        <div class="pull-right">
-	            <div class="g-plusone" data-size="medium" data-href="http://www.swarmcontrol.net/"></div>
-	            <div class="fb-like" data-href="http://www.swarmcontrol.net" data-width="50" data-layout="button_count" data-show-faces="true" data-send="true"></div>
-	            <!-- Place this tag after the last +1 button tag. -->
-	            <script type="text/javascript">
-	            (function() {
-	                var po = document.createElement('script'); po.type = 'text/javascript'; po.async = true;
-	                po.src = 'https://apis.google.com/js/plusone.js';
-	                var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(po, s);
-	            })();
-	            </script>
-	        </div></h1>  
-	        We want to understand how humans can best control robotic swarms. To achieve this, we gather and analyze game-play data.   
-	        <br>For more, <a href="http://www.youtube.com/subscription_center?add_user=aabecker5">subscribe</a> to our YouTube channel.
-	        <hr>
+	    </h1>  
 
+	    <p>
+	    	We want to understand how humans can best control robotic swarms. To achieve this, we gather and analyze game-play data.
+	    </p>
+	   	<p>
+	   		For more, <a href="http://www.youtube.com/subscription_center?add_user=aabecker5">subscribe</a> to our YouTube channel.
+	    </p>
+	    <hr>
 
+	    <h2>Why we care </h2>
+	    <a href="/subscribe"> Request the research paper!</a>
+	    
+	    <p>
+	    	Compelling applications for creating micro-robotic swarms range from <a href="http://en.wikipedia.org/wiki/Targeted_drug_delivery">targeted drug delivery</a> to <a href="http://en.wikipedia.org/wiki/Invasiveness_of_surgical_procedures#Minimally_invasive_procedure">minimally invasive surgery</a>.
+	    </p>
+		<p>
+			Potential impacts are broad: large populations of micro-manipulators would enable surgeons to eliminate cancer at the cellular level, let engineers develop complex MEMS assemblies, and empower biologists to simultaneously sort all the cells on a Petri dish.
+		</p>
 
-	        <h2>Why we care </h2>
-	        <a href="/subscribe"> Request the research paper!</a>
-	        
-	Compelling applications for creating micro-robotic swarms range from <a href="http://en.wikipedia.org/wiki/Targeted_drug_delivery">targeted drug delivery</a> to <a href="http://en.wikipedia.org/wiki/Invasiveness_of_surgical_procedures#Minimally_invasive_procedure">minimally invasive surgery</a>.
-	Potential impacts are broad: large populations of micro-manipulators would enable surgeons to eliminate cancer at the cellular level, let engineers develop complex MEMS assemblies, and empower biologists to simultaneously sort all the cells on a Petri dish. 
+		<h2>Play them all</h2>
 
+		<script> 
+		    var myParticipant =  document.cookie.slice(document.cookie.indexOf("task_sig")+("task_sig").length+1); //substring starting at task_sig 
+		    myParticipant = myParticipant.substr(0,myParticipant.indexOf(";")); //trim any extra info off the string
 
+		    function drawMeritBadges(divname,taskname,numstars){
+		        numstars = typeof numstars !== 'undefined' ? numstars : 3;
+		        var numPres = 0;
+		        $.get("/result.json?task="+taskname+"&participant="+myParticipant, function( data ) {
+		            data = JSON.parse(data);
 
-	<h2>Play them all</h2>
-
-	<script> 
-	    var myParticipant =  document.cookie.slice(document.cookie.indexOf("task_sig")+("task_sig").length+1); //substring starting at task_sig 
-	    myParticipant = myParticipant.substr(0,myParticipant.indexOf(";")); //trim any extra info off the string
-
-	    function drawMeritBadges(divname,taskname,numstars){
-	        numstars = typeof numstars !== 'undefined' ? numstars : 3;
-	        var numPres = 0;
-	        $.get("/result.json?task="+taskname+"&participant="+myParticipant, function( data ) {
-	            data = JSON.parse(data);
-	            //console.log(data.results);
-	            for( var i = 0; i<data.results.length; i++){
-	                if( data.results[i].participant == myParticipant) {
-	                    numPres = numPres+1;
-	                } 
-	            }
-	            var element=  document.getElementById(divname);
-	            for( var i = 0; i<Math.max(numstars, numPres); i++){
-	                var strImage = "/assets/soft_edge_empty_star.png";
-	                if( numPres >i) {strImage = "/assets/soft_edge_yellow_star.png";}
-	                var img = document.createElement("img");
-	                img.src = strImage;
-	                img.width = 24;
-	                img.height = 24;
-	                element.appendChild(img);  
-	            }
-	        }); 
-	} 
-	</script>
+		            for( var i = 0; i<data.results.length; i++){
+		                if( data.results[i].participant == myParticipant) {
+		                    numPres = numPres+1;
+		                } 
+		            }
+		            var element=  document.getElementById(divname);
+		            for( var i = 0; i<Math.max(numstars, numPres); i++){
+		                var strImage = "/assets/soft_edge_empty_star.png";
+		                if( numPres >i) {strImage = "/assets/soft_edge_yellow_star.png";}
+		                var img = document.createElement("img");
+		                img.src = strImage;
+		                img.width = 24;
+		                img.height = 24;
+		                element.appendChild(img);  
+		            }
+		        }); 
+		} 
+		</script>
 		<%- include('partials/landing-tasks.html.ejs', {tasks: locals.tasks || [] } ) %>
-	<br>
 	</div>
 </div>
 
