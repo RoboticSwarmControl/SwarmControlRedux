@@ -49,11 +49,11 @@ h1 .btn-group
 }
 
 .highlightit img{
-    border: 2px solid rgba(#ccc, 0.0);
+    border: 4px solid #ccc;
 }
 
 .highlightit:hover img{
-    border: 2px solid rgb(70,0,255);
+    border: 4px solid rgb(70,0,255);
 }
 
 .highlightit:hover{
