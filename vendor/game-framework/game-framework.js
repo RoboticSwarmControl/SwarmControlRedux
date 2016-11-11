@@ -168,7 +168,8 @@
 	GameFramework.prototype.doStateOverview = function ( dt, inputEvents ){
 		this._drawCallback();
 		this._overviewCallback( dt, inputEvents);
-		if (inputEvents.length > 0) {
+
+		if ( inputEvents.some( function _anyStarts(evt){ return evt.type === 'mouseup'; }) ) {
 			// on new input, we're gonna run. fire the preagme and roll!
 			this._pregameCallback();
 			return this.doStateRunning;
