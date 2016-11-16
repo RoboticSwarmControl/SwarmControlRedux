@@ -86,7 +86,9 @@ function theGame($,phys,GameFramework, Box2D, drawutils, mathutils) {
         this.keyDown = false;
         this.keyLeft = false;
         this.keyRight = false;
-        this.impulseStart = null;        
+        this.impulseStart = null;
+
+        $('#select-robot-count').html(this.task.numRobots);
     });
 
     game.setDrawCallback( function() {
