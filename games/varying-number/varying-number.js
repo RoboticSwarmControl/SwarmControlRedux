@@ -8,6 +8,29 @@ function theGame($,phys,GameFramework, Box2D, drawutils, mathutils) {
     function URFP( x ) { /* jshint expr:true */ x; }
     URFP(mathutils);
 
+    var setupRobots = function(numRobots) {
+        this.task.robotRadius = 0.5*4.0/Math.sqrt(this.task.numRobots);
+        
+        // remove existing robots
+        this.task.robots.forEach( function(bot){
+            phys.destroyRobot(this.world, bot);
+        }.bind(this));
+        this.task.robots.length = 0;
+
+        // add robots
+        var rowLength = Math.floor(7/(2*this.task.robotRadius));
+        var xoffset = this.task.robotRadius+0.5;
+        var yoffset = 14+this.task.robotRadius;
+
+        for(var i = 0; i < numRobots; ++i) {
+            this.task.robots.push( phys.makeRobot(  this.world,
+                                                    (i%rowLength)*2.1*this.task.robotRadius + xoffset,
+                                                    Math.floor(i/rowLength)*2.1*this.task.robotRadius + yoffset,
+                                                    this.task.robotRadius,
+                                                    'robot'));
+        }
+    }.bind(game);
+
     game.setSpawnWorldCallback( function() {
         /*jshint camelcase:false */
         /* ^ we do this because the Box2D bindings are fugly. */
@@ -16,12 +39,11 @@ function theGame($,phys,GameFramework, Box2D, drawutils, mathutils) {
         this.task.minRobots = 1;
         this.task.maxRobots = 450;
         this.task.numRobots = Math.floor((Math.random()*500)+1);          // number of robots
-        this.task.robotRadius = 0.5*4.0/Math.sqrt(this.task.numRobots);
         this.task.robots = [];              // array of bodies representing the robots
         this.task.goals = [];               // array of goals of form {x,y,w,h}
         this.task.blocks = [];              // array of bodies representing blocks
 
-        var i;
+        
         var fixDef = new phys.fixtureDef();
         fixDef.density = 10.0;
         fixDef.friction = 0.5;
@@ -77,18 +99,8 @@ function theGame($,phys,GameFramework, Box2D, drawutils, mathutils) {
         fixDef.shape = new phys.circleShape(3); 
         this.task.goals[0].CreateFixture(fixDef);
 
-        // create some robots
-        var rowLength = Math.floor(7/(2*this.task.robotRadius));
-        var xoffset = this.task.robotRadius+0.5;
-        var yoffset = 14+this.task.robotRadius;
-
-        for(i = 0; i < this.task.numRobots; ++i) {
-            this.task.robots.push( phys.makeRobot(  this.world,
-                                                    (i%rowLength)*2.1*this.task.robotRadius + xoffset,
-                                                    Math.floor(i/rowLength)*2.1*this.task.robotRadius + yoffset,
-                                                    this.task.robotRadius,
-                                                    'robot'));
-        }
+        // create some robots        
+        setupRobots(this.task.numRobots);
     });
 
     game.setInitTaskCallback( function() {
@@ -112,11 +124,12 @@ function theGame($,phys,GameFramework, Box2D, drawutils, mathutils) {
                     $robotCounter.html(this.task.numRobots);
                     this.task.clickTimeout = window.setTimeout( _handleAddClick.bind(this), 250 );
                 }
-            }.bind(this),250);
+            }.bind(this),0);
 
             $(window).on('mouseup', function(evt){
                 URFP(evt);
                 if (this.task.clickTimeout) {
+                    setupRobots(this.task.numRobots);
                     window.clearTimeout( this.task.clickTimeout );
                     this.task.clickTimeout = null;
                 }
@@ -131,15 +144,16 @@ function theGame($,phys,GameFramework, Box2D, drawutils, mathutils) {
             this.task.clickStart = new Date();
             this.task.clickTimeout = window.setTimeout( function _handleRemoveClick(){
                 if (this.task.numRobots > this.task.minRobots) {
-                    this.task.numRobots--;
+                    this.task.numRobots--;                    
                     $robotCounter.html(this.task.numRobots);
                     this.task.clickTimeout = window.setTimeout( _handleRemoveClick.bind(this), 250 );
                 }                
-            }.bind(this),250);
+            }.bind(this),0);
 
             $(window).on('mouseup', function(evt){
                 URFP(evt);
                 if (this.task.clickTimeout) {
+                    setupRobots(this.task.numRobots);
                     window.clearTimeout( this.task.clickTimeout );
                     this.task.clickTimeout = null;
                 }
