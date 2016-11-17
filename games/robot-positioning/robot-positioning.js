@@ -9,9 +9,39 @@ function theGame($,phys,GameFramework, Box2D, drawutils, mathutils) {
 
     var game = new GameFramework('robot-positioning', 'Robot positioning', 'Number of robots');
 
-    game.setSpawnWorldCallback( function () {
+    var setupRobots = function(numRobots){
         /*jshint camelcase:false */
         /* ^ we do this because the Box2D bindings are fugly. */
+
+        this.task.robots.forEach( function(bot){
+            phys.destroyRobot(this.world, bot);
+        }.bind(this));
+        this.task.robots.length = 0;
+
+        var rowLength = 3;
+        var bodyDef = new phys.bodyDef();
+        bodyDef.type = phys.body.b2_dynamicBody;
+        bodyDef.userData = 'robot';
+
+        var fixDef = new phys.fixtureDef();        
+        fixDef.density = 1.0;
+        fixDef.friction = 0.5;
+        fixDef.restitution = 0.2;  //bouncing value
+        fixDef.shape = new phys.circleShape( 0.5 ); // radius .5 robots
+
+        for(var i = 0; i < numRobots; ++i) {
+            bodyDef.position.x = (i%rowLength)*2.1*0.5 + 12;
+            bodyDef.position.y = Math.floor(i/rowLength)-2.1*0.5 + 8;
+            this.task.robots[i] = this.world.CreateBody(bodyDef);
+            this.task.robots[i].CreateFixture(fixDef);
+            this.task.robots[i].m_angularDamping = 10;
+            this.task.robots[i].m_linearDamping = 10;
+            this.task.robots[i].atGoal = false;
+        }
+    }.bind(game);
+
+    game.setSpawnWorldCallback( function () {
+        /*jshint camelcase:false */
 
         this.task = {};
         this.task.minRobots = 1;
@@ -67,18 +97,10 @@ function theGame($,phys,GameFramework, Box2D, drawutils, mathutils) {
         fixDef.friction = 0.5;
         fixDef.restitution = 0.2;  //bouncing value
         fixDef.shape = new phys.circleShape( 0.5 ); // radius .5 robots
-        var rowLength = 3;
-        for(var i = 0; i < this.task.numRobots; ++i) {
-            bodyDef.position.x = (i%rowLength)*2.1*0.5 + 12;
-            bodyDef.position.y = Math.floor(i/rowLength)-2.1*0.5 + 8;
-            this.task.robots[i] = this.world.CreateBody(bodyDef);
-            this.task.robots[i].CreateFixture(fixDef);
-            this.task.robots[i].m_angularDamping = 10;
-            this.task.robots[i].m_linearDamping = 10;
-            this.task.robots[i].atGoal = false;
-        }
+        
+        setupRobots(this.task.numRobots);
     });
-
+    
     game.setInitTaskCallback( function() {
         this.task.goalsX = [8,7,9,7,8,9,7,9,7,9];                 // x-coord of goals
         this.task.goalsY = [6,7,7,8,8,8,9,9,6,6];                 // y-coord of goals
@@ -112,6 +134,7 @@ function theGame($,phys,GameFramework, Box2D, drawutils, mathutils) {
             $(window).on('mouseup', function(evt){
                 URFP(evt);
                 if (this.task.clickTimeout) {
+                    setupRobots(this.task.numRobots);
                     window.clearTimeout( this.task.clickTimeout );
                     this.task.clickTimeout = null;
                 }
@@ -135,6 +158,7 @@ function theGame($,phys,GameFramework, Box2D, drawutils, mathutils) {
             $(window).on('mouseup', function(evt){
                 URFP(evt);
                 if (this.task.clickTimeout) {
+                    setupRobots(this.task.numRobots);
                     window.clearTimeout( this.task.clickTimeout );
                     this.task.clickTimeout = null;
                 }
