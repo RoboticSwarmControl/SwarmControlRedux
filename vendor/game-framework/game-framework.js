@@ -97,47 +97,59 @@
 	    this.constants.obsThick = 0.2;						//thickness of obstacles at edges and internally
 	}
 
+	function MAKE_SAFE_CALLBACK( cb, thiz, defaultRet) {
+		return function(){
+			var ret = defaultRet;
+			try{
+				ret = cb.apply(thiz, arguments);
+			} catch (e) {
+				console.log(e);
+			}
+			return ret;
+		};
+	}
+
 	GameFramework.prototype.setSpawnWorldCallback = function ( spawnWorldCb ) {
-		this._spawnWorldCallback = spawnWorldCb.bind(this);
+		this._spawnWorldCallback = MAKE_SAFE_CALLBACK(spawnWorldCb,this);
 	};
 	GameFramework.prototype.setInitTaskCallback = function ( initTaskCb ) {
-		this._initTaskCallback = initTaskCb.bind(this);
+		this._initTaskCallback = MAKE_SAFE_CALLBACK(initTaskCb,this);
 	};
 
 	GameFramework.prototype.setOverviewCallback = function ( overviewFunctionCb ) {
-		this._overviewCallback = overviewFunctionCb.bind(this);
+		this._overviewCallback = MAKE_SAFE_CALLBACK(overviewFunctionCb,this);
 	};
 
 	GameFramework.prototype.setPregameCallback = function ( pregameCb ) {
-		this._pregameCallback = pregameCb.bind(this);
+		this._pregameCallback = MAKE_SAFE_CALLBACK(pregameCb,this);
 	};
 
 	GameFramework.prototype.setUpdateCallback = function ( updateFunctionCb ) {
-		this._updateCallback = updateFunctionCb.bind(this);
+		this._updateCallback = MAKE_SAFE_CALLBACK(updateFunctionCb,this);
 	};
 
 	GameFramework.prototype.setDrawCallback = function ( drawCb ) {
-		this._drawCallback = drawCb.bind(this);
+		this._drawCallback = MAKE_SAFE_CALLBACK(drawCb,this);
 	};
 
 	GameFramework.prototype.setWinTestCallback = function ( winTestCallback ) {
-		this._winTestCallback = winTestCallback.bind(this);
+		this._winTestCallback = MAKE_SAFE_CALLBACK(winTestCallback,this,false);
 	};
 
 	GameFramework.prototype.setLoseTestCallback = function ( lostTestCallback ) {
-		this._loseTestCallback = lostTestCallback.bind(this);
+		this._loseTestCallback = MAKE_SAFE_CALLBACK(lostTestCallback,this,false);
 	};
 
 	GameFramework.prototype.setLostCallback = function ( lostCb) {
-		this._lostCallback = lostCb.bind(this);
+		this._lostCallback = MAKE_SAFE_CALLBACK(lostCb,this);
 	};
 
 	GameFramework.prototype.setWonCallback = function( wonCb ) {
-		this._wonCallback = wonCb.bind(this);
+		this._wonCallback = MAKE_SAFE_CALLBACK(wonCb,this);
 	};
 
 	GameFramework.prototype.setResultsCallback = function ( resultsCb ) {
-		this._submitResultsCallback = resultsCb.bind(this);
+		this._submitResultsCallback = MAKE_SAFE_CALLBACK(resultsCb,this,{});
 	};
 
 	GameFramework.prototype.doStateSpawnWorld = function ( dt, inputEvents ){

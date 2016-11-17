@@ -88,6 +88,13 @@ window.phys = (function(Box2D){
             return body;
         },
 
+        destroyRobot: function(world, bot) {
+            for(var f = bot.GetFixtureList(); f; f = f.GetNext()) {
+                bot.DestroyFixture(f);
+            }
+            world.DestroyBody(bot);
+        },
+
         makeBlock: function(world, x, y, w, h, userData){
             var phys = window.phys;
             var bodyDef = new phys.bodyDef();
