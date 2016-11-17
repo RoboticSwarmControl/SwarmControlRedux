@@ -9,12 +9,44 @@ function theGame($,phys,GameFramework, Box2D, drawutils, mathutils) {
 
     var game = new GameFramework('robot-positioning', 'Robot positioning', 'Number of robots');
 
-    game.setSpawnWorldCallback( function () {
+    var setupRobots = function(numRobots){
         /*jshint camelcase:false */
         /* ^ we do this because the Box2D bindings are fugly. */
 
+        this.task.robots.forEach( function(bot){
+            phys.destroyRobot(this.world, bot);
+        }.bind(this));
+        this.task.robots.length = 0;
+
+        var rowLength = 3;
+        var bodyDef = new phys.bodyDef();
+        bodyDef.type = phys.body.b2_dynamicBody;
+        bodyDef.userData = 'robot';
+
+        var fixDef = new phys.fixtureDef();        
+        fixDef.density = 1.0;
+        fixDef.friction = 0.5;
+        fixDef.restitution = 0.2;  //bouncing value
+        fixDef.shape = new phys.circleShape( 0.5 ); // radius .5 robots
+
+        for(var i = 0; i < numRobots; ++i) {
+            bodyDef.position.x = (i%rowLength)*2.1*0.5 + 12;
+            bodyDef.position.y = Math.floor(i/rowLength)-2.1*0.5 + 8;
+            this.task.robots[i] = this.world.CreateBody(bodyDef);
+            this.task.robots[i].CreateFixture(fixDef);
+            this.task.robots[i].m_angularDamping = 10;
+            this.task.robots[i].m_linearDamping = 10;
+            this.task.robots[i].atGoal = false;
+        }
+    }.bind(game);
+
+    game.setSpawnWorldCallback( function () {
+        /*jshint camelcase:false */
+
         this.task = {};
-        this.task.numRobots = Math.floor((Math.random()*10)+1);   // number of robots
+        this.task.minRobots = 1;
+        this.task.maxRobots = 10; // if you change this, make sure to update the number of goal positiosn
+        this.task.numRobots = Math.floor((Math.random()*(this.task.maxRobots-this.task.minRobots))+this.task.minRobots);   // number of robots
         this.task.robots = [];
         this.task.goals = [];
         this.task.blocks = [];
@@ -65,18 +97,10 @@ function theGame($,phys,GameFramework, Box2D, drawutils, mathutils) {
         fixDef.friction = 0.5;
         fixDef.restitution = 0.2;  //bouncing value
         fixDef.shape = new phys.circleShape( 0.5 ); // radius .5 robots
-        var rowLength = 3;
-        for(var i = 0; i < this.task.numRobots; ++i) {
-            bodyDef.position.x = (i%rowLength)*2.1*0.5 + 12;
-            bodyDef.position.y = Math.floor(i/rowLength)-2.1*0.5 + 8;
-            this.task.robots[i] = this.world.CreateBody(bodyDef);
-            this.task.robots[i].CreateFixture(fixDef);
-            this.task.robots[i].m_angularDamping = 10;
-            this.task.robots[i].m_linearDamping = 10;
-            this.task.robots[i].atGoal = false;
-        }
+        
+        setupRobots(this.task.numRobots);
     });
-
+    
     game.setInitTaskCallback( function() {
         this.task.goalsX = [8,7,9,7,8,9,7,9,7,9];                 // x-coord of goals
         this.task.goalsY = [6,7,7,8,8,8,9,9,6,6];                 // y-coord of goals
@@ -86,7 +110,66 @@ function theGame($,phys,GameFramework, Box2D, drawutils, mathutils) {
         this.keyDown = false;
         this.keyLeft = false;
         this.keyRight = false;
-        this.impulseStart = null;        
+        this.impulseStart = null;
+
+        var $robotCounter = $('#select-robot-count');
+        $robotCounter.html(this.task.numRobots);
+
+        this.task.clickStart = null;
+        this.task.clickTimeout = null;
+
+        this.$addRobotButton = $('#-add-robots');
+        this.$addRobotButton.on('mousedown', function(evt){
+            URFP(evt);
+            
+            this.task.clickStart = new Date();
+            this.task.clickTimeout = window.setTimeout( function _handleAddClick(){
+                if (this.task.numRobots < this.task.maxRobots) {
+                    this.task.numRobots++;
+                    $robotCounter.html(this.task.numRobots);
+                    this.task.clickTimeout = window.setTimeout( _handleAddClick.bind(this), 250 );
+                }                
+            }.bind(this),250);
+
+            $(window).on('mouseup', function(evt){
+                URFP(evt);
+                if (this.task.clickTimeout) {
+                    setupRobots(this.task.numRobots);
+                    window.clearTimeout( this.task.clickTimeout );
+                    this.task.clickTimeout = null;
+                }
+            }.bind(this));
+        }.bind(this));
+        
+
+        this.$removeRobotButton = $('#-remove-robots');
+        this.$removeRobotButton.on('mousedown', function(evt){
+            URFP(evt);            
+            
+            this.task.clickStart = new Date();
+            this.task.clickTimeout = window.setTimeout( function _handleRemoveClick(){
+                if (this.task.numRobots > this.task.minRobots) {
+                    this.task.numRobots--;
+                    $robotCounter.html(this.task.numRobots);
+                    this.task.clickTimeout = window.setTimeout( _handleRemoveClick.bind(this), 250 );
+                }                
+            }.bind(this),250);
+
+            $(window).on('mouseup', function(evt){
+                URFP(evt);
+                if (this.task.clickTimeout) {
+                    setupRobots(this.task.numRobots);
+                    window.clearTimeout( this.task.clickTimeout );
+                    this.task.clickTimeout = null;
+                }
+            }.bind(this));
+        }.bind(this));
+
+    });
+
+    game.setPregameCallback( function() {
+        this.$addRobotButton.prop('disabled',true);
+        this.$removeRobotButton.prop('disabled',true);
     });
 
     game.setDrawCallback( function() {
