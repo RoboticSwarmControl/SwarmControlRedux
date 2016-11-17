@@ -14,7 +14,9 @@ function theGame($,phys,GameFramework, Box2D, drawutils, mathutils) {
         /* ^ we do this because the Box2D bindings are fugly. */
 
         this.task = {};
-        this.task.numRobots = Math.floor((Math.random()*10)+1);   // number of robots
+        this.task.minRobots = 1;
+        this.task.maxRobots = 10; // if you change this, make sure to update the number of goal positiosn
+        this.task.numRobots = Math.floor((Math.random()*(this.task.maxRobots-this.task.minRobots))+this.task.minRobots);   // number of robots
         this.task.robots = [];
         this.task.goals = [];
         this.task.blocks = [];
@@ -88,7 +90,62 @@ function theGame($,phys,GameFramework, Box2D, drawutils, mathutils) {
         this.keyRight = false;
         this.impulseStart = null;
 
-        $('#select-robot-count').html(this.task.numRobots);
+        var $robotCounter = $('#select-robot-count');
+        $robotCounter.html(this.task.numRobots);
+
+        this.task.clickStart = null;
+        this.task.clickTimeout = null;
+
+        this.$addRobotButton = $('#-add-robots');
+        this.$addRobotButton.on('mousedown', function(evt){
+            URFP(evt);
+            
+            this.task.clickStart = new Date();
+            this.task.clickTimeout = window.setTimeout( function _handleAddClick(){
+                if (this.task.numRobots < this.task.maxRobots) {
+                    this.task.numRobots++;
+                    $robotCounter.html(this.task.numRobots);
+                    this.task.clickTimeout = window.setTimeout( _handleAddClick.bind(this), 250 );
+                }                
+            }.bind(this),250);
+
+            $(window).on('mouseup', function(evt){
+                URFP(evt);
+                if (this.task.clickTimeout) {
+                    window.clearTimeout( this.task.clickTimeout );
+                    this.task.clickTimeout = null;
+                }
+            }.bind(this));
+        }.bind(this));
+        
+
+        this.$removeRobotButton = $('#-remove-robots');
+        this.$removeRobotButton.on('mousedown', function(evt){
+            URFP(evt);            
+            
+            this.task.clickStart = new Date();
+            this.task.clickTimeout = window.setTimeout( function _handleRemoveClick(){
+                if (this.task.numRobots > this.task.minRobots) {
+                    this.task.numRobots--;
+                    $robotCounter.html(this.task.numRobots);
+                    this.task.clickTimeout = window.setTimeout( _handleRemoveClick.bind(this), 250 );
+                }                
+            }.bind(this),250);
+
+            $(window).on('mouseup', function(evt){
+                URFP(evt);
+                if (this.task.clickTimeout) {
+                    window.clearTimeout( this.task.clickTimeout );
+                    this.task.clickTimeout = null;
+                }
+            }.bind(this));
+        }.bind(this));
+
+    });
+
+    game.setPregameCallback( function() {
+        this.$addRobotButton.prop('disabled',true);
+        this.$removeRobotButton.prop('disabled',true);
     });
 
     game.setDrawCallback( function() {
