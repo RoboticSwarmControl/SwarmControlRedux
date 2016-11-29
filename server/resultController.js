@@ -11,6 +11,22 @@ var csv = require('fast-csv');
 
 var games = require('./gameController.js')._swarm_.mountedGames;
 
+function packArrayOfObjects( results ) {
+	if (results.length < 1) {
+		return {};
+	} else {
+		var keys = Object.keys(results[0]);
+		var packed = keys.reduce( function(acc,k) { acc[k] = []; return acc},{});
+		return results.reduce( function _packResult( acc, result) {
+			keys.forEach( function _setKey(k) {
+				acc[k].push(result[k]);
+			});
+
+			return acc;
+		}, packed);	
+	}
+}
+
 router.get('/', function _renderResultsIndex( req, res ) {
 	URFP(req);
 	db.getResults()
@@ -33,9 +49,10 @@ router.get('/', function _renderResultsIndex( req, res ) {
 														}
 												});
 							break;
-			case 'json': 	
-							res.status(200).json( {results:results, taskInfo: games} );
+			case 'json': 	res.status(200).json( {results:results, taskInfo: games} );
 							break;
+			case 'json-packed': 	res.status(200).json( {results: packArrayOfObjects(results), taskInfo: games} );
+									break;
 			default: 		util.renderPage('results.html.ejs')
 							.then( function (page) {
 								res.status(200).send(page);
