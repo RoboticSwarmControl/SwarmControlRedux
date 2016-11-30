@@ -18,12 +18,20 @@ var getResultsForTaskQuery = 'SELECT' +
 							 ' agent, created_at as "createdAt", ending, id, mode, participant, robot_count as "robotCount", runtime, task ' +
 							 ' FROM results WHERE task = $1;';
 
-function getResults() {
-	return db.any( getAllResultsQuery );
+/* These queries omit information that is not used for charting. */
+var getAllResultsQueryForDisplay =	'SELECT' +
+									' ending, id, mode, participant, robot_count as "robotCount", runtime, task ' +
+									' FROM results;';
+var getResultsForTaskQueryForDisplay = 'SELECT' +
+							 ' ending, id, mode, participant, robot_count as "robotCount", runtime, task ' +
+							 ' FROM results WHERE task = $1;';							 
+
+function getResults( displayOnly ) {
+	return db.any( displayOnly ? getAllResultsQueryForDisplay : getAllResultsQuery );
 }
 
-function getResultsForTask( task ) {
-	return db.any( getResultsForTaskQuery, [task] );
+function getResultsForTask( task, displayOnly ) {
+	return db.any( displayOnly ? getResultsForTaskQueryForDisplay : getResultsForTaskQuery, [task] );
 }
 
 function saveResult( result ) {

@@ -29,12 +29,15 @@ function packArrayOfObjects( results ) {
 
 router.get('/', function _renderResultsIndex( req, res ) {
 	URFP(req);
-	db.getResults()
+	
+	db.getResults( req.query.forDisplay == 'true' )
 	.then( function( results ) {
 		// fix date to be formatted usefully
 		results = results.map( function _fixupDates( r ){
 			/* jshint sub:true */
-			r.createdAt = r.createdAt.toISOString();
+			if ( r.createdAt){
+				r.createdAt = r.createdAt.toISOString();
+			}			
 			return r;
 		});
 
