@@ -16,7 +16,7 @@ function packArrayOfObjects( results ) {
 		return {};
 	} else {
 		var keys = Object.keys(results[0]);
-		var packed = keys.reduce( function(acc,k) { acc[k] = []; return acc},{});
+		var packed = keys.reduce( function(acc,k) { acc[k] = []; return acc;},{});
 		return results.reduce( function _packResult( acc, result) {
 			keys.forEach( function _setKey(k) {
 				acc[k].push(result[k]);
@@ -30,7 +30,7 @@ function packArrayOfObjects( results ) {
 router.get('/', function _renderResultsIndex( req, res ) {
 	URFP(req);
 	
-	db.getResults( req.query.forDisplay == 'true' )
+	db.getResults( req.query.forDisplay === 'true' )
 	.then( function( results ) {
 		// fix date to be formatted usefully
 		results = results.map( function _fixupDates( r ){
