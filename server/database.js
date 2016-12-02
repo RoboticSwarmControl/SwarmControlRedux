@@ -13,18 +13,18 @@ function init( connectionString ) {
 
 var getAllResultsQuery =	'SELECT' +
 							' agent, created_at as "createdAt", ending, id, mode, participant, robot_count as "robotCount", runtime, task ' +
-							' FROM results;';
+							' FROM results_redux;';
 var getResultsForTaskQuery = 'SELECT' +
 							 ' agent, created_at as "createdAt", ending, id, mode, participant, robot_count as "robotCount", runtime, task ' +
-							 ' FROM results WHERE task = $1;';
+							 ' FROM results_redux WHERE task = $1;';
 
 /* These queries omit information that is not used for charting. */
 var getAllResultsQueryForDisplay =	'SELECT' +
 									' ending, id, mode, participant, robot_count as "robotCount", runtime, task ' +
-									' FROM results;';
+									' FROM results_redux;';
 var getResultsForTaskQueryForDisplay = 'SELECT' +
 							 ' ending, id, mode, participant, robot_count as "robotCount", runtime, task ' +
-							 ' FROM results WHERE task = $1;';							 
+							 ' FROM results_redux WHERE task = $1;';
 
 function getResults( displayOnly ) {
 	return db.any( displayOnly ? getAllResultsQueryForDisplay : getAllResultsQuery );
@@ -35,7 +35,7 @@ function getResultsForTask( task, displayOnly ) {
 }
 
 function saveResult( result ) {
-	return db.none('INSERT INTO results(task, participant, runtime, mode, agent, robot_count, ending) VALUES ($1, $2, $3, $4, $5, $6, $7);',
+	return db.none('INSERT INTO results_redux(task, participant, runtime, mode, agent, robot_count, ending) VALUES ($1, $2, $3, $4, $5, $6, $7);',
 					[
 						result.task,
 						result.participant,

@@ -1,5 +1,5 @@
-DROP TABLE IF EXISTS results CASCADE;
-CREATE TABLE results (
+DROP TABLE IF EXISTS results_redux CASCADE;
+CREATE TABLE results_redux (
 	id SERIAL NOT NULL UNIQUE,									-- index of the result
 	task TEXT NOT NULL,											-- which task was undertaken
 	participant TEXT NOT NULL DEFAULT 'sql',					-- a unique identifier for the participant
@@ -13,11 +13,11 @@ CREATE TABLE results (
 );
 
 DROP INDEX IF EXISTS results_tasks_idx;
-CREATE INDEX results_tasks_idx ON results(task);
+CREATE INDEX results_tasks_idx ON results_redux(task);
 
 DROP INDEX IF EXISTS results_tasks_with_mode_idx;
-CREATE INDEX results_tasks_with_mode_idx ON results(task,mode);
+CREATE INDEX results_tasks_with_mode_idx ON results_redux(task,mode);
 
 DROP INDEX IF EXISTS results_participant_idx;
-CREATE INDEX results_participant_idx ON results(participant);
+CREATE INDEX results_participant_idx ON results_redux(participant);
 
