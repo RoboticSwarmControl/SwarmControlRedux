@@ -1,6 +1,7 @@
 'use strict';
 
 var express = require('express');
+var compression = require('compression');
 var app = express();
 var path = require('path');
 var crypto = require('crypto');
@@ -23,6 +24,7 @@ db.init( kDatabaseConnection );
 var kTwentyYears = 1000 * 60 * 60 * 24 * 365 * 20;
 
 // Make sure we can get the cookies.
+app.use( compression() );
 app.use( cookieParser() );
 app.use( bodyParser.json() );
 app.use( function _addTaskSig( req, res, next ) {
