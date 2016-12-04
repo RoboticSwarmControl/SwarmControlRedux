@@ -45,11 +45,28 @@
 			$resultsButton.html('Loading results...');
 			$resultsButton.prop('disabled', true);
 
-			$.get('/results?download=json', function( rawData ) {
+			$.get('/results?download=json-packed', function( rawData ) {
+				function unpackData( packed ) {
+					var keys = Object.keys(packed);
+					var ret = [];
+					if (keys.length > 0){
+						var numRecords = packed[keys[0]].length;
+						for (var i = 0; i < numRecords; i++) {
+							ret.push( keys.reduce(function (acc, key){
+								acc[key] = packed[key][i];
+								return acc;
+							},{}));
+						}
+					}
+
+					return ret;
+				}
+
+
 	        	var data = rawData;
 	        	$resultsButton.hide();
 
-	        	var organizedResults = data.results.reduce( function( acc, el) {
+	        	var organizedResults = unpackData(data.results).reduce( function( acc, el) {
 	        		// make sure the result is for a game we have available.
 	        		// we only care about won tasks for now
 	        		if ( data.taskInfo[el.task] && el.ending === 'won'){
