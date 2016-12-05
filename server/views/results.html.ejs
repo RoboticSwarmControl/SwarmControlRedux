@@ -46,6 +46,7 @@
 			$resultsButton.prop('disabled', true);
 
 			$.get('/results?download=json-packed', function( rawData ) {
+				$resultsButton.html('Drawing results...');
 				function unpackData( packed ) {
 					var keys = Object.keys(packed);
 					var ret = [];
