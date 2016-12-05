@@ -79,11 +79,11 @@
 
 	        	console.log(organizedResults);
 
-	        	Object.keys(organizedResults).forEach( function (taskName) {
-	        		var taskInfo = data.taskInfo[taskName];
-
-	        		var $resultGraph = $('<div class="col-xs-12 col-sm-6 col-md-6 col-lg-6 col-xl-6"></div>');
-	        		$resultsContainer.append($resultGraph);
+	        	Object.keys(organizedResults).forEach( function (taskName, i) {
+	        		window.setTimeout( function _drawChart(){
+	        			var taskInfo = data.taskInfo[taskName];
+	        			var $resultGraph = $('<div class="col-xs-12 col-sm-6 col-md-6 col-lg-6 col-xl-6"></div>');
+	        			$resultsContainer.append($resultGraph);
 	        		
 	        		// at this point, we do not reschedule, and the task ends.
 		            resultutils.plot(	$resultGraph,
@@ -93,6 +93,7 @@
 		            					[]);
 		            $resultGraph.append('<button class="btn btn-success" onclick="location=\'' + taskInfo.url +'\'">Play '+ taskInfo.displayName +'!</button>');
 		            $resultGraph.append('<br><br>');
+	        		},i*500);	        		
 	        	});
 	            
 	        });
