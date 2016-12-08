@@ -218,7 +218,7 @@
 			this.world.ClearForces();
 
 			// render the task time
-    		var string = '<strong>Time:</strong> ' + (this._timeElapsed/1000).toFixed(2) + 's';
+    		var string = '<strong>Time:</strong> ' + (this._timeElapsed/1000).toFixed(1) + 's';
     		this._$feedback.html(string);
 
 			return this.doStateRunning;	
@@ -308,7 +308,7 @@
 	GameFramework.prototype.doStatePaused = function( dt, inputEvents ) {
 
 		// render the task time
-    	var string = '<strong>Time:</strong> PAUSED at ' + (this._timeElapsed/1000).toFixed(2) + 's';
+    	var string = '<strong>Time:</strong> PAUSED at ' + (this._timeElapsed/1000).toFixed(1) + 's';
     	this._$feedback.html(string);
 
 		this._timeInPause += dt;
