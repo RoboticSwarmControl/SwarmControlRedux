@@ -4,3 +4,19 @@
     bottom:0px;
     left:50%;
 }
+
+.landing-body
+{
+	line-height: 1.3em;	
+}
+
+.landing-body h2
+{
+	margin-top: 0.2em;
+	margin-bottom: 0.2em;
+}
+
+.landing-body p
+{
+	margin-bottom: 0.6em;
+}
