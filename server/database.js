@@ -10,28 +10,40 @@ function init( connectionString ) {
 	db = pgp( connectionString );
 }
 
+function getResults( filterOptions ) {
+	var participant = filterOptions.participant;
+	var task = filterOptions.task;
+	var forDisplay = filterOptions.forDisplay;
 
-var getAllResultsQuery =	'SELECT' +
-							' agent, created_at as "createdAt", ending, id, mode, participant, robot_count as "robotCount", runtime, task ' +
-							' FROM results_redux;';
-var getResultsForTaskQuery = 'SELECT' +
-							 ' agent, created_at as "createdAt", ending, id, mode, participant, robot_count as "robotCount", runtime, task ' +
-							 ' FROM results_redux WHERE task = $1;';
+	/* Make sure you don't forget the trailling spaces in these clauses if you change them! -crertel */
+	var query = 'SELECT ' + 
+				((forDisplay)?(' ending, id, mode, participant, robot_count as "robotCount", runtime, task ')
+							:(' agent, created_at as "createdAt", ending, id, mode, participant, robot_count as "robotCount", runtime, task ') )+
+				'FROM results_redux ';
+	var queryParams = [];
 
-/* These queries omit information that is not used for charting. */
-var getAllResultsQueryForDisplay =	'SELECT' +
-									' ending, id, mode, participant, robot_count as "robotCount", runtime, task ' +
-									' FROM results_redux;';
-var getResultsForTaskQueryForDisplay = 'SELECT' +
-							 ' ending, id, mode, participant, robot_count as "robotCount", runtime, task ' +
-							 ' FROM results_redux WHERE task = $1;';
+	if ( participant || task ) {
+		query += ' WHERE ';
+		var param = 1;
 
-function getResults( displayOnly ) {
-	return db.any( displayOnly ? getAllResultsQueryForDisplay : getAllResultsQuery );
-}
+		if (participant) {
+			query += ' participant=$' + param + ' ';
+			param++;
+			queryParams.push(participant);
+		}
 
-function getResultsForTask( task, displayOnly ) {
-	return db.any( displayOnly ? getResultsForTaskQueryForDisplay : getResultsForTaskQuery, [task] );
+		if (task) {
+			if (participant) {
+				query += ' AND ';
+			}
+			query += ' task=$' + param + ' ';
+			queryParams.push(task);
+		}
+	}
+
+	query += ';';
+
+	return db.any( query, queryParams);
 }
 
 function saveResult( result ) {
@@ -50,6 +62,5 @@ function saveResult( result ) {
 module.exports = {
 	init: init,
 	getResults: getResults,
-	getResultsForTask: getResultsForTask,
 	saveResult: saveResult
 };

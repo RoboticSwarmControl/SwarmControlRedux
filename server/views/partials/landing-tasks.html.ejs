@@ -2,14 +2,14 @@
 	<% (locals.tasks||[]).forEach( function( task ) { %>
 	<div class="col-sm-6 col-md-3 col-lg-2">
 		<a href="<%= '/games/' + task.name %>">
-	        <div id="div1" align="center">
+	        <div id="<%= 'task-'+task.name %>" align="center">
 	            <div class ="highlightit">
 	            	<img src="<%= 'assets/games/'+ task.name + '/preview.png' %>"></img>
 	            </div>
 	            <div align="center">
 	                <%= task.displayName %>
 	            </div>
-	            <script>drawMeritBadges("div1","<%= task.id %>",3);</script>
+	            <script>drawMeritBadges("<%='task-'+task.name %>","<%= task.name %>",3);</script>
 	        </div>
         </a>
     </div>

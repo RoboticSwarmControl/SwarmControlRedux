@@ -64,8 +64,7 @@
 		    function drawMeritBadges(divname,taskname,numstars){
 		        numstars = typeof numstars !== 'undefined' ? numstars : 3;
 		        var numPres = 0;
-		        $.get("/result.json?task="+taskname+"&participant="+myParticipant, function( data ) {
-		            data = JSON.parse(data);
+		        $.get("/results?forDisplay=true&download=json&participant="+myParticipant+"&task="+taskname, function(data){ 
 
 		            for( var i = 0; i<data.results.length; i++){
 		                if( data.results[i].participant == myParticipant) {
@@ -73,10 +72,11 @@
 		                } 
 		            }
 		            var element = document.getElementById(divname);
-		            for( var i = 0; i < Math.max(numstars, numPres); i++){
-		                var strImage = "/assets/soft_edge_empty_star.png";
-		                if ( numPres > i ) {
-		                	strImage = "/assets/soft_edge_yellow_star.png";
+		            for( var i = 0; i < numstars; i++){
+		                var strImage = "/assets/images/soft_edge_empty_star.png";
+		                if ( numPres > 0 ) {
+		                	strImage = "/assets/images/soft_edge_yellow_star.png";
+		                	numPres--;
 		                }
 		                var img = document.createElement("img");
 		                img.src = strImage;

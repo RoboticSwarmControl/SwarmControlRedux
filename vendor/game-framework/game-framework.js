@@ -253,7 +253,7 @@
         // 2. display buttons for Play Again, all results, task list
         // 3. display: 'you have completed x of 4 tasks.  Play again!' <or> 'Level cleared -- you may play again to increase your score'
         var c = $('#resultsCanvas');
-        $.get('/results/'+this.taskName+'?download=json', function( rawData ) {
+        $.get('/results?download=json&task='+this.taskName, function( rawData ) {
         	var data = rawData;
         	var taskInfo = data.taskInfo[this.taskName];
         	console.log(rawData);
