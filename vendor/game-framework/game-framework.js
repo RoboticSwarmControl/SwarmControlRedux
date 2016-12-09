@@ -253,7 +253,7 @@
         // 2. display buttons for Play Again, all results, task list
         // 3. display: 'you have completed x of 4 tasks.  Play again!' <or> 'Level cleared -- you may play again to increase your score'
         var c = $('#resultsCanvas');
-        $.get('/results?download=json&task='+this.taskName, function( rawData ) {
+        $.get('/results?forDisplay=true&download=json&task='+this.taskName, function( rawData ) {
         	var data = rawData;
         	var taskInfo = data.taskInfo[this.taskName];
         	console.log(rawData);
@@ -267,23 +267,32 @@
             var $buttonBar = $('#buttonBar');
             var $playAgainButton = $('<div class="col-md-3"><button class="btn btn-success play-again-button" onclick="location.reload(true);"> <strong>Play again! </strong></button></div>');
             $buttonBar.append($playAgainButton);
-            
 
-        	var numMyResults = 3; //FIXFIX
-            var numPres = numMyResults;            
+            var numPres = 0;
+			var myParticipant = document.cookie.slice(document.cookie.indexOf('task_sig')+('task_sig').length+1); //substring starting at task_sig 
+		    myParticipant = myParticipant.substr(0,myParticipant.indexOf(';')); //trim any extra info off the string            
+		    for( var i = 0; i<data.results.length; i++){
+		    	if( data.results[i].participant === myParticipant) {
+                    numPres++;
+                } 
+            }
+
+            
             var maxstars = 5;
             var imgsize = '25';
             var strImage;
             var $starBar = $('<div class="col-md-6"></div>');
             if(numPres > 5) { 
-                strImage = '/assets/soft_edge_yellow_star.png';
-                $starBar.append('<img src="'+strImage+'" width="'+imgsize+'" height="'+imgsize+'"><h3>x'+numPres+'</h3>');
+                strImage = '/assets/images/soft_edge_yellow_star.png';
+                $starBar.append('<h3><img src="'+strImage+'" width="'+imgsize+'" height="'+imgsize+'">  x'+numPres+'</h3>');
             } else {
-                for( var i = 0; i<maxstars; i++){
+                for( i = 0; i<maxstars; i++){
                     strImage = '/assets/images/soft_edge_empty_star.png';
-                    if( numPres > i) {
+                    if( numPres > 0) {
                         strImage = '/assets/images/soft_edge_yellow_star.png';
+                        numPres--;
                     }
+
                     $starBar.append('<img src="'+strImage+'" width="'+imgsize+'" height="'+imgsize+'">');
                 }
             }
