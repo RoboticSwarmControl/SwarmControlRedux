@@ -45,11 +45,29 @@
 			$resultsButton.html('Loading results...');
 			$resultsButton.prop('disabled', true);
 
-			$.get('/results?download=json', function( rawData ) {
+			$.get('/results?download=json-packed&forDisplay=true', function( rawData ) {
+				$resultsButton.html('Drawing results...');
+				function unpackData( packed ) {
+					var keys = Object.keys(packed);
+					var ret = [];
+					if (keys.length > 0){
+						var numRecords = packed[keys[0]].length;
+						for (var i = 0; i < numRecords; i++) {
+							ret.push( keys.reduce(function (acc, key){
+								acc[key] = packed[key][i];
+								return acc;
+							},{}));
+						}
+					}
+
+					return ret;
+				}
+
+
 	        	var data = rawData;
 	        	$resultsButton.hide();
 
-	        	var organizedResults = data.results.reduce( function( acc, el) {
+	        	var organizedResults = unpackData(data.results).reduce( function( acc, el) {
 	        		// make sure the result is for a game we have available.
 	        		// we only care about won tasks for now
 	        		if ( data.taskInfo[el.task] && el.ending === 'won'){
@@ -61,11 +79,11 @@
 
 	        	console.log(organizedResults);
 
-	        	Object.keys(organizedResults).forEach( function (taskName) {
-	        		var taskInfo = data.taskInfo[taskName];
-
-	        		var $resultGraph = $('<div class="col-xs-12 col-sm-6 col-md-6 col-lg-6 col-xl-6"></div>');
-	        		$resultsContainer.append($resultGraph);
+	        	Object.keys(organizedResults).forEach( function (taskName, i) {
+	        		window.setTimeout( function _drawChart(){
+	        			var taskInfo = data.taskInfo[taskName];
+	        			var $resultGraph = $('<div class="col-xs-12 col-sm-6 col-md-6 col-lg-6 col-xl-6"></div>');
+	        			$resultsContainer.append($resultGraph);
 	        		
 	        		// at this point, we do not reschedule, and the task ends.
 		            resultutils.plot(	$resultGraph,
@@ -75,6 +93,7 @@
 		            					[]);
 		            $resultGraph.append('<button class="btn btn-success" onclick="location=\'' + taskInfo.url +'\'">Play '+ taskInfo.displayName +'!</button>');
 		            $resultGraph.append('<br><br>');
+	        		},i*500);	        		
 	        	});
 	            
 	        });
@@ -83,7 +102,6 @@
 	</script>
 
 	<%- include('partials/footer.html.ejs') %>
-	<%- include('partials/user-voice.html.ejs') %>
 	</body>
 </html>
 

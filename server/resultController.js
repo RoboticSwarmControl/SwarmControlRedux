@@ -11,14 +11,39 @@ var csv = require('fast-csv');
 
 var games = require('./gameController.js')._swarm_.mountedGames;
 
+function packArrayOfObjects( results ) {
+	if (results.length < 1) {
+		return {};
+	} else {
+		var keys = Object.keys(results[0]);
+		var packed = keys.reduce( function(acc,k) { acc[k] = []; return acc;},{});
+		return results.reduce( function _packResult( acc, result) {
+			keys.forEach( function _setKey(k) {
+				acc[k].push(result[k]);
+			});
+
+			return acc;
+		}, packed);	
+	}
+}
+
 router.get('/', function _renderResultsIndex( req, res ) {
 	URFP(req);
-	db.getResults()
+
+	var filterOpts = {
+		forDisplay: req.query.forDisplay === 'true',
+		participant: req.query.participant,
+		task: req.query.task
+	};
+	
+	db.getResults( filterOpts )
 	.then( function( results ) {
 		// fix date to be formatted usefully
 		results = results.map( function _fixupDates( r ){
 			/* jshint sub:true */
-			r.createdAt = r.createdAt.toISOString();
+			if ( r.createdAt){
+				r.createdAt = r.createdAt.toISOString();
+			}			
 			return r;
 		});
 
@@ -33,48 +58,10 @@ router.get('/', function _renderResultsIndex( req, res ) {
 														}
 												});
 							break;
-			case 'json': 	
-							res.status(200).json( {results:results, taskInfo: games} );
+			case 'json': 	res.status(200).json( {results:results, taskInfo: games} );
 							break;
-			default: 		util.renderPage('results.html.ejs')
-							.then( function (page) {
-								res.status(200).send(page);
-							})
-							.catch(function (err) {
-								res.status(500).send(err.toString());
-							});
-		}
-	})
-	.catch( function ( err ) {
-		console.log( err.toString() );
-		res.status(500).send( err.toString() );
-	});
-});
-
-router.get('/:resultID', function _renderResultsIndex( req, res ) {	
-	db.getResultsForTask( req.params.resultID)
-	.then( function( results ) {
-		// fix date to be formatted usefully
-		results = results.map( function _fixupDates( r ){
-			/* jshint sub:true */
-			r.createdAt = r.createdAt.toISOString();
-			return r;
-		});
-
-		switch (req.query.download) {
-			case 'csv': 	csv.writeToString(	results,
-												{ headers: true},
-												function (err, data) {
-														if (err ){
-															res.status(500).send( err.toString() );
-														} else {
-															res.type('text/csv').status(200).send( data );
-														}
-												});
-							break;
-			case 'json': 	
-							res.status(200).json( {results:results, taskInfo: games} );
-							break;
+			case 'json-packed': 	res.status(200).json( {results: packArrayOfObjects(results), taskInfo: games} );
+									break;
 			default: 		util.renderPage('results.html.ejs')
 							.then( function (page) {
 								res.status(200).send(page);

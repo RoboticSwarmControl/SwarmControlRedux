@@ -10,24 +10,44 @@ function init( connectionString ) {
 	db = pgp( connectionString );
 }
 
+function getResults( filterOptions ) {
+	var participant = filterOptions.participant;
+	var task = filterOptions.task;
+	var forDisplay = filterOptions.forDisplay;
 
-var getAllResultsQuery =	'SELECT' +
-							' agent, created_at as "createdAt", ending, id, mode, participant, robot_count as "robotCount", runtime, task ' +
-							' FROM results;';
-var getResultsForTaskQuery = 'SELECT' +
-							 ' agent, created_at as "createdAt", ending, id, mode, participant, robot_count as "robotCount", runtime, task ' +
-							 ' FROM results WHERE task = $1;';
+	/* Make sure you don't forget the trailling spaces in these clauses if you change them! -crertel */
+	var query = 'SELECT ' + 
+				((forDisplay)?(' ending, id, mode, participant, robot_count as "robotCount", runtime, task ')
+							:(' agent, created_at as "createdAt", ending, id, mode, participant, robot_count as "robotCount", runtime, task ') )+
+				'FROM results_redux ';
+	var queryParams = [];
 
-function getResults() {
-	return db.any( getAllResultsQuery );
-}
+	if ( participant || task ) {
+		query += ' WHERE ';
+		var param = 1;
 
-function getResultsForTask( task ) {
-	return db.any( getResultsForTaskQuery, [task] );
+		if (participant) {
+			query += ' participant=$' + param + ' ';
+			param++;
+			queryParams.push(participant);
+		}
+
+		if (task) {
+			if (participant) {
+				query += ' AND ';
+			}
+			query += ' task=$' + param + ' ';
+			queryParams.push(task);
+		}
+	}
+
+	query += ';';
+
+	return db.any( query, queryParams);
 }
 
 function saveResult( result ) {
-	return db.none('INSERT INTO results(task, participant, runtime, mode, agent, robot_count, ending) VALUES ($1, $2, $3, $4, $5, $6, $7);',
+	return db.none('INSERT INTO results_redux(task, participant, runtime, mode, agent, robot_count, ending) VALUES ($1, $2, $3, $4, $5, $6, $7);',
 					[
 						result.task,
 						result.participant,
@@ -42,6 +62,5 @@ function saveResult( result ) {
 module.exports = {
 	init: init,
 	getResults: getResults,
-	getResultsForTask: getResultsForTask,
 	saveResult: saveResult
 };
