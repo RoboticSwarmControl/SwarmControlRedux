@@ -244,72 +244,74 @@
 		results.runtime = (this._timeElapsed/1000).toFixed(2); 
 
 		var req = new XMLHttpRequest();
-		req.open('POST', '/results', true);		
-		// req.onreadystatechange = function() { };
+		req.open('POST', '/results', true);				
 		req.setRequestHeader('Content-Type','application/json');
+		req.onload = function _presentResults(){
+			if (req.status === 201){
+				// 1. display plot in a colorbox
+		        // 2. display buttons for Play Again, all results, task list
+		        var c = $('#resultsCanvas');
+		        $.get('/results?forDisplay=true&download=json&task='+this.taskName, function( rawData ) {
+		        	var data = rawData;
+		        	var taskInfo = data.taskInfo[this.taskName];
+		        	console.log(rawData);
+		            
+		            // draw white  box to to give a background for plot            
+		            drawutils.drawRect(300,300, 590,590, 'white');//rgba(200, 200, 200, 0.8)');
+		            
+		            // at this point, we do not reschedule, and the task ends.
+		            resultutils.plot(c, taskInfo.xAxisLabel, taskInfo.displayName, data.results, []);
+		            var $buttonBar = $('#buttonBar');
+		            var $playAgainButton = $('<div class="col-md-3"><button class="btn btn-success play-again-button" onclick="location.reload(true);"> <strong>Play again! </strong></button></div>');
+		            $buttonBar.append($playAgainButton);
+
+		            var numPres = 0;
+					var myParticipant = document.cookie.slice(document.cookie.indexOf('task_sig')+('task_sig').length+1); //substring starting at task_sig 
+					console.log('rawParticipant '+ myParticipant);
+					if (myParticipant.indexOf(';') !== -1) {
+						myParticipant = myParticipant.substr(0,myParticipant.indexOf(';')); //trim any extra info off the string            
+					}				    
+				    for( var i = 0; i<data.results.length; i++){
+				    	if( data.results[i].participant === myParticipant) {
+		                    numPres++;
+		                } 
+		            }
+		            console.log('myParticipant ' + myParticipant, numPres);
+
+		            
+		            var maxstars = 5;
+		            var strImage;
+		            var $starBar = $('<div class="col-md-6"></div>');
+		            if(numPres > 5) { 
+		                strImage = '/assets/images/soft_edge_yellow_star.png';
+		                $starBar.append('<h3><img src="'+strImage+'" width="25" height="25">  x'+numPres+'</h3>');
+		            } else {
+		                for( i = 0; i<maxstars; i++){
+		                    strImage = '/assets/images/soft_edge_empty_star.png';
+		                    if( numPres > 0) {
+		                        strImage = '/assets/images/soft_edge_yellow_star.png';
+		                        numPres--;
+		                    }
+
+		                    $starBar.append('<img src="'+strImage+'" width="25" height="25">');
+		                }
+		            }
+		            $buttonBar.append($starBar);
+
+
+		            // Add button for next task
+			        var k = Object.keys(data.taskInfo);
+			        var nextTask = k.indexOf(this.taskName) + 1;
+			        if(nextTask >= k.length) {
+			            nextTask = 0;
+			        }
+			        var newTaskPath = 'parent.location=\'/games/' + k[nextTask] + '\'';
+			        $buttonBar.append('<div class="col-md-3"><button class="btn btn-success next-Task-button" onclick="'+newTaskPath+'">► Next Task</button></div>');			        
+		        }.bind(this));
+			}
+		}.bind(this);
+
 		req.send( JSON.stringify( results ) );
-
-		// 1. display plot in a colorbox
-        // 2. display buttons for Play Again, all results, task list
-        // 3. display: 'you have completed x of 4 tasks.  Play again!' <or> 'Level cleared -- you may play again to increase your score'
-        var c = $('#resultsCanvas');
-        $.get('/results?forDisplay=true&download=json&task='+this.taskName, function( rawData ) {
-        	var data = rawData;
-        	var taskInfo = data.taskInfo[this.taskName];
-        	console.log(rawData);
-            
-            // draw white  box to to give a background for plot            
-            drawutils.drawRect(300,300, 590,590, 'white');//rgba(200, 200, 200, 0.8)');
-            
-            // at this point, we do not reschedule, and the task ends.
-            resultutils.plot(c, taskInfo.xAxisLabel, taskInfo.displayName, data.results, []);
-            //var $buttonBar = $('<div class="row"></div>');
-            var $buttonBar = $('#buttonBar');
-            var $playAgainButton = $('<div class="col-md-3"><button class="btn btn-success play-again-button" onclick="location.reload(true);"> <strong>Play again! </strong></button></div>');
-            $buttonBar.append($playAgainButton);
-
-            var numPres = 0;
-			var myParticipant = document.cookie.slice(document.cookie.indexOf('task_sig')+('task_sig').length+1); //substring starting at task_sig 
-		    myParticipant = myParticipant.substr(0,myParticipant.indexOf(';')); //trim any extra info off the string            
-		    for( var i = 0; i<data.results.length; i++){
-		    	if( data.results[i].participant === myParticipant) {
-                    numPres++;
-                } 
-            }
-
-            
-            var maxstars = 5;
-            var imgsize = '25';
-            var strImage;
-            var $starBar = $('<div class="col-md-6"></div>');
-            if(numPres > 5) { 
-                strImage = '/assets/images/soft_edge_yellow_star.png';
-                $starBar.append('<h3><img src="'+strImage+'" width="'+imgsize+'" height="'+imgsize+'">  x'+numPres+'</h3>');
-            } else {
-                for( i = 0; i<maxstars; i++){
-                    strImage = '/assets/images/soft_edge_empty_star.png';
-                    if( numPres > 0) {
-                        strImage = '/assets/images/soft_edge_yellow_star.png';
-                        numPres--;
-                    }
-
-                    $starBar.append('<img src="'+strImage+'" width="'+imgsize+'" height="'+imgsize+'">');
-                }
-            }
-            $buttonBar.append($starBar);
-
-
-            // Add button for next task
-	        var k = Object.keys(data.taskInfo);
-	        var nextTask = k.indexOf(this.taskName) + 1;
-	        if(nextTask >= k.length) {
-	            nextTask = 0;
-	        }
-	        var newTaskPath = 'parent.location=\'/games/' + k[nextTask] + '\'';
-	        $buttonBar.append('<div class="col-md-3"><button class="btn btn-success next-Task-button" onclick="'+newTaskPath+'">► Next Task</button></div>');
-	        
-        }.bind(this));
-        
 
 		return this.doStateHalted;
 	};

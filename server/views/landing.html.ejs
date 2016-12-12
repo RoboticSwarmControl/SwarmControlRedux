@@ -59,7 +59,9 @@
 
 		<script> 
 		    var myParticipant =  document.cookie.slice(document.cookie.indexOf("task_sig")+("task_sig").length+1); //substring starting at task_sig 
-		    myParticipant = myParticipant.substr(0,myParticipant.indexOf(";")); //trim any extra info off the string
+		    if (myParticipant.indexOf(';') !== -1) {
+			    myParticipant = myParticipant.substr(0,myParticipant.indexOf(";")); //trim any extra info off the string
+			}
 
 		    function drawMeritBadges(divname,taskname,numstars){
 		        numstars = typeof numstars !== 'undefined' ? numstars : 3;
