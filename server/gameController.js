@@ -38,7 +38,7 @@ function loadGames() {
 			router._swarm_.mountedGames[gameName] = {
 				name: manifest.name,
 				displayName: manifest.displayName,
-				url: '/tasks/' + encodeURIComponent(manifest.name),
+				url: '/games/' + encodeURIComponent(manifest.name),
 				xAxisLabel: manifest.xAxisLabel
 			};
 

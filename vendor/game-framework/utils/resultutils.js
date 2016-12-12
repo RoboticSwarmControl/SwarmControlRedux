@@ -177,9 +177,7 @@ window.resultutils = (function ($,_, Flotr) {
                 {data: d2, label : 'trend (all)', color:'darkblue', lines : { fill : true , lineWidth : 4}  },  // Regression, all data
                 {data: points, label: 'results (all)', points: {show:true}, color:'blue' },
             ];
-
-        console.log('TASK ', prettyTaskName, mypoints.length);
-
+        
         if( mypoints.length >= 2){
             data.push( {data:dme, label : 'trend (me)', color:'darkred', lines : { lineWidth : 4 }  });  // Regression
         }
