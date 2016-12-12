@@ -253,8 +253,7 @@
 		        var c = $('#resultsCanvas');
 		        $.get('/results?forDisplay=true&download=json&task='+this.taskName, function( rawData ) {
 		        	var data = rawData;
-		        	var taskInfo = data.taskInfo[this.taskName];
-		        	console.log(rawData);
+		        	var taskInfo = data.taskInfo[this.taskName];		        	
 		            
 		            // draw white  box to to give a background for plot            
 		            drawutils.drawRect(300,300, 590,590, 'white');//rgba(200, 200, 200, 0.8)');
@@ -267,17 +266,15 @@
 
 		            var numPres = 0;
 					var myParticipant = document.cookie.slice(document.cookie.indexOf('task_sig')+('task_sig').length+1); //substring starting at task_sig 
-					console.log('rawParticipant '+ myParticipant);
+					
 					if (myParticipant.indexOf(';') !== -1) {
 						myParticipant = myParticipant.substr(0,myParticipant.indexOf(';')); //trim any extra info off the string            
 					}				    
 				    for( var i = 0; i<data.results.length; i++){
 				    	if( data.results[i].participant === myParticipant) {
 		                    numPres++;
-		                } 
+		                }
 		            }
-		            console.log('myParticipant ' + myParticipant, numPres);
-
 		            
 		            var maxstars = 5;
 		            var strImage;

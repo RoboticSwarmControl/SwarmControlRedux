@@ -2,7 +2,10 @@ window.resultutils = (function ($,_, Flotr) {
     'use strict';
     function URFP( x ) { /* jshint expr:true */ x; }
 
-    var myParticipant = '';
+    var myParticipant =  document.cookie.slice(document.cookie.indexOf('task_sig')+('task_sig').length+1); //substring starting at task_sig 
+    if (myParticipant.indexOf(';') !== -1) {
+        myParticipant = myParticipant.substr(0,myParticipant.indexOf(';')); //trim any extra info off the string
+    }
 
     function trendline( pts ){
         var sx    = 0,
@@ -41,6 +44,10 @@ window.resultutils = (function ($,_, Flotr) {
         return y;
     }
 
+    /* N.B. -- This will not ignore tasks that have not been "won". Do that when filtering results before
+            you try to plot them here. --crertel
+    */
+
     function plotTask($container, $task, prettyTaskName, xAxisLabel, taskResults, userResults, isHistogram){
         URFP(isHistogram);
         URFP(userResults);
@@ -68,14 +75,7 @@ window.resultutils = (function ($,_, Flotr) {
         var modes = _.groupBy( res, function (m) { return m.mode;} );
         
         var modekeys = _.keys(modes);
-        
-        var mostRecentTime = null;
-        var mostRecentx = NaN;
-        var mostRecenty = NaN;
-        var mostRecentIsParticipant = false;
 
-
-        console.log(res);
         _.each( res, function (r) {
             y = parseTime(r.runtime);
             
@@ -99,17 +99,15 @@ window.resultutils = (function ($,_, Flotr) {
                 
                 points.push( [x, y] );
                 if( r.participant === myParticipant) {
-                    mypoints.push( [x, y] );
-                }
-
-                if( mostRecentTime === null || r.createdAt > mostRecentTime){
-                    mostRecentTime = r.createdAt;
-                    mostRecentx = x;
-                    mostRecenty = y;
-                    mostRecentIsParticipant = false; //( r.participant === myParticipant);
+                    mypoints.push( [x, y, new Date(r.createdAt)] );
                 }
             }
-        });    
+        });
+    
+        mypoints = mypoints.sort( function _sortByTime(a,b){
+            return a[2] <= b[2];
+        }).map( function _removeTime(el) { return [el[0], el[1]]; });
+
         var xrange = xmax-xmin;
         var yrange = ymax-ymin;
 
@@ -169,7 +167,7 @@ window.resultutils = (function ($,_, Flotr) {
             }
 
         }
-        var legendPos = 'nw';//default legend position in nw
+        var legendPos = 'nw'; //default legend position in nw
 
         if( dataTrendline[1] <0 ) {
             legendPos = 'sw';
@@ -180,21 +178,22 @@ window.resultutils = (function ($,_, Flotr) {
                 {data: points, label: 'results (all)', points: {show:true}, color:'blue' },
             ];
 
+        console.log('TASK ', prettyTaskName, mypoints.length);
+
         if( mypoints.length >= 2){
             data.push( {data:dme, label : 'trend (me)', color:'darkred', lines : { lineWidth : 4 }  });  // Regression
         }
         if( mypoints.length >= 1){
             data.push({ data:mypoints, label: 'results (me)', points: {show:true}, color:'red' });
+
+            data.push({ data:[mypoints[0]],
+                        label: 'newest result',
+                        points: {   show:true,
+                                    radius: 5,
+                                    fillColor: 'lightgreen'
+                                },
+                        color: 'green'}); //most recent result
         }
-        var mostRecentFillColor = 'lightgreen';
-        var mostRecentLineColor = 'green';
-        var mostRecentSize = 5;
-        if( mostRecentIsParticipant){
-            mostRecentFillColor = 'pink';
-            mostRecentLineColor = 'darkred';
-            mostRecentSize = 8;
-        }
-        data.push({ data:[[mostRecentx,mostRecenty]], label: 'newest result', points: {show:true, radius: mostRecentSize,fillColor: mostRecentFillColor}, color:mostRecentLineColor}); //most recent result
 
         Flotr.draw( $task[0],
                     data,

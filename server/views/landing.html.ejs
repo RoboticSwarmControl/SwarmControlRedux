@@ -65,14 +65,17 @@
 
 		    function drawMeritBadges(divname,taskname,numstars){
 		        numstars = typeof numstars !== 'undefined' ? numstars : 3;
-		        var numPres = 0;
 		        $.get("/results?forDisplay=true&download=json&participant="+myParticipant+"&task="+taskname, function(data){ 
+		        	var numPres = 0;
 
 		            for( var i = 0; i<data.results.length; i++){
-		                if( data.results[i].participant == myParticipant) {
+		                if( data.results[i].participant === myParticipant &&
+		                	data.results[i].ending === 'won') {
 		                    numPres++;
 		                } 
 		            }
+		            console.log('TASK ', taskname, numPres, data.results.length);
+		            console.log(data.results);
 		            var element = document.getElementById(divname);
 		            for( var i = 0; i < numstars; i++){
 		                var strImage = "/assets/images/soft_edge_empty_star.png";
