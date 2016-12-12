@@ -3,7 +3,7 @@
 <script>
     $(document).ready(function(){
 //alternate warning in a non intrusive alert line
-//$('body').prepend('<div class="alert alert-warning alert-dismissable"><button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button> SwarmControl.net helps science by studying how humans interact with robot swarms.  <strong>We record gameplay statistics.</strong> <br>  Click  <button id="-tos-accept-button" class="btn btn-warning"> I accept!</button> to play.  </div>');
+//$('body').prepend('<div class="alert alert-warning alert-dismissable"><button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button> SwarmControl.net helps science by studying how humans interact with robot swarms.  <strong>We record gameplay statistics.</strong> <br>  Click  <button class="btn btn-warning -tos-accept"> I accept!</button> to play.  </div>');
 
 
         if (document.cookie.indexOf("tos_seen") == -1) {
@@ -18,17 +18,10 @@
                 });
             }});
 
-            $("#-tos-accept-button").on("click", function () {
+            $(".-tos-accept").on("click", function () {
                 $.colorbox.remove();
                 document.cookie = "tos_seen=true";
             });
-            $("#-tos-accept-button2").on("click", function () {
-                $.colorbox.remove();
-                document.cookie = "tos_seen=true";
-            });
-
-
-
         }
     });
 </script>
@@ -36,12 +29,11 @@
 
 <div style="display:none;">
     <div id="terms-of-service" style="padding:20px; background-color: #fff">
-
+    <h4 class="pull-right"><button class="btn btn-success -tos-accept"> I accept!</button> </h4>
     <h3>UNIVERSITY OF HOUSTON  </h3>
     <h4>CONSENT TO PARTICIPATE IN RESEARCH </h4>
 
-
-     <h4>PROJECT TITLE:  </h4>
+    <h4>PROJECT TITLE:  </h4>
     SwarmControl: An online user study on controlling large swarms of simple robots <br>
 
     You are being invited to participate in a research project conducted by Aaron T. Becker from the Electrical and Computer Engineering Department at the University of Houston.  
@@ -82,7 +74,7 @@
     Principal Investigator’s Name: Aaron T. Becker 9/30/2015
 
 
-            <h4 class="pull-right"><button id="-tos-accept-button2" class="btn btn-success"> I accept!</button>
+            <h4 class="pull-right"><button class="btn btn-success -tos-accept"> I accept!</button>
             </h4>
 
     </div>

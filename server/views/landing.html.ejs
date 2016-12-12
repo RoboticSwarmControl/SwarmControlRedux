@@ -59,18 +59,22 @@
 
 		<script> 
 		    var myParticipant =  document.cookie.slice(document.cookie.indexOf("task_sig")+("task_sig").length+1); //substring starting at task_sig 
-		    myParticipant = myParticipant.substr(0,myParticipant.indexOf(";")); //trim any extra info off the string
+		    if (myParticipant.indexOf(';') !== -1) {
+			    myParticipant = myParticipant.substr(0,myParticipant.indexOf(";")); //trim any extra info off the string
+			}
 
 		    function drawMeritBadges(divname,taskname,numstars){
 		        numstars = typeof numstars !== 'undefined' ? numstars : 3;
-		        var numPres = 0;
 		        $.get("/results?forDisplay=true&download=json&participant="+myParticipant+"&task="+taskname, function(data){ 
+		        	var numPres = 0;
 
 		            for( var i = 0; i<data.results.length; i++){
-		                if( data.results[i].participant == myParticipant) {
+		                if( data.results[i].participant === myParticipant &&
+		                	data.results[i].ending === 'won') {
 		                    numPres++;
 		                } 
 		            }
+
 		            var element = document.getElementById(divname);
 		            for( var i = 0; i < numstars; i++){
 		                var strImage = "/assets/images/soft_edge_empty_star.png";

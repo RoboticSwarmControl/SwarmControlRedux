@@ -76,9 +76,7 @@
 	        		}
 	        		return acc;
 	        	}, {});
-
-	        	console.log(organizedResults);
-
+	        	
 	        	Object.keys(organizedResults).forEach( function (taskName, i) {
 	        		window.setTimeout( function _drawChart(){
 	        			var taskInfo = data.taskInfo[taskName];
