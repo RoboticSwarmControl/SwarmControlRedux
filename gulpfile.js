@@ -16,7 +16,8 @@ gulp.task('build:styles', function() {
 });
 
 gulp.task('build:styles-vendor', function() {
-    return gulp.src(['vendor/bootstrap-3.3.6-dist/css/bootstrap.css'])
+    return gulp.src(['vendor/bootstrap-3.3.6-dist/css/bootstrap.css',
+                     'vendor/d3-4.0/css/distrochart.css'])
                 .pipe(concat('main-client-vendor.css'))
                 .pipe(rename({suffix: '.min'}))
                 .pipe(gulp.dest('dist/css'))
@@ -93,6 +94,8 @@ gulp.task('build:games-scripts', function () {
 gulp.task('build:results-vendor', function() {
 return gulp.src([
                         'vendor/flotr2/flotr2.min.js',
+                        'vendor/d3-4.0/js/d3.v4.min.js',
+                        'vendor/d3-4.0/js/distrochart.js',
                         'vendor/game-framework/utils/resultutils.js',
                     ])
                 .pipe(concat('main-results-vendor.js'))
@@ -106,6 +109,8 @@ gulp.task('build:games-vendor', function() {
     return gulp.src([
                         'vendor/box2dWeb-2.1.a.3/Box2dWeb-2.1.a.3.min.js',
                         'vendor/flotr2/flotr2.min.js',
+                        'vendor/d3-4.0/js/d3.v4.min.js',
+                        'vendor/d3-4.0/js/distrochart.js',
                         'vendor/jcanvas-6.0/jcanvas.min.js',
                         'vendor/rng-1.0/rng.js',
                         'vendor/game-framework/utils/drawutils.js',
