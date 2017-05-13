@@ -390,8 +390,8 @@ function theGame($,phys,GameFramework, Box2D, drawutils, mathutils) {
             {
                 angle2 = Math.atan2(roboMeanY - b.GetPosition().y,roboMeanX - b.GetPosition().x);//90* Math.random();
             }
-                this.impulseV.x = 40* Math.cos(angle2);
-                this.impulseV.y = 40* Math.sin(angle2);
+                this.impulseV.x = 100* Math.cos(angle2);
+                this.impulseV.y = 100* Math.sin(angle2);
                                                     
                 b.ApplyForce(this.impulseV, b.GetWorldPoint( this.constants.zeroRef ));
             }.bind(this));
@@ -400,8 +400,8 @@ function theGame($,phys,GameFramework, Box2D, drawutils, mathutils) {
                    
             if (this.task.mode === 'global' ) {
                 var angle = Math.atan2(this.mY - 10, this.mX-10);
-                this.impulseV.x = 10* Math.cos(angle);
-                this.impulseV.y = 10* Math.sin(angle);
+                this.impulseV.x = 40* Math.cos(angle);
+                this.impulseV.y = 40* Math.sin(angle);
                 this.task.robots.forEach( function(r) {                                     
                     r.ApplyForce( this.impulseV, r.GetWorldPoint( this.constants.zeroRef ) );
                 }.bind(this));
@@ -414,7 +414,7 @@ function theGame($,phys,GameFramework, Box2D, drawutils, mathutils) {
                     var mag = Math.sqrt(distSq);
                     var h2 = 4;
                     var forceM = 100*distSq/Math.pow(distSq + h2,2);
-                    var forceStrength = 8;
+                    var forceStrength = 20;
                     this.impulseV.x = 20*dx/mag*forceM || 0;
                     this.impulseV.y = 20*dy/mag*forceM || 0;
                     if (this.task.mode === 'repulsive') {
