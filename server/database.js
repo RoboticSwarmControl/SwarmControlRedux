@@ -18,7 +18,7 @@ function getResults( filterOptions ) {
 	/* Make sure you don't forget the trailling spaces in these clauses if you change them! -crertel */
 	var query = 'SELECT ' + 
 				((forDisplay)?(' ending, id, mode, participant, robot_count as "robotCount", runtime, task, created_at as "createdAt" ')
-							:(' agent, created_at as "createdAt", ending, id, mode, participant, robot_count as "robotCount", runtime, task ') )+
+							:(' agent, extra, created_at as "createdAt", ending, id, mode, participant, robot_count as "robotCount", runtime, task ') )+
 				'FROM results_redux ';
 	var queryParams = [];
 
