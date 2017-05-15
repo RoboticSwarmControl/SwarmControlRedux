@@ -81,9 +81,10 @@ window.resultutils = (function ($,_, Flotr) {
             
             if (r.task === 'varying-number' || r.task === 'robot-positioning'){
                 x = r.robotCount;
-            }else if (r.task ==='varying-control-scheme' || r.task === 'foraging' ){
-                x = _.indexOf(modekeys, r.mode);
-            }else if(r.task === 'varying-visualization'){
+            }else if (r.task ==='varying-control-scheme' ||
+                r.task === 'foraging' ||
+                r.task === 'predator' ||
+                r.task === 'varying-visualization'){
                 x = _.indexOf(modekeys, r.mode);
             }else if(r.task === 'pyramid-building'){
                 x = 10*parseFloat(r.mode);
@@ -226,7 +227,8 @@ window.resultutils = (function ($,_, Flotr) {
 
         var isHistogram =   taskResults[0].task === 'varying-control-scheme' ||
                             taskResults[0].task === 'foraging' ||
-                            taskResults[0].task === 'varying-visualization';
+                            taskResults[0].task === 'varying-visualization' ||
+                            taskResults[0].task === 'predator';
 
         plotTask( $container, $task, taskPrettyName, xAxisLabel, taskResults, userResults, isHistogram);
     }
