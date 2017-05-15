@@ -9,6 +9,7 @@ CREATE TABLE results_redux (
 	updated_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT now(),	-- when the task record was updated
 	mode TEXT NOT NULL,											-- the task information, what mode it's in
 	agent TEXT NOT NULL,										-- the user agent of the user performing the task
+	extra JSONB NOT NULL DEFAULT '{}',							-- "extra" task information
 	robot_count INTEGER NOT NULL DEFAULT 0						-- the number of roboots involved in the task.
 );
 
