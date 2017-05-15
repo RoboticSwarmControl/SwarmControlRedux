@@ -47,7 +47,7 @@ function getResults( filterOptions ) {
 }
 
 function saveResult( result ) {
-	return db.none('INSERT INTO results_redux(task, participant, runtime, mode, agent, robot_count, ending) VALUES ($1, $2, $3, $4, $5, $6, $7);',
+	return db.none('INSERT INTO results_redux(task, participant, runtime, mode, agent, robot_count, ending, extra) VALUES ($1, $2, $3, $4, $5, $6, $7, $8);',
 					[
 						result.task,
 						result.participant,
@@ -55,7 +55,8 @@ function saveResult( result ) {
 						result.mode,
 						result.agent,
 						result.robotCount,
-						result.ending
+						result.ending,
+						result.extra || {}
 					]);
 }
 

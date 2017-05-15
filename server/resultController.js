@@ -85,6 +85,7 @@ router.post('/', function _renderResultsIndex( req, res ) {
 			participant: req.cookies['task_sig'] || 'unknown',
 			runtime: req.body.runtime,
 			mode: req.body.mode,
+			extra: req.body.extra || {},
 			agent: req.body.agent || req.header('user-agent'),
 			robotCount: req.body.numRobots,
 			ending: req.body.ending
