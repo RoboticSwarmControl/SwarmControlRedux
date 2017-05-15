@@ -240,6 +240,7 @@
 		URFP( inputEvents );
 
 		var results = this._submitResultsCallback();
+		results.extra = results.extra || {}; // make sure we have that "extra" data
 		results.ending = this.ending;
 		results.runtime = (this._timeElapsed/1000).toFixed(2); 
 

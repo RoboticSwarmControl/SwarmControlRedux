@@ -465,7 +465,11 @@ function theGame($,phys,GameFramework, Box2D, drawutils, mathutils) {
         return {
             numRobots: this.task.numRobots,
             task: 'predator',
-            mode: this.task.mode
+            mode: this.task.mode,
+            /* the "extra" key is used to store task-specific or run-specific information */
+            extra: {
+                percentSurvived: this.task.numBlocksCollected / this.task.numRobots
+            }
         };
     });
 
