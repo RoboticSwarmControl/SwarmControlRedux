@@ -11,6 +11,45 @@
     function URFP( x ) { /* jshint expr:true */ x; }
 
     var $canvas = null;
+    var drawBulgyBlock= function(x,y,rotate, color,strokeWidth)
+    {
+      var unitLength = 60;
+
+$canvas.draw({
+  fn: function(ctx) {
+
+ctx.save();
+
+    
+    ctx.translate(x,y);
+    ctx.rotate( Math.PI + rotate* Math.PI /180);
+    ctx.fillStyle = color;
+    ctx.strokeWidth = strokeWidth;
+
+    ctx.moveTo(-unitLength, 0);
+    var nextCoordX = -unitLength+(unitLength/2);
+    var nextCoordY = (unitLength*Math.sqrt(3)/2);
+    ctx.lineTo(nextCoordX, nextCoordY);
+    nextCoordX = nextCoordX+unitLength;
+    ctx.lineTo(nextCoordX, nextCoordY);
+    nextCoordX = nextCoordX+(unitLength/2);
+    nextCoordY = nextCoordY-(unitLength*Math.sqrt(3)/2);
+    ctx.lineTo(nextCoordX, nextCoordY);
+    nextCoordX = nextCoordX-(unitLength/2);
+    ctx.lineTo(nextCoordX, nextCoordY);
+    nextCoordY = nextCoordY-(unitLength*Math.sqrt(3)/4);
+    ctx.lineTo(nextCoordX, nextCoordY);
+    nextCoordX = nextCoordX-unitLength;
+    ctx.lineTo(nextCoordX, nextCoordY);
+    nextCoordY = nextCoordY+(unitLength*Math.sqrt(3)/4);
+    ctx.lineTo(nextCoordX, nextCoordY);
+    ctx.lineTo(-unitLength, 0);
+    ctx.fill();
+    ctx.closePath();
+    ctx.restore();
+  }
+});
+    };
 
     var drawCircle = function (x,y,radius,color,strokeWidth) {
       strokeWidth = typeof strokeWidth !== 'undefined' ? strokeWidth : 4;
@@ -205,6 +244,7 @@ var drawEmptyRect = function (x,y,w,h,color,angle,strokeWidth) {
       };
 
       return { drawLine : drawLine,
+        drawBulgyBlock : drawBulgyBlock,
        getConvexHull : getConvexHull,
        drawCircle : drawCircle,
        drawEllipse : drawEllipse,
