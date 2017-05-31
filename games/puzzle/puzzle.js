@@ -204,7 +204,7 @@ function theGame($,phys,GameFramework, Box2D, drawutils, mathutils) {
                     X = verts[1].x - verts[0].x; 
                     Y = verts[2].y - verts[1].y;
                     index = 2;
-                    this.task.colorSelected[index] = 'blue';
+                    this.task.colorSelected[index] = 'seagreen';
                     this.task.objectposx[index] = pos.x;
                     this.task.objectposy[index] = pos.y;
                     drawutils.drawPuzzle3(30* pos.x,30 * pos.y, angle, this.task.colorSelected[index],4,120);
