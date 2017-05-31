@@ -374,7 +374,7 @@ function theGame($,phys,GameFramework, Box2D, drawutils, mathutils) {
         this.task.goals.forEach( function (g) { 
             pos = g.GetPosition();
             color = this.constants.colorGoal;
-            drawutils.drawText(30*pos.x,30*pos.y,'Goal', 1.5, color, color);
+            //drawutils.drawText(30*pos.x,30*pos.y,'Goal', 1.5, color, color);
         }.bind(this));
     });
 
@@ -522,19 +522,34 @@ function theGame($,phys,GameFramework, Box2D, drawutils, mathutils) {
         // nothing to do on lose.
     });
 
-    game.setWinTestCallback( function() {
-        var ret = true;
-        // need to check if object has been moved into the goal zone
-        this.task.blocks.forEach( function (b) {
-            // we use _.every because it will stop iterating on success
-            this.task.goals.every( function (g) {
-                var pos = b.GetPosition();
+    // game.setWinTestCallback( function() {
+    //     var ret = true;
+    //     // need to check if object has been moved into the goal zone
+    //     this.task.blocks.forEach( function (b) {
+    //         // we use _.every because it will stop iterating on success
+    //         this.task.goals.every( function (g) {
+    //             var pos = b.GetPosition();
 
-                ret = g.GetFixtureList().GetAABB().Contains( pos );
-                return !ret;
-            }.bind(this));
-        }.bind(this)); 
-        return ret;
+    //             ret = g.GetFixtureList().GetAABB().Contains( pos );
+    //             return !ret;
+    //         }.bind(this));
+    //     }.bind(this)); 
+    //     return ret;
+    // });
+
+    game.setWinTestCallback( function() {
+
+        var ret = true;
+        drawutils.drawRobot(30*this.task.objectposx[0], 30*this.task.objectposy[0],0, 30*0.1, this.constants.colorRobot,this.constants.colorRobotEdge );
+        drawutils.drawRobot(30*this.task.objectposx[1], 30*this.task.objectposy[1],0, 30*0.1, this.constants.colorRobot,this.constants.colorRobotEdge );
+        //drawutils.drawText(300,250, ' goal Pose '+ goalPos.x +'  , '+ goalPos.y, 2, 'blue', 'blue');
+        var dist = Math.sqrt((this.task.objectposx[0]-this.task.objectposx[1])*(this.task.objectposx[0]-this.task.objectposx[1]) + (this.task.objectposy[0]-this.task.objectposy[1])*(this.task.objectposy[0]-this.task.objectposy[1]));
+        // drawutils.drawText(300,250, ' distance is '+ dist, 2, 'blue', 'blue');
+        if(dist>=0.1)
+        {ret = true;}
+        else 
+        {ret = false;}
+        return !ret;
     });
 
     game.setWonCallback( function() {

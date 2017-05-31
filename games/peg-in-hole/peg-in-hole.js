@@ -538,17 +538,36 @@ function theGame($,phys,GameFramework, Box2D, drawutils, mathutils) {
 
     game.setWinTestCallback( function() {
         var ret = true;
-        // need to check if object has been moved into the goal zone
-        this.task.blocks.forEach( function (b) {
-            // we use _.every because it will stop iterating on success
-            this.task.goals.every( function (g) {
-                var pos = b.GetPosition();
 
-                ret = g.GetFixtureList().GetAABB().Contains( pos );
-                return !ret;
-            }.bind(this));
-        }.bind(this)); 
-        return ret;
+    var goalPos;
+    var pos;
+    this.task.blocks.forEach(function(b){
+    this.task.goals.every( function (g) {
+    goalPos = g.GetPosition();
+    pos = b.GetPosition();
+    //drawutils.drawText(300,250, ' goal Pose '+ goalPos.x +'  , '+ goalPos.y, 2, 'blue', 'blue');
+    var dist = Math.sqrt((pos.x-goalPos.x)*(pos.x-goalPos.x) + (pos.y-goalPos.y)*(pos.y-goalPos.y));
+    // drawutils.drawText(300,250, ' distance is '+ dist, 2, 'blue', 'blue');
+    if(dist>=0.1)
+    {ret = true;}
+    else 
+    {ret = false;}
+    return !ret;
+}.bind(this));
+}.bind(this));
+    return !ret;
+    //return ret;
+        // need to check if object has been moved into the goal zone
+        //this.task.blocks.forEach( function (b) {
+            // we use _.every because it will stop iterating on success
+            // this.task.goals.every( function (g) {
+                
+
+            //     ret = g.GetFixtureList().GetAABB().Contains( pos );
+            //     return !ret;
+            // }.bind(this));
+         //}.bind(this)); 
+        // return false;
     });
 
     game.setWonCallback( function() {

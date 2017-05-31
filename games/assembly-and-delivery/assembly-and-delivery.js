@@ -4,7 +4,7 @@
 function theGame($,phys,GameFramework, Box2D, drawutils, mathutils) {
     /* jshint unused:true */
     'use strict';
-    var game = new GameFramework('assembly-and-delivery', 'assembly-and-delivery','Visualization method');
+    var game = new GameFramework('assembly', 'assembly','Visualization method');
     function URFP( x ) { /* jshint expr:true */ x; }
     URFP(mathutils);
 
@@ -88,25 +88,12 @@ function theGame($,phys,GameFramework, Box2D, drawutils, mathutils) {
         bodyDef.type = phys.body.b2_dynamicBody;
         bodyDef.userData = 'goal';
         // bodyDef.position.Set(18- this.constants.obsThick-2* Math.sqrt(3)/2,3);
-        bodyDef.position.Set(18.8,3);
+        bodyDef.position.Set(17,3);
         this.task.goals.push( this.world.CreateBody(bodyDef) );
         fixDef.isSensor = true;
         fixDef.shape = new Box2D.Collision.Shapes.b2PolygonShape();
-        //fixDef.shape.SetAsBox(Math.sqrt(3)/4, 0.8); 
-        var Mpoints = [    
-                                {x: 0, y:1},
-                                {x: -Math.sqrt(3)/2, y:1/2}, 
-                                {x: -Math.sqrt(3)/2, y: -1/2}, 
-                                {x: 0, y:-1},
-                                {x: Math.sqrt(3)/2, y: -1/2}, 
-                                {x: Math.sqrt(3)/2, y: 1/2}, 
-                                 ];
-            var points = [];
-            for ( i = 0; i < Mpoints.length; i++) {
-                points.push( new phys.vec2(1*Mpoints[i].x, 1 *Mpoints[i].y) );
-            }
+        fixDef.shape.SetAsBox(2, 2); 
         
-        fixDef.shape.SetAsArray(points, points.length);
         //fixDef.SetAngle(Math.PI/3);
         //var body = world.CreateBody(bodyDef);
         //body.CreateFixture(fixDef);
@@ -180,16 +167,16 @@ function theGame($,phys,GameFramework, Box2D, drawutils, mathutils) {
         var verts;
 
         // draw goal zone
-        // this.task.goals.forEach( function (g) { 
-        //      var f = g.GetFixtureList();
-        //      verts = f.GetShape().GetVertices();
-        //     // //var radius = f.GetShape().GetRadius();
-        //     pos = g.GetPosition();
-        //     angle = g.GetAngle()* 180 / Math.PI- Math.PI/2*180 /Math.PI;
-        //     X = verts[1].x - verts[0].x; 
-        //     Y = verts[2].y - verts[1].y;
-        //     drawutils.drawBulgyBlock(30*pos.x, 30*pos.y,angle,color,4);
-        // }.bind(this));
+        this.task.goals.forEach( function (g) { 
+             var f = g.GetFixtureList();
+             verts = f.GetShape().GetVertices();
+            // //var radius = f.GetShape().GetRadius();
+            pos = g.GetPosition();
+            angle = g.GetAngle()* 180 / Math.PI- Math.PI/2*180 /Math.PI;
+            X = verts[1].x - verts[0].x; 
+            Y = verts[2].y - verts[1].y;
+            drawutils.drawRect(30*pos.x, 30*pos.y,X* 30,Y*30,color,angle,4);
+        }.bind(this));
 
         //draw robots and obstacles
         for (var b = this.world.GetBodyList() ; b; b = b.GetNext())
@@ -214,7 +201,7 @@ function theGame($,phys,GameFramework, Box2D, drawutils, mathutils) {
                     this.task.colorSelected[index] = 'green';
                     this.task.objectposx[index] = pos.x;
                     this.task.objectposy[index] = pos.y;
-                    drawutils.drawMirroredBlock(30* pos.x,30 * pos.y, angle, this.task.colorSelected[index],4);
+                    drawutils.drawMirroredBlock(30* pos.x,30 * pos.y, angle, this.task.colorSelected[index],4, 60);
                 }
                 else if (type === 'workpiece1') {
                     // draw the pushable object
@@ -225,7 +212,7 @@ function theGame($,phys,GameFramework, Box2D, drawutils, mathutils) {
                     this.task.colorSelected[index] = 'purple';
                     this.task.objectposx[index] = pos.x;
                     this.task.objectposy[index] = pos.y;
-                    drawutils.drawMirroredBlock(30* pos.x,30 * pos.y, angle, this.task.colorSelected[index],4);
+                    drawutils.drawMirroredBlock(30* pos.x,30 * pos.y, angle, this.task.colorSelected[index],4,60);
                 }
 
                  else {
@@ -401,12 +388,12 @@ function theGame($,phys,GameFramework, Box2D, drawutils, mathutils) {
         // var aX = 50;
         // pGoalArrow = [[400-aX,100+aY],[400,100],[400-aX,100-aY]];
         // drawutils.drawLine(pGoalArrow,this.constants.colorGoalArrow,false,50,false);
-        // // (←,↑,↓,→)
-        // if(this.mobileUserAgent) {
-        //     drawutils.drawText(300,300,'move object to goal by tilting screen', 1.5, 'white', 'white');
-        // }else{
-        //     drawutils.drawText(300,300,'move object to goal with arrow keys', 1.5, 'white', 'white');
-        // }
+        // (←,↑,↓,→)
+        if(this.mobileUserAgent) {
+            drawutils.drawText(300,300,'move object to goal by tilting screen', 1.5, 'white', 'white');
+        }else{
+            drawutils.drawText(300,300,'move object to goal with arrow keys', 1.5, 'white', 'white');
+        }
 
         this.task.blocks.forEach( function (g) { 
             var pos = g.GetPosition();
@@ -535,18 +522,43 @@ function theGame($,phys,GameFramework, Box2D, drawutils, mathutils) {
         // nothing to do on lose.
     });
 
+
     game.setWinTestCallback( function() {
         var ret = true;
+        var goalPos;
         // need to check if object has been moved into the goal zone
-        this.task.blocks.forEach( function (b) {
             // we use _.every because it will stop iterating on success
             this.task.goals.every( function (g) {
-                ret = g.GetFixtureList().GetAABB().Contains( b.GetFixtureList().GetAABB() );
-                return !ret;
+                goalPos = g.GetPosition();
+                var dist = Math.sqrt((this.task.objectposx[0]-this.task.objectposx[1])*(this.task.objectposx[0]-this.task.objectposx[1]) + (this.task.objectposy[0]-this.task.objectposy[1])*(this.task.objectposy[0]-this.task.objectposy[1]));
+                var goalDist = Math.sqrt((this.task.objectposx[0]-goalPos.x)*(this.task.objectposx[0]-goalPos.x) + (this.task.objectposy[0]-goalPos.y)*(this.task.objectposy[0]-goalPos.y));
+                if(dist>= 0.1 || goalDist>=1)
+                {
+                    ret = true;
+                }
+                else 
+                {
+                    ret = false;
+                }
+
             }.bind(this));
-        }.bind(this)); 
-        return ret;
+        return !ret;
     });
+
+    // game.setWinTestCallback( function() {
+
+    //     var ret = true;
+    //     drawutils.drawRobot(30*this.task.objectposx[0], 30*this.task.objectposy[0],0, 30*0.1, this.constants.colorRobot,this.constants.colorRobotEdge );
+    //     drawutils.drawRobot(30*this.task.objectposx[1], 30*this.task.objectposy[1],0, 30*0.1, this.constants.colorRobot,this.constants.colorRobotEdge );
+    //     //drawutils.drawText(300,250, ' goal Pose '+ goalPos.x +'  , '+ goalPos.y, 2, 'blue', 'blue');
+    //     var dist = Math.sqrt((this.task.objectposx[0]-this.task.objectposx[1])*(this.task.objectposx[0]-this.task.objectposx[1]) + (this.task.objectposy[0]-this.task.objectposy[1])*(this.task.objectposy[0]-this.task.objectposy[1]));
+    //     // drawutils.drawText(300,250, ' distance is '+ dist, 2, 'blue', 'blue');
+    //     if(dist>=0.1)
+    //     {ret = true;}
+    //     else 
+    //     {ret = false;}
+    //     return !ret;
+    // });
 
     game.setWonCallback( function() {
         //congratulate
