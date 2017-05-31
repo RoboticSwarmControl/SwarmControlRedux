@@ -62,7 +62,7 @@ function theGame($,phys,GameFramework, Box2D, drawutils, mathutils) {
 
         this.task.blocks.push( phys.makePuzzle1(this.world, 10, 10, 'workpiece0'));
         this.task.blocks.push( phys.makePuzzle2(this.world, 6, 6, 'workpiece1'));
-        this.task.blocks.push( phys.makePuzzle3(this.world, 13, 6 , 'workpiece2'));
+        this.task.blocks.push( phys.makePuzzle3(this.world, 12, 6 , 'workpiece2'));
         this.task.blocks.push( phys.makePuzzle4(this.world, 13, 13,'workpiece3'));
 
 
@@ -70,7 +70,7 @@ function theGame($,phys,GameFramework, Box2D, drawutils, mathutils) {
         bodyDef.type = phys.body.b2_dynamicBody;
         bodyDef.userData = 'goal';
         // bodyDef.position.Set(18- this.constants.obsThick-2* Math.sqrt(3)/2,3);
-        bodyDef.position.Set(18.8,3);
+        bodyDef.position.Set(17,5);
         this.task.goals.push( this.world.CreateBody(bodyDef) );
         fixDef.isSensor = true;
         fixDef.shape = new Box2D.Collision.Shapes.b2PolygonShape();
@@ -161,18 +161,6 @@ function theGame($,phys,GameFramework, Box2D, drawutils, mathutils) {
         var color;
         var verts;
 
-        // draw goal zone
-        // this.task.goals.forEach( function (g) { 
-        //      var f = g.GetFixtureList();
-        //      verts = f.GetShape().GetVertices();
-        //     // //var radius = f.GetShape().GetRadius();
-        //     pos = g.GetPosition();
-        //     angle = g.GetAngle()* 180 / Math.PI- Math.PI/2*180 /Math.PI;
-        //     X = verts[1].x - verts[0].x; 
-        //     Y = verts[2].y - verts[1].y;
-        //     drawutils.drawBulgyBlock(30*pos.x, 30*pos.y,angle,color,4);
-        // }.bind(this));
-
 
         
         //draw robots and obstacles
@@ -205,7 +193,7 @@ function theGame($,phys,GameFramework, Box2D, drawutils, mathutils) {
                     X = verts[1].x - verts[0].x; 
                     Y = verts[2].y - verts[1].y;
                     index = 1;
-                    this.task.colorSelected[index] = 'red';
+                    this.task.colorSelected[index] = 'salmon';
                     this.task.objectposx[index] = pos.x;
                     this.task.objectposy[index] = pos.y;
                     drawutils.drawPuzzle2(30* pos.x,30 * pos.y, angle, this.task.colorSelected[index],4, 120);
@@ -227,7 +215,7 @@ function theGame($,phys,GameFramework, Box2D, drawutils, mathutils) {
                     X = verts[1].x - verts[0].x; 
                     Y = verts[2].y - verts[1].y;
                     index = 3;
-                    this.task.colorSelected[index] = 'purple';
+                    this.task.colorSelected[index] = 'coral';
                     this.task.objectposx[index] = pos.x;
                     this.task.objectposy[index] = pos.y;
                     drawutils.drawPuzzle4(30* pos.x,30 * pos.y, angle, this.task.colorSelected[index],4,120);
@@ -246,11 +234,7 @@ function theGame($,phys,GameFramework, Box2D, drawutils, mathutils) {
                 }
             }
         }
-            // draw the goal of the game
-    drawutils.drawPuzzle1(30* 17,30 * 3, angle, this.task.colorSelected[0],4,30);
-    drawutils.drawPuzzle2(30* 17,30 * 3, angle, this.task.colorSelected[1],4,30);
-    drawutils.drawPuzzle3(30* 17,30 * 3, angle, this.task.colorSelected[2],4,30);
-    drawutils.drawPuzzle4(30* 17,30 * 3, angle, this.task.colorSelected[3],4,30);
+
 
         switch (this.task.mode) {
             case 'full-state': for( i = 0; i < this.task.numRobots; ++i) {
@@ -396,32 +380,17 @@ function theGame($,phys,GameFramework, Box2D, drawutils, mathutils) {
         this.task.goals.forEach( function (g) { 
             pos = g.GetPosition();
             color = this.constants.colorGoal;
+                        // draw the goal of the game
+            drawutils.drawPuzzle1(30* pos.x,30 * (pos.y-2), 0, 'light'+this.task.colorSelected[0],4,45);
+            drawutils.drawPuzzle2(30* pos.x,30 * (pos.y-2), 0, 'light'+ this.task.colorSelected[1],4,45);
+            drawutils.drawPuzzle3(30* pos.x,30 * (pos.y-2), 0, 'light'+ this.task.colorSelected[2],4,45);
+            drawutils.drawPuzzle4(30* pos.x,30 * (pos.y-2), 0, 'light'+ this.task.colorSelected[3],4,45);
             drawutils.drawText(30*pos.x,30*pos.y,'Goal', 1.5, color, color);
         }.bind(this));
     });
 
     game.setOverviewCallback( function() {
         var color = 'white';
-
-        //draw arrow from object to goal
-        // var pGoalArrow = [[400,495],[525,495],[525,300],[80,300],[80,100],[400,100]];
-        // drawutils.drawLine(pGoalArrow,this.constants.colorGoalArrow,false,50,true);
-        // var aY = 20;
-        // var aX = 50;
-        // pGoalArrow = [[400-aX,100+aY],[400,100],[400-aX,100-aY]];
-        // drawutils.drawLine(pGoalArrow,this.constants.colorGoalArrow,false,50,false);
-        // (←,↑,↓,→)
-        // if(this.mobileUserAgent) {
-        //     drawutils.drawText(300,300,'move object to goal by tilting screen', 1.5, 'white', 'white');
-        // }else{
-        //     drawutils.drawText(300,300,'move object to goal with arrow keys', 1.5, 'white', 'white');
-        // }
-
-        this.task.blocks.forEach( function (g) { 
-            var pos = g.GetPosition();
-            color = 'white';
-            drawutils.drawText(30*pos.x,30*pos.y,'Object', 1.5, color, color);
-        }.bind(this));
 
         var meanx = 0;
         var meany = 0;

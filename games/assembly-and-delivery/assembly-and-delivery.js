@@ -59,47 +59,19 @@ function theGame($,phys,GameFramework, Box2D, drawutils, mathutils) {
                     20 - this.constants.obsThick, 10,
                     this.constants.obsThick, 10);
 
-        // // create mid lower wall    
-        // phys.makeBox(    this.world,
-        //             25, 6.66,
-        //             20, this.constants.obsThick);
-
-        // // create mid upper wall
-        // phys.makeBox(    this.world,
-        //             -5, 13.33,
-        //             20, this.constants.obsThick);
-
-        // // create goal top wall
-        // phys.makeBox( this.world, 20- this.constants.obsThick-Math.sqrt(3)/4,0, Math.sqrt(3)/4, 1.85
-        //             );
-        //         // create goal bottom wall
-        // phys.makeBox( this.world, 20-this.constants.obsThick-Math.sqrt(3)/4,this.constants.obsThick+5.1, Math.sqrt(3)/4, 1.15
-        //             );
-
-        // create block
-        //for (i = 0 ; i < this.task.numBlocks; ++i){
             this.task.blocks.push( phys.makeMirroredBlock(this.world, 17, 3, 'workpiece0'));
         this.task.blocks.push( phys.makeMirroredBlock(this.world, 17, 17, 'workpiece1'));
         
 
-    //}
-
         // create the goal
         bodyDef.type = phys.body.b2_dynamicBody;
         bodyDef.userData = 'goal';
-        // bodyDef.position.Set(18- this.constants.obsThick-2* Math.sqrt(3)/2,3);
-        bodyDef.position.Set(17,3);
+        bodyDef.position.Set(17,3.35);
         this.task.goals.push( this.world.CreateBody(bodyDef) );
         fixDef.isSensor = true;
-        fixDef.shape = new Box2D.Collision.Shapes.b2PolygonShape();
-        fixDef.shape.SetAsBox(2, 2); 
-        
-        //fixDef.SetAngle(Math.PI/3);
-        //var body = world.CreateBody(bodyDef);
-        //body.CreateFixture(fixDef);
-        //body.SetAngle(Math.PI/3);
-        //fixDef.shape.SetAsBox(1.2,2);
+        fixDef.shape = new phys.circleShape(2.5); 
         this.task.goals[0].CreateFixture(fixDef);
+
 
         // create some robots
         var xoffset = this.task.robotRadius+0.5;
@@ -168,14 +140,10 @@ function theGame($,phys,GameFramework, Box2D, drawutils, mathutils) {
 
         // draw goal zone
         this.task.goals.forEach( function (g) { 
-             var f = g.GetFixtureList();
-             verts = f.GetShape().GetVertices();
-            // //var radius = f.GetShape().GetRadius();
-            pos = g.GetPosition();
-            angle = g.GetAngle()* 180 / Math.PI- Math.PI/2*180 /Math.PI;
-            X = verts[1].x - verts[0].x; 
-            Y = verts[2].y - verts[1].y;
-            drawutils.drawRect(30*pos.x, 30*pos.y,X* 30,Y*30,color,angle,4);
+            var f = g.GetFixtureList();
+            var radius = f.GetShape().GetRadius();
+            var pos = g.GetPosition();
+            drawutils.drawCircle( 30*pos.x, 30*pos.y,30*radius, this.constants.colorGoal, this.constants.strokeWidth );
         }.bind(this));
 
         //draw robots and obstacles
@@ -198,7 +166,7 @@ function theGame($,phys,GameFramework, Box2D, drawutils, mathutils) {
                     X = verts[1].x - verts[0].x; 
                     Y = verts[2].y - verts[1].y;
                     index = 0;
-                    this.task.colorSelected[index] = 'green';
+                    this.task.colorSelected[index] = 'blue';
                     this.task.objectposx[index] = pos.x;
                     this.task.objectposy[index] = pos.y;
                     drawutils.drawMirroredBlock(30* pos.x,30 * pos.y, angle, this.task.colorSelected[index],4, 60);
@@ -237,20 +205,6 @@ function theGame($,phys,GameFramework, Box2D, drawutils, mathutils) {
                                     drawutils.drawRobot( 30*pos.x, 30*pos.y,angle, 30*radius, this.constants.colorRobot,this.constants.colorRobotEdge); 
                                 }
                                 break;
-            
-            // case 'convex-hull': var points = [];
-            //                     for( i = 0; i < this.task.numRobots; ++i) {
-            //                         pos = this.task.robots[i].GetPosition();
-            //                         points.push([30*pos.x,30*pos.y]);
-            //                     }
-            //                     var cHull = drawutils.getConvexHull(points);
-            //                     var cHullPts = [];
-            //                     for( i = 0; i < cHull.length; ++i) {
-            //                         cHullPts.push([cHull[i][0][0],cHull[i][0][1]]);
-            //                     }
-
-            //                     drawutils.drawLine(cHullPts,'lightblue',true,4,false);
-            //                     break;
             case 'mean & variance': // http://en.wikipedia.org/wiki/Algorithms_for_calculating_variance
                                     // t95% confidence ellipse
                                     meanx = 0;
@@ -381,25 +335,11 @@ function theGame($,phys,GameFramework, Box2D, drawutils, mathutils) {
     game.setOverviewCallback( function() {
         var color = 'white';
 
-        // //draw arrow from object to goal
-        // var pGoalArrow = [[400,495],[525,495],[525,300],[80,300],[80,100],[400,100]];
-        // drawutils.drawLine(pGoalArrow,this.constants.colorGoalArrow,false,50,true);
-        // var aY = 20;
-        // var aX = 50;
-        // pGoalArrow = [[400-aX,100+aY],[400,100],[400-aX,100-aY]];
-        // drawutils.drawLine(pGoalArrow,this.constants.colorGoalArrow,false,50,false);
-        // (←,↑,↓,→)
         if(this.mobileUserAgent) {
             drawutils.drawText(300,300,'move object to goal by tilting screen', 1.5, 'white', 'white');
         }else{
             drawutils.drawText(300,300,'move object to goal with arrow keys', 1.5, 'white', 'white');
         }
-
-        this.task.blocks.forEach( function (g) { 
-            var pos = g.GetPosition();
-            color = 'white';
-            drawutils.drawText(30*pos.x,30*pos.y,'Object', 1.5, color, color);
-        }.bind(this));
 
         var meanx = 0;
         var meany = 0;
@@ -532,7 +472,7 @@ function theGame($,phys,GameFramework, Box2D, drawutils, mathutils) {
                 goalPos = g.GetPosition();
                 var dist = Math.sqrt((this.task.objectposx[0]-this.task.objectposx[1])*(this.task.objectposx[0]-this.task.objectposx[1]) + (this.task.objectposy[0]-this.task.objectposy[1])*(this.task.objectposy[0]-this.task.objectposy[1]));
                 var goalDist = Math.sqrt((this.task.objectposx[0]-goalPos.x)*(this.task.objectposx[0]-goalPos.x) + (this.task.objectposy[0]-goalPos.y)*(this.task.objectposy[0]-goalPos.y));
-                if(dist>= 0.1 || goalDist>=1)
+                if(dist>= 0.1 || goalDist>=0.7)
                 {
                     ret = true;
                 }
@@ -544,21 +484,6 @@ function theGame($,phys,GameFramework, Box2D, drawutils, mathutils) {
             }.bind(this));
         return !ret;
     });
-
-    // game.setWinTestCallback( function() {
-
-    //     var ret = true;
-    //     drawutils.drawRobot(30*this.task.objectposx[0], 30*this.task.objectposy[0],0, 30*0.1, this.constants.colorRobot,this.constants.colorRobotEdge );
-    //     drawutils.drawRobot(30*this.task.objectposx[1], 30*this.task.objectposy[1],0, 30*0.1, this.constants.colorRobot,this.constants.colorRobotEdge );
-    //     //drawutils.drawText(300,250, ' goal Pose '+ goalPos.x +'  , '+ goalPos.y, 2, 'blue', 'blue');
-    //     var dist = Math.sqrt((this.task.objectposx[0]-this.task.objectposx[1])*(this.task.objectposx[0]-this.task.objectposx[1]) + (this.task.objectposy[0]-this.task.objectposy[1])*(this.task.objectposy[0]-this.task.objectposy[1]));
-    //     // drawutils.drawText(300,250, ' distance is '+ dist, 2, 'blue', 'blue');
-    //     if(dist>=0.1)
-    //     {ret = true;}
-    //     else 
-    //     {ret = false;}
-    //     return !ret;
-    // });
 
     game.setWonCallback( function() {
         //congratulate

@@ -198,7 +198,7 @@ function theGame($,phys,GameFramework, Box2D, drawutils, mathutils) {
                     X = verts[1].x - verts[0].x; 
                     Y = verts[2].y - verts[1].y;
                     index = 0;
-                    this.task.colorSelected[index] = 'green';
+                    this.task.colorSelected[index] = 'blue';
                     this.task.objectposx[index] = pos.x;
                     this.task.objectposy[index] = pos.y;
                     drawutils.drawMirroredBlock(30* pos.x,30 * pos.y, angle, this.task.colorSelected[index],4, 60);
@@ -381,25 +381,6 @@ function theGame($,phys,GameFramework, Box2D, drawutils, mathutils) {
     game.setOverviewCallback( function() {
         var color = 'white';
 
-        // //draw arrow from object to goal
-        // var pGoalArrow = [[400,495],[525,495],[525,300],[80,300],[80,100],[400,100]];
-        // drawutils.drawLine(pGoalArrow,this.constants.colorGoalArrow,false,50,true);
-        // var aY = 20;
-        // var aX = 50;
-        // pGoalArrow = [[400-aX,100+aY],[400,100],[400-aX,100-aY]];
-        // drawutils.drawLine(pGoalArrow,this.constants.colorGoalArrow,false,50,false);
-        // // (←,↑,↓,→)
-        // if(this.mobileUserAgent) {
-        //     drawutils.drawText(300,300,'move object to goal by tilting screen', 1.5, 'white', 'white');
-        // }else{
-        //     drawutils.drawText(300,300,'move object to goal with arrow keys', 1.5, 'white', 'white');
-        // }
-
-        this.task.blocks.forEach( function (g) { 
-            var pos = g.GetPosition();
-            color = 'white';
-            drawutils.drawText(30*pos.x,30*pos.y,'Object', 1.5, color, color);
-        }.bind(this));
 
         var meanx = 0;
         var meany = 0;
