@@ -15,7 +15,7 @@ window.drawutils = (function(){
 
 
   var drawPuzzle1 = function(x,y,rotate,color,strokeWidth, unitLength){
-    var tolerance = 0.05*unitLength;
+    var tolerance = 0.02*unitLength;
     $canvas.draw({
       fn: function(ctx) {
         ctx.save();
@@ -34,14 +34,18 @@ window.drawutils = (function(){
         ctx.lineTo(nextCoordX, nextCoordY);
         nextCoordY -= (unitLength*Math.sqrt(3)/2)/2;
         ctx.lineTo(nextCoordX, nextCoordY);
-        nextCoordX -= unitLength/3+tolerance;
+
+        nextCoordX -= unitLength/8 + tolerance;
         ctx.lineTo(nextCoordX, nextCoordY);
-        nextCoordY -= unitLength/3;
+        nextCoordX -= unitLength/8;    
+        nextCoordY -= unitLength/4;
         ctx.lineTo(nextCoordX, nextCoordY);
-        nextCoordX -= unitLength/3-2*tolerance;
+        nextCoordX -= unitLength/8 - tolerance * 2;
         ctx.lineTo(nextCoordX, nextCoordY);
-        nextCoordY += unitLength/3;
+        nextCoordX -= unitLength/8;
+        nextCoordY += unitLength/4;
         ctx.lineTo(nextCoordX, nextCoordY);
+    
         ctx.fill();
         ctx.closePath();
         ctx.restore();
@@ -67,27 +71,33 @@ window.drawutils = (function(){
         ctx.lineTo(nextCoordX, nextCoordY);
         nextCoordX += (unitLength/2);
         ctx.lineTo(nextCoordX, nextCoordY);
-        nextCoordY += (unitLength*Math.sqrt(3)/2)/3;
+        
+        nextCoordY += (unitLength*Math.sqrt(3)/2)/6;
         ctx.lineTo(nextCoordX, nextCoordY);
+        nextCoordY += (unitLength*Math.sqrt(3)/2)/6;
         nextCoordX -= (unitLength*Math.sqrt(3)/2)/3;
         ctx.lineTo(nextCoordX, nextCoordY);
         nextCoordY += (unitLength*Math.sqrt(3)/2)/3;
         ctx.lineTo(nextCoordX, nextCoordY);
         nextCoordX += (unitLength*Math.sqrt(3)/2)/3;
+        nextCoordY += (unitLength*Math.sqrt(3)/2)/6;
         ctx.lineTo(nextCoordX, nextCoordY);
-        nextCoordY += (unitLength*Math.sqrt(3)/2)/3+(unitLength*Math.sqrt(3)/2)/2;
+        nextCoordY += (unitLength*Math.sqrt(3)/2)/6+(unitLength*Math.sqrt(3)/2)/2;
         ctx.lineTo(nextCoordX, nextCoordY);
-        nextCoordX -= unitLength/3;
+        
+        nextCoordX -= unitLength/8;
         ctx.lineTo(nextCoordX, nextCoordY);
-        nextCoordY -= unitLength/3;
+        nextCoordX -= unitLength/8;    
+        nextCoordY -= unitLength/4;
         ctx.lineTo(nextCoordX, nextCoordY);
-        nextCoordX -= unitLength/3;
+        nextCoordX -= unitLength/8;
         ctx.lineTo(nextCoordX, nextCoordY);
-        nextCoordY += unitLength/3;
+        nextCoordX -= unitLength/8;
+        nextCoordY += unitLength/4;
         ctx.lineTo(nextCoordX, nextCoordY);
-        nextCoordX -= 3*unitLength/4-(unitLength*2/3);
+        nextCoordX -= unitLength/4;
         ctx.lineTo(nextCoordX, nextCoordY);
-        //ctx.lineTo(offset-unitLength, offset);
+
         ctx.fill();
         ctx.closePath();
         ctx.restore();
@@ -97,7 +107,7 @@ window.drawutils = (function(){
   };
 
   var drawPuzzle3 = function(x,y,rotate,color,strokeWidth, unitLength){
-    var tolerance = 0.05*unitLength;
+    var tolerance = 0.02*unitLength;
 
     $canvas.draw({
       fn: function(ctx) {
@@ -118,24 +128,31 @@ window.drawutils = (function(){
         ctx.lineTo(nextCoordX, nextCoordY);
         nextCoordX -= unitLength/2;
         ctx.lineTo(nextCoordX, nextCoordY);
-        nextCoordY += (unitLength*Math.sqrt(3)/2)/3+tolerance;
+        
+        nextCoordY += (unitLength*Math.sqrt(3)/2)/6+tolerance;
         ctx.lineTo(nextCoordX, nextCoordY);
+        nextCoordY += (unitLength*Math.sqrt(3)/2)/6;
         nextCoordX -= (unitLength*Math.sqrt(3)/2)/3;
         ctx.lineTo(nextCoordX, nextCoordY);
         nextCoordY += (unitLength*Math.sqrt(3)/2)/3-2*tolerance;
         ctx.lineTo(nextCoordX, nextCoordY);
         nextCoordX += (unitLength*Math.sqrt(3)/2)/3;
+        nextCoordY += (unitLength*Math.sqrt(3)/2)/6;
         ctx.lineTo(nextCoordX, nextCoordY);
-        nextCoordY += (unitLength*Math.sqrt(3)/2)/3+tolerance;
+        nextCoordY += (unitLength*Math.sqrt(3)/2)/6+tolerance;
         ctx.lineTo(nextCoordX, nextCoordY);
-        nextCoordX += unitLength/3;
+        
+        nextCoordX += unitLength/6;
         ctx.lineTo(nextCoordX, nextCoordY);
+        nextCoordX += unitLength/6;    
         nextCoordY -= unitLength/3;
         ctx.lineTo(nextCoordX, nextCoordY);
         nextCoordX += unitLength/3;
         ctx.lineTo(nextCoordX, nextCoordY);
+        nextCoordX += unitLength/6;
         nextCoordY += unitLength/3;
         ctx.lineTo(nextCoordX, nextCoordY);
+    
         ctx.fill();
         ctx.closePath();
         ctx.restore();
@@ -144,7 +161,7 @@ window.drawutils = (function(){
   };
 
   var drawPuzzle4 = function(x,y,rotate,color,strokeWidth,unitLength){
-    var tolerance = 0.05*unitLength;
+    var tolerance = 0.02*unitLength;
 
     $canvas.draw({
       fn: function(ctx) {
@@ -165,15 +182,18 @@ window.drawutils = (function(){
         ctx.lineTo(nextCoordX, nextCoordY);
         nextCoordY -= unitLength*Math.sqrt(3)/2;
         ctx.lineTo(nextCoordX, nextCoordY);
-        nextCoordX += unitLength/3+tolerance;
+        
+        nextCoordX += unitLength/6+tolerance;
         ctx.lineTo(nextCoordX, nextCoordY);
+        nextCoordX += unitLength/6;    
         nextCoordY -= unitLength/3;
         ctx.lineTo(nextCoordX, nextCoordY);
         nextCoordX += unitLength/3-2*tolerance;
         ctx.lineTo(nextCoordX, nextCoordY);
+        nextCoordX += unitLength/6;
         nextCoordY += unitLength/3;
         ctx.lineTo(nextCoordX, nextCoordY);
-
+    
         ctx.fill();
         ctx.closePath();
         ctx.restore();
@@ -185,7 +205,7 @@ window.drawutils = (function(){
   var drawMirroredBlock = function(x,y,rotate, color,strokeWidth, unitLength)
       {
         
-        var tolerance = 0.025 * unitLength;
+        var tolerance = 0.02 * unitLength;
 
         $canvas.draw({
           fn: function(ctx) {
