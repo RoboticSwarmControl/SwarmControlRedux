@@ -88,11 +88,7 @@ window.phys = (function(Box2D){
             return body;
         },
 
-          makePuzzle1: function(world,x,y,userData){
-
-// create block
-            // This defines a hexagon in CCW order.
-            // http://blog.sethladd.com/2011/09/box2d-and-polygons-for-javascript.html
+        makePuzzle1: function(world,x,y,userData){
             var phys = window.phys;
             var bodyDef = new phys.bodyDef();
             var tolerance = 0.05;
@@ -115,8 +111,8 @@ window.phys = (function(Box2D){
                             ];
             var Mpoints2 = [ 
                             {x: -2/3 + tolerance, y: Math.sqrt(3)/4},
-                            {x: -2/3 + tolerance, y: Math.sqrt(3)/4 - 1/3 + tolerance},
-                            {x: -1/3 - tolerance, y: Math.sqrt(3)/4 - 1/3 + tolerance},
+                            {x: -2/3 + tolerance, y: Math.sqrt(3)/4 - 1/3},
+                            {x: -1/3 - tolerance, y: Math.sqrt(3)/4 - 1/3},
                             {x: -1/3 - tolerance, y: Math.sqrt(3)/4},
                             ];
                     
@@ -136,7 +132,7 @@ window.phys = (function(Box2D){
 
             return body;
         },
-makePuzzle2: function(world,x,y,userData){
+        makePuzzle2: function(world,x,y,userData){
 
 // create block
             // This defines a hexagon in CCW order.
@@ -201,10 +197,6 @@ makePuzzle2: function(world,x,y,userData){
         },
 
         makePuzzle3: function(world,x,y,userData){
-
-// create block
-            // This defines a hexagon in CCW order.
-            // http://blog.sethladd.com/2011/09/box2d-and-polygons-for-javascript.html
             var phys = window.phys;
             var bodyDef = new phys.bodyDef();
             var tolerance = 0.05;
@@ -228,8 +220,8 @@ makePuzzle2: function(world,x,y,userData){
                     ];
             var Mpoints2 = [ 
                     {x: 0, y: -Math.sqrt(3)/6 - tolerance},
-                    {x: -Math.sqrt(3)/6 + tolerance, y: -Math.sqrt(3)/6 - tolerance},
-                    {x: -Math.sqrt(3)/6 + tolerance, y: -Math.sqrt(3)*2/6 + tolerance},
+                    {x: -Math.sqrt(3)/6, y: -Math.sqrt(3)/6 - tolerance},
+                    {x: -Math.sqrt(3)/6, y: -Math.sqrt(3)*2/6 + tolerance},
                     {x: 0, y: -Math.sqrt(3)*2/6 + tolerance}
                     ];
             var Mpoints3 = [ 
@@ -261,13 +253,9 @@ makePuzzle2: function(world,x,y,userData){
             return body;
         },
         makePuzzle4: function(world,x,y,userData){
-
-// create block
-            // This defines a hexagon in CCW order.
-            // http://blog.sethladd.com/2011/09/box2d-and-polygons-for-javascript.html
             var phys = window.phys;
             var bodyDef = new phys.bodyDef();
-            var tolerance = 0.05;
+            var tolerance = 0.01;
             bodyDef.type = phys.body.b2_dynamicBody;
             bodyDef.userData = userData;
             bodyDef.position.Set(x,y);        
@@ -287,8 +275,8 @@ makePuzzle2: function(world,x,y,userData){
                     ];
             var Mpoints2 = [ 
                     {x: 1/3 + tolerance, y: 0},
-                    {x: 1/3 + tolerance, y: -1/3 + tolerance},
-                    {x: 2/3 - tolerance, y: -1/3 + tolerance},
+                    {x: 1/3 + tolerance, y: -1/3},
+                    {x: 2/3 - tolerance, y: -1/3},
                     {x: 2/3 - tolerance, y: 0}
                     ];
             
@@ -309,11 +297,7 @@ makePuzzle2: function(world,x,y,userData){
             return body;
         },
 
-makeMirroredBlock: function(world,x,y,userData){
-
-// create block
-            // This defines a hexagon in CCW order.
-            // http://blog.sethladd.com/2011/09/box2d-and-polygons-for-javascript.html
+        makeMirroredBlock: function(world,x,y,userData){
             var phys = window.phys;
             var bodyDef = new phys.bodyDef();
             var tolerance = 0.025;
@@ -329,28 +313,29 @@ makeMirroredBlock: function(world,x,y,userData){
             var body = world.CreateBody(bodyDef);
             var i = 0;
             
-            var Mpoints1 = [            
+            var Mpoints1 = [ 
+                            {x: 1/4, y: 1/2},           
+                            //{x: 1/2, y: Math.sqrt(3)/2},
+                            {x: -1/2, y: Math.sqrt(3)/2},
                             {x: -1, y: 0},
-                            {x: -1/2 + tolerance, y: 0},
-                            {x: -1/2 + tolerance, y: Math.sqrt(3)/2},
-                            {x: -1/2, y: Math.sqrt(3)/2}];
-            var Mpoints2 = [
-                            {x: -1/2 + tolerance, y: Math.sqrt(3)/2},
-                            {x: -1/2 + tolerance, y: -1/2 + tolerance},
-                            {x: -tolerance, y: -1/2 + tolerance},
-                            {x: -tolerance, y: Math.sqrt(3)/2},
+                            {x: 0, y: 0}
                             ];
-
+            var Mpoints2 = [
+                            {x: -tolerance, y: 0},
+                            {x: -3/4 + tolerance, y: 0},
+                            {x: -2/4 + tolerance, y: -1/2},
+                            {x: -1/4 - tolerance, y: -1/2}
+                            ];
             var Mpoints3 = [  
-                            {x: -tolerance, y: Math.sqrt(3)/2}, 
-                            {x: -tolerance, y: 1/2},
+                            {x: 1/4, y: 1/2},
                             {x: 1/2, y: 1/2},
-                            {x: 1/2, y: Math.sqrt(3)/2 }
-                            
+                            {x: 1/2, y: Math.sqrt(3)/2},
+                            {x: -1/2, y: Math.sqrt(3)/2},
                             ];
             var Mpoints4 = [
                             {x: 1/2, y: Math.sqrt(3)/2},
-                            {x: 1/2, y: 0},
+                            {x: 1/2, y: 1/2},
+                            {x: 3/4, y: 0},
                             {x: 1, y: 0}
                             ];
 
@@ -370,6 +355,7 @@ makeMirroredBlock: function(world,x,y,userData){
 
             return body;
         },
+
         makeDishedBlock: function (world, x, y, userData) {
             // create block
             // This defines a hexagon in CCW order.
@@ -388,37 +374,24 @@ makeMirroredBlock: function(world,x,y,userData){
             fixDef.isSensor = false;
             var body = world.CreateBody(bodyDef);
             var i = 0;
-//             var Mpoints1 = [ 
-//          {x: -1/2, y: Math.sqrt(3)/4},
-//         {x: 1/2 , y: Math.sqrt(3)/4},
-//         {x: 1/2, y: Math.sqrt(3)/2},
-//         {x: -1/2, y: Math.sqrt(3)/2}
-//         ];
-// var Mpoints2 = [ 
-//         {x: 1, y: 0},
-//         {x: 1/2, y: Math.sqrt(3)/2},
-//         {x: 1/2, y: 0}
-//         ];
-// var Mpoints3 = [ 
-//         {x: -1, y: 0},
-//         {x: -1/2, y: 0},
-//         {x: -1/2, y: Math.sqrt(3)/2}
-var Mpoints1 = [ 
-         {x: -1/2, y: Math.sqrt(3)/4},
-        {x: 1/2 , y: Math.sqrt(3)/4},
-        {x: 1/2, y: Math.sqrt(3)/2},
-        {x: -1/2, y: Math.sqrt(3)/2}
-        ];
-var Mpoints2 = [ 
-        {x: 1, y: 0},
-        {x: 1/2, y: Math.sqrt(3)/2},
-        {x: 1/2, y: 0}
-        ];
-var Mpoints3 = [ 
-        {x: -1, y: 0},
-        {x: -1/2, y: 0},
-        {x: -1/2, y: Math.sqrt(3)/2}
-        ];
+
+            var Mpoints1 = [ 
+                     {x: -1/2, y: Math.sqrt(3)/4},
+                    {x: 1/2 , y: Math.sqrt(3)/4},
+                    {x: 1/2, y: Math.sqrt(3)/2},
+                    {x: -1/2, y: Math.sqrt(3)/2}
+                    ];
+            var Mpoints2 = [ 
+                    {x: 1, y: 0},
+                    {x: 1/2, y: Math.sqrt(3)/2},
+                    {x: 1/2, y: 0}
+                    ];
+            var Mpoints3 = [ 
+                    {x: -1, y: 0},
+                    {x: -1/2, y: 0},
+                    {x: -1/2, y: Math.sqrt(3)/2}
+                    ];
+
             var Mpoints = [Mpoints1, Mpoints2,Mpoints3];
             for (var j = 0 ; j< Mpoints.length; j++){
                 var points = [];
