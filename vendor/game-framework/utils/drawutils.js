@@ -11,7 +11,277 @@
     function URFP( x ) { /* jshint expr:true */ x; }
 
     var $canvas = null;
-    var drawBulgyBlock= function(x,y,rotate, color,strokeWidth)
+
+
+
+    var drawPuzzle1 = function(x,y,rotate,color,strokeWidth, unitLength){
+      //var unitLength = 60*2;
+       var tolerance = 0.05*unitLength;
+      $canvas.draw({
+      fn: function(ctx) {
+
+    ctx.save();
+
+        
+        ctx.translate(x,y);
+        ctx.rotate( rotate* Math.PI /180);
+        ctx.fillStyle = color;
+        ctx.strokeWidth = strokeWidth;
+        ctx.beginPath();
+      
+
+        ctx.moveTo(-3*unitLength/4, (unitLength*Math.sqrt(3)/2)/2);
+        var nextCoordX = -(unitLength/2);
+        var nextCoordY = (unitLength*Math.sqrt(3)/2);
+        ctx.lineTo(nextCoordX, nextCoordY);
+        nextCoordX += (unitLength/2);
+        ctx.lineTo(nextCoordX, nextCoordY);
+        nextCoordY -= (unitLength*Math.sqrt(3)/2)/2;
+        ctx.lineTo(nextCoordX, nextCoordY);
+        nextCoordX -= unitLength/3+tolerance;
+        ctx.lineTo(nextCoordX, nextCoordY);
+        nextCoordY -= unitLength/3-tolerance;
+        ctx.lineTo(nextCoordX, nextCoordY);
+        nextCoordX -= unitLength/3-2*tolerance;
+        ctx.lineTo(nextCoordX, nextCoordY);
+        nextCoordY += unitLength/3-tolerance;
+        ctx.lineTo(nextCoordX, nextCoordY);
+        ctx.fill();
+        ctx.closePath();
+        ctx.restore();
+      }
+    });
+    };
+
+
+    var drawPuzzle2 = function(x,y,rotate,color,strokeWidth,unitLength){
+     //var unitLength = 60*2;
+    
+
+      $canvas.draw({
+  fn: function(ctx) {
+
+ctx.save();
+
+    
+    ctx.translate(x,y);
+    ctx.rotate(rotate* Math.PI /180);
+    ctx.fillStyle = color;
+    ctx.strokeWidth = strokeWidth;
+    ctx.beginPath();
+    ctx.moveTo(-unitLength, 0);
+    var nextCoordX = -unitLength+(unitLength/2);
+    var nextCoordY = -(unitLength*Math.sqrt(3)/2);
+    ctx.lineTo(nextCoordX, nextCoordY);
+    nextCoordX += (unitLength/2);
+    ctx.lineTo(nextCoordX, nextCoordY);
+    nextCoordY += (unitLength*Math.sqrt(3)/2)/3;
+    ctx.lineTo(nextCoordX, nextCoordY);
+    nextCoordX -= (unitLength*Math.sqrt(3)/2)/3;
+    ctx.lineTo(nextCoordX, nextCoordY);
+    nextCoordY += (unitLength*Math.sqrt(3)/2)/3;
+    ctx.lineTo(nextCoordX, nextCoordY);
+    nextCoordX += (unitLength*Math.sqrt(3)/2)/3;
+    ctx.lineTo(nextCoordX, nextCoordY);
+    nextCoordY += (unitLength*Math.sqrt(3)/2)/3+(unitLength*Math.sqrt(3)/2)/2;
+    ctx.lineTo(nextCoordX, nextCoordY);
+    nextCoordX -= unitLength/3;
+    ctx.lineTo(nextCoordX, nextCoordY);
+    nextCoordY -= unitLength/3;
+    ctx.lineTo(nextCoordX, nextCoordY);
+    nextCoordX -= unitLength/3;
+    ctx.lineTo(nextCoordX, nextCoordY);
+    nextCoordY += unitLength/3;
+    ctx.lineTo(nextCoordX, nextCoordY);
+    nextCoordX -= 3*unitLength/4-(unitLength*2/3);
+    ctx.lineTo(nextCoordX, nextCoordY);
+    //ctx.lineTo(offset-unitLength, offset);
+    ctx.fill();
+    ctx.closePath();
+    ctx.restore();
+  }
+});
+
+    };
+
+    var drawPuzzle3 = function(x,y,rotate,color,strokeWidth, unitLength){
+     //var unitLength = 60*2;
+     var tolerance = 0.05*unitLength;
+
+      $canvas.draw({
+  fn: function(ctx) {
+
+ctx.save();
+
+    
+    ctx.translate(x,y);
+    ctx.rotate(rotate* Math.PI /180);
+    ctx.fillStyle = color;
+    ctx.strokeWidth = strokeWidth;
+    ctx.beginPath();
+
+
+    ctx.moveTo(unitLength, 0);
+    var nextCoordX = (unitLength/2);
+    var nextCoordY = -(unitLength*Math.sqrt(3)/2);
+    ctx.lineTo(nextCoordX, nextCoordY);
+    nextCoordX -= unitLength/2;
+    ctx.lineTo(nextCoordX, nextCoordY);
+    nextCoordY += (unitLength*Math.sqrt(3)/2)/3+tolerance;
+    ctx.lineTo(nextCoordX, nextCoordY);
+    nextCoordX -= (unitLength*Math.sqrt(3)/2)/3-tolerance;
+    ctx.lineTo(nextCoordX, nextCoordY);
+    nextCoordY += (unitLength*Math.sqrt(3)/2)/3-2*tolerance;
+    ctx.lineTo(nextCoordX, nextCoordY);
+    nextCoordX += (unitLength*Math.sqrt(3)/2)/3-tolerance;
+    ctx.lineTo(nextCoordX, nextCoordY);
+    nextCoordY += (unitLength*Math.sqrt(3)/2)/3+tolerance;
+    ctx.lineTo(nextCoordX, nextCoordY);
+    nextCoordX += unitLength/3;
+    ctx.lineTo(nextCoordX, nextCoordY);
+    nextCoordY -= unitLength/3;
+    ctx.lineTo(nextCoordX, nextCoordY);
+    nextCoordX += unitLength/3;
+    ctx.lineTo(nextCoordX, nextCoordY);
+    nextCoordY += unitLength/3;
+    ctx.lineTo(nextCoordX, nextCoordY);
+    ctx.fill();
+    ctx.closePath();
+    ctx.restore();
+  }
+});
+  };
+
+  var drawPuzzle4 = function(x,y,rotate,color,strokeWidth,unitLength){
+     //var unitLength = 60*2;
+     var tolerance = 0.05*unitLength;
+
+      $canvas.draw({
+  fn: function(ctx) {
+
+ctx.save();
+
+    
+    ctx.translate(x,y);
+    ctx.rotate(rotate* Math.PI /180);
+    ctx.fillStyle = color;
+    ctx.strokeWidth = strokeWidth;
+    ctx.beginPath();
+
+    ctx.moveTo(unitLength, 0);
+    var nextCoordX = (unitLength/2);
+    var nextCoordY = (unitLength*Math.sqrt(3)/2);
+    ctx.lineTo(nextCoordX, nextCoordY);
+    nextCoordX -= unitLength/2;
+    ctx.lineTo(nextCoordX, nextCoordY);
+    nextCoordY -= unitLength*Math.sqrt(3)/2;
+    ctx.lineTo(nextCoordX, nextCoordY);
+    nextCoordX += unitLength/3+tolerance;
+    ctx.lineTo(nextCoordX, nextCoordY);
+    nextCoordY -= unitLength/3-tolerance;
+    ctx.lineTo(nextCoordX, nextCoordY);
+    nextCoordX += unitLength/3-2*tolerance;
+    ctx.lineTo(nextCoordX, nextCoordY);
+    nextCoordY += unitLength/3-tolerance;
+    ctx.lineTo(nextCoordX, nextCoordY);
+
+    ctx.fill();
+    ctx.closePath();
+    ctx.restore();
+  }
+});
+  };
+
+
+var drawMirroredBlock = function(x,y,rotate, color,strokeWidth, unitLength)
+    {
+      
+      var tolerance = 0.025 * unitLength;
+
+      $canvas.draw({
+        fn: function(ctx) {
+
+          ctx.save();
+   
+          ctx.translate(x,y);
+          ctx.rotate(rotate * Math.PI /180);
+          ctx.fillStyle = color;
+          ctx.strokeWidth = strokeWidth;
+          ctx.beginPath();
+          ctx.moveTo(-unitLength, 0);
+          var nextCoordX = -(unitLength/2);
+          var nextCoordY = (unitLength*Math.sqrt(3)/2);
+          ctx.lineTo(nextCoordX, nextCoordY);
+          nextCoordX += unitLength;
+          ctx.lineTo(nextCoordX, nextCoordY);
+          nextCoordX += (unitLength/2);
+          nextCoordY -= (unitLength*Math.sqrt(3)/2);
+          ctx.lineTo(nextCoordX, nextCoordY);
+          
+          nextCoordX -= (unitLength/2);
+          ctx.lineTo(nextCoordX, nextCoordY);
+          nextCoordY += (unitLength/2);
+          ctx.lineTo(nextCoordX, nextCoordY);
+          nextCoordX -= (unitLength/2 + tolerance);
+          ctx.lineTo(nextCoordX, nextCoordY);
+          nextCoordY -= (unitLength/2 - tolerance);
+          ctx.lineTo(nextCoordX, nextCoordY);
+          nextCoordY -= (unitLength/2);
+          ctx.lineTo(nextCoordX, nextCoordY);
+          nextCoordX -= (unitLength/2 - 2 * tolerance);
+          ctx.lineTo(nextCoordX, nextCoordY);
+          nextCoordY += (unitLength/2 - tolerance);
+          ctx.lineTo(nextCoordX, nextCoordY);
+          
+          ctx.fill();
+          ctx.closePath();
+          ctx.restore();
+          }
+        });
+    };
+  var drawDishedBlock = function(x,y,rotate, color,strokeWidth)
+    {
+      var unitLength = 60;
+      
+
+$canvas.draw({
+  fn: function(ctx) {
+
+ctx.save();
+
+    
+    ctx.translate(x,y);
+    ctx.rotate(Math.PI + rotate* Math.PI /180);
+    ctx.fillStyle = color;
+    ctx.fillStyle = 'blue';
+    ctx.strokeWidth = strokeWidth;
+    ctx.beginPath();
+    ctx.moveTo(-unitLength, 0);
+    var nextCoordX = -(unitLength/2);
+    var nextCoordY = -(unitLength*Math.sqrt(3)/2);
+    ctx.lineTo(nextCoordX, nextCoordY);
+    nextCoordX = nextCoordX+unitLength;
+    ctx.lineTo(nextCoordX, nextCoordY);
+    nextCoordX = nextCoordX+(unitLength/2);
+    nextCoordY = nextCoordY+(unitLength*Math.sqrt(3)/2);
+    ctx.lineTo(nextCoordX, nextCoordY);
+    nextCoordX = nextCoordX-(unitLength/2);//+ openness;
+    ctx.lineTo(nextCoordX, nextCoordY);
+    nextCoordY = nextCoordY-(unitLength*Math.sqrt(3)/4);//- openness;
+    ctx.lineTo(nextCoordX, nextCoordY);
+    nextCoordX = nextCoordX-unitLength;//-2* openness;
+    ctx.lineTo(nextCoordX, nextCoordY);
+    nextCoordY = nextCoordY+(unitLength*Math.sqrt(3)/4);//+ openness;
+    ctx.lineTo(nextCoordX, nextCoordY);
+    
+    ctx.fill();
+    ctx.closePath();
+    ctx.restore();
+  }
+});
+    };
+
+    var drawBulgyGoal = function(x,y,rotate, color,strokeWidth)
     {
       var unitLength = 60;
 
@@ -23,9 +293,11 @@ ctx.save();
     
     ctx.translate(x,y);
     ctx.rotate( Math.PI + rotate* Math.PI /180);
-    ctx.fillStyle = color;
+    ctx.fillStyle = 'blue';
+    ctx.strokeStyle = color;
+    ctx.strokeStyle = 'blue';
     ctx.strokeWidth = strokeWidth;
-
+    ctx.beginPath();
     ctx.moveTo(-unitLength, 0);
     var nextCoordX = -unitLength+(unitLength/2);
     var nextCoordY = (unitLength*Math.sqrt(3)/2);
@@ -40,6 +312,47 @@ ctx.save();
     nextCoordY = nextCoordY-(unitLength*Math.sqrt(3)/4);
     ctx.lineTo(nextCoordX, nextCoordY);
     nextCoordX = nextCoordX-unitLength;
+    ctx.lineTo(nextCoordX, nextCoordY);
+    nextCoordY = nextCoordY+(unitLength*Math.sqrt(3)/4);
+    ctx.lineTo(nextCoordX, nextCoordY);
+    ctx.lineTo(-unitLength, 0);
+    ctx.closePath();
+    //ctx.stroke();
+    ctx.restore();
+  }
+});
+    };
+
+    var drawBulgyBlock = function(x,y,rotate, color,strokeWidth)
+    {
+      var unitLength = 60;
+      var tolerance = 0.05*60;
+
+$canvas.draw({
+  fn: function(ctx) {
+
+ctx.save();
+
+    
+    ctx.translate(x,y);
+    ctx.rotate( Math.PI + rotate* Math.PI /180);
+    ctx.fillStyle = color;
+    ctx.strokeWidth = strokeWidth;
+    ctx.beginPath();
+    ctx.moveTo(-unitLength, 0);
+    var nextCoordX = -unitLength+(unitLength/2);
+    var nextCoordY = (unitLength*Math.sqrt(3)/2);
+    ctx.lineTo(nextCoordX, nextCoordY);
+    nextCoordX = nextCoordX+unitLength;
+    ctx.lineTo(nextCoordX, nextCoordY);
+    nextCoordX = nextCoordX+(unitLength/2);
+    nextCoordY = nextCoordY-(unitLength*Math.sqrt(3)/2);
+    ctx.lineTo(nextCoordX, nextCoordY);
+    nextCoordX = nextCoordX-(unitLength/2)-tolerance;
+    ctx.lineTo(nextCoordX, nextCoordY);
+    nextCoordY = nextCoordY-(unitLength*Math.sqrt(3)/4);
+    ctx.lineTo(nextCoordX, nextCoordY);
+    nextCoordX = nextCoordX-unitLength+tolerance;
     ctx.lineTo(nextCoordX, nextCoordY);
     nextCoordY = nextCoordY+(unitLength*Math.sqrt(3)/4);
     ctx.lineTo(nextCoordX, nextCoordY);
@@ -244,7 +557,14 @@ var drawEmptyRect = function (x,y,w,h,color,angle,strokeWidth) {
       };
 
       return { drawLine : drawLine,
+        drawPuzzle1 : drawPuzzle1,
+        drawPuzzle2 : drawPuzzle2,
+        drawPuzzle3 : drawPuzzle3,
+        drawPuzzle4 : drawPuzzle4,
+        drawMirroredBlock : drawMirroredBlock,
+        drawDishedBlock : drawDishedBlock,
         drawBulgyBlock : drawBulgyBlock,
+        drawBulgyGoal : drawBulgyGoal,
        getConvexHull : getConvexHull,
        drawCircle : drawCircle,
        drawEllipse : drawEllipse,
