@@ -430,7 +430,7 @@ function theGame($,phys,GameFramework, Box2D, drawutils, mathutils) {
         this.task.goals.forEach( function (g) { 
             pos = g.GetPosition();
             color = this.constants.colorGoal;
-            drawutils.drawText(30*pos.x,30*pos.y,'Goal', 1.5, color, color);
+            drawutils.drawText(30*pos.x,30*(pos.y+2.5),'Goal', 1.5, color, color);
         }.bind(this));
     });
 
@@ -451,11 +451,11 @@ function theGame($,phys,GameFramework, Box2D, drawutils, mathutils) {
             drawutils.drawText(300,300,'move object to goal with arrow keys', 1.5, 'white', 'white');
         }
 
-        this.task.blocks.forEach( function (g) { 
-            var pos = g.GetPosition();
-            color = 'white';
-            drawutils.drawText(30*pos.x,30*pos.y,'Object', 1.5, color, color);
-        }.bind(this));
+        // this.task.blocks.forEach( function (g) { 
+        //     var pos = g.GetPosition();
+        //     color = 'white';
+        //     drawutils.drawText(30*pos.x,30*pos.y,'Object', 1.5, color, color);
+        // }.bind(this));
 
         var meanx = 0;
         var meany = 0;
@@ -467,7 +467,7 @@ function theGame($,phys,GameFramework, Box2D, drawutils, mathutils) {
         color = this.constants.colorRobot;
         drawutils.drawRect(30*meanx,30*(meany+1), 120,30, 'rgba(240, 240, 240, 0.7)');
         drawutils.drawText(30*meanx,30*(meany+1),this.task.numRobots+' Robots', 1.5, color, color);
-        color = 'black';
+        color = 'green';
         drawutils.drawRect(30*meanx,30*(meany+2), 120,30, 'rgba(240, 240, 240, 0.7)');
         drawutils.drawText(30*meanx,30*(meany+2),this.task.mode, 1.5, color, color);
     });
