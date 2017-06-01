@@ -611,7 +611,7 @@ function theGame($,phys,GameFramework, Box2D, drawutils, mathutils) {
     game.setResultsCallback( function() {
         return {
             numRobots: this.task.numRobots,
-            task: 'varying-visualization',
+            task: 'peg-in-hole',
             mode: this.task.mode
         };
     });
