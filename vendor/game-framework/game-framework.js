@@ -231,8 +231,9 @@
 
 		var color = 'green';
 		drawutils.drawText(300,330, 'Reloading...', 2, color, color);
-		this.ending = 'aborted';	
-		return this.doStateHalted;
+		this.ending = 'aborted';
+		location.reload(true);
+		return this.doStateAbandoned;
 	};
 
 	GameFramework.prototype.doStateHalted = function ( dt, inputEvents  ) {
@@ -245,7 +246,7 @@
 		results.runtime = (this._timeElapsed/1000).toFixed(2); 
 
 		var req = new XMLHttpRequest();
-		req.open('POST', '/results', true);				
+		req.open('POST', '/results', true);	
 		req.setRequestHeader('Content-Type','application/json');
 		req.onload = function _presentResults(){
 			if (req.status === 201){
@@ -309,7 +310,7 @@
 			}
 		}.bind(this);
 
-		if (this.ending == 'won') {req.send( JSON.stringify( results ) );}
+		req.send( JSON.stringify( results ) );
 
 		return this.doStateHalted;
 	};
