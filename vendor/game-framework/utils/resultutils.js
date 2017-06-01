@@ -84,7 +84,11 @@ window.resultutils = (function ($,_, Flotr) {
             }else if (r.task ==='varying-control-scheme' ||
                 r.task === 'foraging' ||
                 r.task === 'predator' ||
-                r.task === 'varying-visualization'){
+                r.task === 'varying-visualization' ||
+                r.task === 'assembly' ||
+                r.task === 'assembly-and-delivery' ||
+                r.task === 'puzzle' ||
+                r.task === 'peg-in-hole'){
                 x = _.indexOf(modekeys, r.mode);
             }else if(r.task === 'pyramid-building'){
                 x = 10*parseFloat(r.mode);
@@ -228,7 +232,11 @@ window.resultutils = (function ($,_, Flotr) {
         var isHistogram =   taskResults[0].task === 'varying-control-scheme' ||
                             taskResults[0].task === 'foraging' ||
                             taskResults[0].task === 'varying-visualization' ||
-                            taskResults[0].task === 'predator';
+                            taskResults[0].task === 'predator' ||
+                            taskResults[0].task === 'peg-in-hole' ||
+                            taskResults[0].task === 'assembly'  ||
+                            taskResults[0].task === 'assembly-and-delivery' ||
+                            taskResults[0].task === 'puzzle';
 
         plotTask( $container, $task, taskPrettyName, xAxisLabel, taskResults, userResults, isHistogram);
     }
