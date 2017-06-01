@@ -255,9 +255,9 @@ window.drawutils = (function(){
             }
           });
       };
-  var drawDishedBlock = function(x,y,rotate, color,strokeWidth)
+  var drawDishedBlock = function(x,y,rotate, color,strokeWidth,unitLength)
     {
-      var unitLength = 60;
+      
       
 
 $canvas.draw({
@@ -269,7 +269,6 @@ ctx.save();
     ctx.translate(x,y);
     ctx.rotate(Math.PI + rotate* Math.PI /180);
     ctx.fillStyle = color;
-    ctx.fillStyle = 'blue';
     ctx.strokeWidth = strokeWidth;
     ctx.beginPath();
     ctx.moveTo(-unitLength, 0);
