@@ -24,6 +24,11 @@ function theGame($,phys,GameFramework, Box2D, drawutils, mathutils) {
         this.task.objectposy = [];
         this.task.counter = 0;
         this.task.colorSelected = [];
+        this.task.history = {
+            workpiece0: [],
+            workpiece1: []
+        };
+        this.task.workpieceTimeSinceLastWorkpeiceUpdate = 0;
 
         // fixture definition for obstacles
         var fixDef = new phys.fixtureDef();
@@ -202,6 +207,12 @@ function theGame($,phys,GameFramework, Box2D, drawutils, mathutils) {
                     this.task.objectposx[index] = pos.x;
                     this.task.objectposy[index] = pos.y;
                     drawutils.drawMirroredBlock(30* pos.x,30 * pos.y, angle, this.task.colorSelected[index],4, 60);
+                    this.task.history.workpiece0.push({
+                        x: 30* pos.x,
+                        y: 30 * pos.y,
+                        theta: angle,
+                        t: Date.now()
+                    });
                 }
                 else if (type === 'workpiece1') {
                     // draw the pushable object
@@ -213,6 +224,12 @@ function theGame($,phys,GameFramework, Box2D, drawutils, mathutils) {
                     this.task.objectposx[index] = pos.x;
                     this.task.objectposy[index] = pos.y;
                     drawutils.drawMirroredBlock(30* pos.x,30 * pos.y, angle, this.task.colorSelected[index],4,60);
+                    this.task.history.workpiece1.push({
+                        x: 30 * pos.x,
+                        y: 30 * pos.y,
+                        theta: angle,
+                        t: Date.now()
+                    });
                 }
 
                  else {
@@ -238,19 +255,6 @@ function theGame($,phys,GameFramework, Box2D, drawutils, mathutils) {
                                 }
                                 break;
             
-            // case 'convex-hull': var points = [];
-            //                     for( i = 0; i < this.task.numRobots; ++i) {
-            //                         pos = this.task.robots[i].GetPosition();
-            //                         points.push([30*pos.x,30*pos.y]);
-            //                     }
-            //                     var cHull = drawutils.getConvexHull(points);
-            //                     var cHullPts = [];
-            //                     for( i = 0; i < cHull.length; ++i) {
-            //                         cHullPts.push([cHull[i][0][0],cHull[i][0][1]]);
-            //                     }
-
-            //                     drawutils.drawLine(cHullPts,'lightblue',true,4,false);
-            //                     break;
             case 'mean & variance': // http://en.wikipedia.org/wiki/Algorithms_for_calculating_variance
                                     // t95% confidence ellipse
                                     meanx = 0;
@@ -274,8 +278,8 @@ function theGame($,phys,GameFramework, Box2D, drawutils, mathutils) {
                                     var varyp = (varx+vary)/2 - diffeq;
                                     angle = 180/Math.PI*1/2*Math.atan2( 2*covxy, varx-vary);
 
-                                    drawutils.drawRobot( 30*meanx, 30*meany,0, 15, 'lightblue',this.constants.colorRobot);
-                                    drawutils.drawEllipse( 30*meanx, 30*meany,2.4*30*Math.sqrt(varxp), 2.4*30*Math.sqrt(varyp),angle,'lightblue',4 );
+                                    drawutils.drawRobot( 30*meanx, 30*meany,0, 15, 'red',this.constants.colorRobot);
+                                    drawutils.drawEllipse( 30*meanx, 30*meany,2.4*30*Math.sqrt(varxp), 2.4*30*Math.sqrt(varyp),angle,'red',4 );
 
                                     break;
             case 'mean':    meanx = 0;
@@ -285,7 +289,7 @@ function theGame($,phys,GameFramework, Box2D, drawutils, mathutils) {
                                 meanx = meanx + pos.x/this.task.numRobots;
                                 meany = meany + pos.y/this.task.numRobots;
                             }
-                            drawutils.drawRobot( 30*meanx, 30*meany,0, 15, 'lightblue',this.task.colorRobot);
+                            drawutils.drawRobot( 30*meanx, 30*meany,0, 15, 'red',this.task.colorRobot);
                             break;
             case 'graph':   var R = 5;
                             meanx = 0;
@@ -365,8 +369,8 @@ function theGame($,phys,GameFramework, Box2D, drawutils, mathutils) {
                                  varxp = (varx+vary)/2 + diffeq;
                                  varyp = (varx+vary)/2 - diffeq;
                                     angle = 180/Math.PI*1/2*Math.atan2( 2*covxy, varx-vary);
-                                    drawutils.drawRobot( 30*meanx, 30*meany,0, 15, 'lightblue',this.constants.colorRobot);
-                                    drawutils.drawEllipse( 30*meanx, 30*meany,2.4*30*Math.sqrt(varxp), 2.4*30*Math.sqrt(varyp),angle,'lightblue',4 );
+                                    drawutils.drawRobot( 30*meanx, 30*meany,0, 15, 'red',this.constants.colorRobot);
+                                    drawutils.drawEllipse( 30*meanx, 30*meany,2.4*30*Math.sqrt(varxp), 2.4*30*Math.sqrt(varyp),angle,'red',4 );
                             break;
         }
 

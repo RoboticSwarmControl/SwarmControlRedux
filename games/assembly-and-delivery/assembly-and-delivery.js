@@ -228,8 +228,8 @@ function theGame($,phys,GameFramework, Box2D, drawutils, mathutils) {
                                     var varyp = (varx+vary)/2 - diffeq;
                                     angle = 180/Math.PI*1/2*Math.atan2( 2*covxy, varx-vary);
 
-                                    drawutils.drawRobot( 30*meanx, 30*meany,0, 15, 'lightblue',this.constants.colorRobot);
-                                    drawutils.drawEllipse( 30*meanx, 30*meany,2.4*30*Math.sqrt(varxp), 2.4*30*Math.sqrt(varyp),angle,'lightblue',4 );
+                                    drawutils.drawRobot( 30*meanx, 30*meany,0, 15, 'red',this.constants.colorRobot);
+                                    drawutils.drawEllipse( 30*meanx, 30*meany,2.4*30*Math.sqrt(varxp), 2.4*30*Math.sqrt(varyp),angle,'red',4 );
 
                                     break;
             case 'mean':    meanx = 0;
@@ -239,7 +239,7 @@ function theGame($,phys,GameFramework, Box2D, drawutils, mathutils) {
                                 meanx = meanx + pos.x/this.task.numRobots;
                                 meany = meany + pos.y/this.task.numRobots;
                             }
-                            drawutils.drawRobot( 30*meanx, 30*meany,0, 15, 'lightblue',this.task.colorRobot);
+                            drawutils.drawRobot( 30*meanx, 30*meany,0, 15, 'red',this.task.colorRobot);
                             break;
             case 'graph':   var R = 5;
                             meanx = 0;
@@ -319,8 +319,8 @@ function theGame($,phys,GameFramework, Box2D, drawutils, mathutils) {
                                  varxp = (varx+vary)/2 + diffeq;
                                  varyp = (varx+vary)/2 - diffeq;
                                     angle = 180/Math.PI*1/2*Math.atan2( 2*covxy, varx-vary);
-                                    drawutils.drawRobot( 30*meanx, 30*meany,0, 15, 'lightblue',this.constants.colorRobot);
-                                    drawutils.drawEllipse( 30*meanx, 30*meany,2.4*30*Math.sqrt(varxp), 2.4*30*Math.sqrt(varyp),angle,'lightblue',4 );
+                                    drawutils.drawRobot( 30*meanx, 30*meany,0, 15, 'red',this.constants.colorRobot);
+                                    drawutils.drawEllipse( 30*meanx, 30*meany,2.4*30*Math.sqrt(varxp), 2.4*30*Math.sqrt(varyp),angle,'red',4 );
                             break;
         }
 
