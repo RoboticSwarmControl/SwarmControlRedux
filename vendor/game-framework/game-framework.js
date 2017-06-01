@@ -309,7 +309,7 @@
 			}
 		}.bind(this);
 
-		req.send( JSON.stringify( results ) );
+		if (this.ending == 'won') {req.send( JSON.stringify( results ) );}
 
 		return this.doStateHalted;
 	};
