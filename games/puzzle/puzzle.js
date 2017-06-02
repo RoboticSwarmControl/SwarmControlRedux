@@ -185,7 +185,7 @@ function theGame($,phys,GameFramework, Box2D, drawutils, mathutils) {
                     this.task.colorSelected[index] = 'green';
                     this.task.objectposx[index] = pos.x;
                     this.task.objectposy[index] = pos.y;
-                    drawutils.drawPuzzle1(30* pos.x,30 * pos.y, angle, this.task.colorSelected[index],4,120);
+                    drawutils.drawPuzzle1(30* pos.x,30 * pos.y, angle, this.task.colorSelected[index],4,120,1);
                 }
                 else if(type === 'workpiece1') {
                     // draw the pushable object
@@ -196,7 +196,7 @@ function theGame($,phys,GameFramework, Box2D, drawutils, mathutils) {
                     this.task.colorSelected[index] = 'salmon';
                     this.task.objectposx[index] = pos.x;
                     this.task.objectposy[index] = pos.y;
-                    drawutils.drawPuzzle2(30* pos.x,30 * pos.y, angle, this.task.colorSelected[index],4, 120);
+                    drawutils.drawPuzzle2(30* pos.x,30 * pos.y, angle, this.task.colorSelected[index],4, 120,1);
                 }
                 else if(type === 'workpiece2'){
                                         // draw the pushable object
@@ -207,7 +207,7 @@ function theGame($,phys,GameFramework, Box2D, drawutils, mathutils) {
                     this.task.colorSelected[index] = 'seagreen';
                     this.task.objectposx[index] = pos.x;
                     this.task.objectposy[index] = pos.y;
-                    drawutils.drawPuzzle3(30* pos.x,30 * pos.y, angle, this.task.colorSelected[index],4,120);
+                    drawutils.drawPuzzle3(30* pos.x,30 * pos.y, angle, this.task.colorSelected[index],4,120,1);
                 }
                 else if(type === 'workpiece3'){
                                                             // draw the pushable object
@@ -218,7 +218,7 @@ function theGame($,phys,GameFramework, Box2D, drawutils, mathutils) {
                     this.task.colorSelected[index] = 'coral';
                     this.task.objectposx[index] = pos.x;
                     this.task.objectposy[index] = pos.y;
-                    drawutils.drawPuzzle4(30* pos.x,30 * pos.y, angle, this.task.colorSelected[index],4,120);
+                    drawutils.drawPuzzle4(30* pos.x,30 * pos.y, angle, this.task.colorSelected[index],4,120,1);
                 }
                  else {
                     //http://calebevans.me/projects/jcanvas/docs/polygons/
@@ -280,8 +280,8 @@ function theGame($,phys,GameFramework, Box2D, drawutils, mathutils) {
                                     var varyp = (varx+vary)/2 - diffeq;
                                     angle = 180/Math.PI*1/2*Math.atan2( 2*covxy, varx-vary);
 
-                                    drawutils.drawRobot( 30*meanx, 30*meany,0, 15, 'lightblue',this.constants.colorRobot);
-                                    drawutils.drawEllipse( 30*meanx, 30*meany,2.4*30*Math.sqrt(varxp), 2.4*30*Math.sqrt(varyp),angle,'lightblue',4 );
+                                    drawutils.drawRobot( 30*meanx, 30*meany,0, 15, 'red',this.constants.colorRobot);
+                                    drawutils.drawEllipse( 30*meanx, 30*meany,2.4*30*Math.sqrt(varxp), 2.4*30*Math.sqrt(varyp),angle,'red',4 );
 
                                     break;
             case 'mean':    meanx = 0;
@@ -291,7 +291,7 @@ function theGame($,phys,GameFramework, Box2D, drawutils, mathutils) {
                                 meanx = meanx + pos.x/this.task.numRobots;
                                 meany = meany + pos.y/this.task.numRobots;
                             }
-                            drawutils.drawRobot( 30*meanx, 30*meany,0, 15, 'lightblue',this.task.colorRobot);
+                            drawutils.drawRobot( 30*meanx, 30*meany,0, 15, 'red',this.task.colorRobot);
                             break;
             case 'graph':   var R = 5;
                             meanx = 0;
@@ -371,8 +371,8 @@ function theGame($,phys,GameFramework, Box2D, drawutils, mathutils) {
                                  varxp = (varx+vary)/2 + diffeq;
                                  varyp = (varx+vary)/2 - diffeq;
                                     angle = 180/Math.PI*1/2*Math.atan2( 2*covxy, varx-vary);
-                                    drawutils.drawRobot( 30*meanx, 30*meany,0, 15, 'lightblue',this.constants.colorRobot);
-                                    drawutils.drawEllipse( 30*meanx, 30*meany,2.4*30*Math.sqrt(varxp), 2.4*30*Math.sqrt(varyp),angle,'lightblue',4 );
+                                    drawutils.drawRobot( 30*meanx, 30*meany,0, 15, 'red',this.constants.colorRobot);
+                                    drawutils.drawEllipse( 30*meanx, 30*meany,2.4*30*Math.sqrt(varxp), 2.4*30*Math.sqrt(varyp),angle,'red',4 );
                             break;
         }
 
@@ -381,10 +381,10 @@ function theGame($,phys,GameFramework, Box2D, drawutils, mathutils) {
             pos = g.GetPosition();
             color = this.constants.colorGoal;
                         // draw the goal of the game
-            drawutils.drawPuzzle1(30* pos.x,30 * (pos.y-2), 0, 'light'+this.task.colorSelected[0],4,45);
-            drawutils.drawPuzzle2(30* pos.x,30 * (pos.y-2), 0, 'light'+ this.task.colorSelected[1],4,45);
-            drawutils.drawPuzzle3(30* pos.x,30 * (pos.y-2), 0, 'light'+ this.task.colorSelected[2],4,45);
-            drawutils.drawPuzzle4(30* pos.x,30 * (pos.y-2), 0, 'light'+ this.task.colorSelected[3],4,45);
+            drawutils.drawPuzzle1(30* pos.x,30 * (pos.y-2), 0, this.task.colorSelected[0],4,45,0.6);
+            drawutils.drawPuzzle2(30* pos.x,30 * (pos.y-2), 0, this.task.colorSelected[1],4,45,0.6);
+            drawutils.drawPuzzle3(30* pos.x,30 * (pos.y-2), 0, this.task.colorSelected[2],4,45,0.6);
+            drawutils.drawPuzzle4(30* pos.x,30 * (pos.y-2), 0, this.task.colorSelected[3],4,45,0.6);
             drawutils.drawText(30*pos.x,30*pos.y,'Goal', 1.5, color, color);
         }.bind(this));
     });

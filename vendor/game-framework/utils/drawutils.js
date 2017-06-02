@@ -14,12 +14,12 @@ window.drawutils = (function(){
 
 
 
-  var drawPuzzle1 = function(x,y,rotate,color,strokeWidth, unitLength){
+  var drawPuzzle1 = function(x,y,rotate,color,strokeWidth, unitLength, opacity){
     var tolerance = 0.02*unitLength;
     $canvas.draw({
       fn: function(ctx) {
         ctx.save();
-
+        ctx.globalAlpha = opacity;
         ctx.translate(x,y);
         ctx.rotate( rotate* Math.PI /180);
         ctx.fillStyle = color;
@@ -54,12 +54,12 @@ window.drawutils = (function(){
   };
 
 
-  var drawPuzzle2 = function(x,y,rotate,color,strokeWidth,unitLength){
+  var drawPuzzle2 = function(x,y,rotate,color,strokeWidth,unitLength, opacity){
     $canvas.draw({
       fn: function(ctx) {
 
         ctx.save();
-
+        ctx.globalAlpha = opacity;
         ctx.translate(x,y);
         ctx.rotate(rotate* Math.PI /180);
         ctx.fillStyle = color;
@@ -106,14 +106,14 @@ window.drawutils = (function(){
 
   };
 
-  var drawPuzzle3 = function(x,y,rotate,color,strokeWidth, unitLength){
+  var drawPuzzle3 = function(x,y,rotate,color,strokeWidth, unitLength,opacity){
     var tolerance = 0.02*unitLength;
 
     $canvas.draw({
       fn: function(ctx) {
 
         ctx.save();
-
+        ctx.globalAlpha = opacity;
 
         ctx.translate(x,y);
         ctx.rotate(rotate* Math.PI /180);
@@ -160,13 +160,14 @@ window.drawutils = (function(){
     });
   };
 
-  var drawPuzzle4 = function(x,y,rotate,color,strokeWidth,unitLength){
+  var drawPuzzle4 = function(x,y,rotate,color,strokeWidth,unitLength,opacity){
     var tolerance = 0.02*unitLength;
 
     $canvas.draw({
       fn: function(ctx) {
 
         ctx.save();
+        ctx.globalAlpha = opacity;
 
         ctx.translate(x,y);
         ctx.rotate(rotate* Math.PI /180);

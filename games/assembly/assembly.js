@@ -507,20 +507,6 @@ function theGame($,phys,GameFramework, Box2D, drawutils, mathutils) {
         // nothing to do on lose.
     });
 
-    // game.setWinTestCallback( function() {
-    //     var ret = true;
-    //     // need to check if object has been moved into the goal zone
-    //     this.task.blocks.forEach( function (b) {
-    //         // we use _.every because it will stop iterating on success
-    //         this.task.goals.every( function (g) {
-    //             var pos = b.GetPosition();
-
-    //             ret = g.GetFixtureList().GetAABB().Contains( pos );
-    //             return !ret;
-    //         }.bind(this));
-    //     }.bind(this)); 
-    //     return ret;
-    // });
 
     game.setWinTestCallback( function() {
 
