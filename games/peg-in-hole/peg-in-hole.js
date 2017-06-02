@@ -22,6 +22,7 @@ function theGame($,phys,GameFramework, Box2D, drawutils, mathutils) {
         var i;
         this.task.objectposx = [];
         this.task.objectposy = [];
+        this.task.colorSelected = [];
         this.task.history = {
             workpiece: [],
             swarm: []
@@ -251,16 +252,17 @@ function theGame($,phys,GameFramework, Box2D, drawutils, mathutils) {
                     
                     this.task.objectposx[0] = pos.x;
                     this.task.objectposy[0] = pos.y;
+                    this.task.colorSelected[0] = 'green';
                     drawutils.drawBulgyBlock(30* pos.x,30 * pos.y, angle, color,4);
                     drawutils.drawRobot(30*pos.x, 30*pos.y,0, 30*0.1, this.constants.colorRobot,this.constants.colorRobotEdge );
-                    if(this._timeElapsed > this.task.workpieceTimeSinceLastWorkpeiceUpdate[0]+ this.task.timeInterval)
+                    if(this.task.workpieceTimeSinceLastWorkpeiceUpdate[0]===0 ||this._timeElapsed > this.task.workpieceTimeSinceLastWorkpeiceUpdate[0]+ this.task.timeInterval)
                     {
 
                         this.task.workpieceTimeSinceLastWorkpeiceUpdate[0] = this._timeElapsed;
                         this.task.history.workpiece.push({
                             x: (pos.x).toFixed(2),
                             y: (pos.y).toFixed(2),
-                            theta: angle.toFixed(1),
+                            theta: angle.toFixed(2),
                             t: (this._timeElapsed/1000).toFixed(2)
                         });
                     }
@@ -423,8 +425,9 @@ function theGame($,phys,GameFramework, Box2D, drawutils, mathutils) {
                                     drawutils.drawRobot( 30*meanx, 30*meany,0, 15, 'red',this.constants.colorRobot);
                                     drawutils.drawEllipse( 30*meanx, 30*meany,2.4*30*Math.sqrt(varxp), 2.4*30*Math.sqrt(varyp),angle,'red',4 );
                             break;
-        }
-        if(this._timeElapsed > this.task.workpieceTimeSinceLastWorkpeiceUpdate[1]+ this.task.timeInterval)
+        }   
+            
+        if(this.task.workpieceTimeSinceLastWorkpeiceUpdate[1]===0 || this._timeElapsed > this.task.workpieceTimeSinceLastWorkpeiceUpdate[1]+ this.task.timeInterval)
         {
             
             this.task.workpieceTimeSinceLastWorkpeiceUpdate[1] = this._timeElapsed;
