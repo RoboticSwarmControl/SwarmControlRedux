@@ -174,7 +174,7 @@ function theGame($,phys,GameFramework, Box2D, drawutils, mathutils) {
                     this.task.objectposy[index] = pos.y;
                     drawutils.drawMirroredBlock(30* pos.x,30 * pos.y, angle, this.task.colorSelected[index],4, 60);
 
-                    if(this.task.workpieceTimeSinceLastWorkpeiceUpdate[index]===0 ||this._timeElapsed > this.task.workpieceTimeSinceLastWorkpeiceUpdate[index]+ this.task.timeInterval)
+                    if(this._timeElapsed > this.task.workpieceTimeSinceLastWorkpeiceUpdate[index]+ this.task.timeInterval)
                     {
 
                         this.task.workpieceTimeSinceLastWorkpeiceUpdate[index] = this._timeElapsed;
@@ -196,7 +196,7 @@ function theGame($,phys,GameFramework, Box2D, drawutils, mathutils) {
                     this.task.objectposx[index] = pos.x;
                     this.task.objectposy[index] = pos.y;
                     drawutils.drawMirroredBlock(30* pos.x,30 * pos.y, angle, this.task.colorSelected[index],4,60);
-                    if(this.task.workpieceTimeSinceLastWorkpeiceUpdate[index]===0 || this._timeElapsed - this.task.timeInterval> this.task.workpieceTimeSinceLastWorkpeiceUpdate[index])
+                    if(this._timeElapsed - this.task.timeInterval> this.task.workpieceTimeSinceLastWorkpeiceUpdate[index])
                     {
                         this.task.workpieceTimeSinceLastWorkpeiceUpdate[index] = this._timeElapsed;
                         this.task.history.workpiece1.push({
@@ -367,7 +367,7 @@ function theGame($,phys,GameFramework, Box2D, drawutils, mathutils) {
                                     drawutils.drawEllipse( 30*meanx, 30*meany,2.4*30*Math.sqrt(varxp), 2.4*30*Math.sqrt(varyp),angle,'red',4 );
                             break;
         }
-        if(this.task.workpieceTimeSinceLastWorkpeiceUpdate[2]===0 || this._timeElapsed > this.task.workpieceTimeSinceLastWorkpeiceUpdate[2]+ this.task.timeInterval)
+        if(this._timeElapsed > this.task.workpieceTimeSinceLastWorkpeiceUpdate[2]+ this.task.timeInterval)
         {
             
             this.task.workpieceTimeSinceLastWorkpeiceUpdate[2] = this._timeElapsed;

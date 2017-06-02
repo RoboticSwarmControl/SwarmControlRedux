@@ -253,7 +253,7 @@ function theGame($,phys,GameFramework, Box2D, drawutils, mathutils) {
                     this.task.objectposy[0] = pos.y;
                     drawutils.drawBulgyBlock(30* pos.x,30 * pos.y, angle, color,4);
                     drawutils.drawRobot(30*pos.x, 30*pos.y,0, 30*0.1, this.constants.colorRobot,this.constants.colorRobotEdge );
-                    if(this.task.workpieceTimeSinceLastWorkpeiceUpdate[0]===0 ||this._timeElapsed > this.task.workpieceTimeSinceLastWorkpeiceUpdate[0]+ this.task.timeInterval)
+                    if(this._timeElapsed > this.task.workpieceTimeSinceLastWorkpeiceUpdate[0]+ this.task.timeInterval)
                     {
 
                         this.task.workpieceTimeSinceLastWorkpeiceUpdate[0] = this._timeElapsed;
@@ -424,7 +424,7 @@ function theGame($,phys,GameFramework, Box2D, drawutils, mathutils) {
                                     drawutils.drawEllipse( 30*meanx, 30*meany,2.4*30*Math.sqrt(varxp), 2.4*30*Math.sqrt(varyp),angle,'red',4 );
                             break;
         }
-        if(this.task.workpieceTimeSinceLastWorkpeiceUpdate[1]===0 || this._timeElapsed > this.task.workpieceTimeSinceLastWorkpeiceUpdate[1]+ this.task.timeInterval)
+        if(this._timeElapsed > this.task.workpieceTimeSinceLastWorkpeiceUpdate[1]+ this.task.timeInterval)
         {
             
             this.task.workpieceTimeSinceLastWorkpeiceUpdate[1] = this._timeElapsed;
