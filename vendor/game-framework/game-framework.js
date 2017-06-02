@@ -232,8 +232,8 @@
 		var color = 'green';
 		drawutils.drawText(300,330, 'Reloading...', 2, color, color);
 		this.ending = 'aborted';
-		location.reload(true);
-		return this.doStateAbandoned;
+		window.location.reload(true);
+		return this.doStateInitTask;
 	};
 
 	GameFramework.prototype.doStateHalted = function ( dt, inputEvents  ) {
@@ -418,6 +418,13 @@
 				type: 'mousedown'
 			});
 		}.bind(this));
+
+		//prevents screen from moving around with arrow keys
+	    window.addEventListener('keydown', function (e) {
+	        if ([32, 37, 38, 39, 40].indexOf(e.keyCode) > -1) {
+	            e.preventDefault();
+	        }
+	    }, false);
 
 		$canvas.on('mousemove', function _handleMouseMove(evt) {
 			this._lastInputTime = new Date();
