@@ -26,8 +26,11 @@ function theGame($,phys,GameFramework, Box2D, drawutils, mathutils) {
         this.task.colorSelected = [];
         this.task.history = {
             workpiece0: [],
-            workpiece1: []
+            workpiece1: [],
+            swarm: []
         };
+        this.task.workpieceTimeSinceLastWorkpeiceUpdate = [0,0,0];
+        this.task.timeInterval = 500;
         // fixture definition for obstacles
         var fixDef = new phys.fixtureDef();
         fixDef.density = 1.0;
@@ -62,7 +65,7 @@ function theGame($,phys,GameFramework, Box2D, drawutils, mathutils) {
                     20 - this.constants.obsThick, 10,
                     this.constants.obsThick, 10);
 
-            this.task.blocks.push( phys.makeMirroredBlock(this.world, 17, 3, 'workpiece0'));
+        this.task.blocks.push( phys.makeMirroredBlock(this.world, 17, 3, 'workpiece0'));
         this.task.blocks.push( phys.makeMirroredBlock(this.world, 17, 17, 'workpiece1'));
         
 
@@ -133,6 +136,8 @@ function theGame($,phys,GameFramework, Box2D, drawutils, mathutils) {
         var pos;
         var meanx;
         var meany;
+        var varx;
+        var vary;
         var meanNearx = [];
         var meanNeary = [];
         var angle;
@@ -173,12 +178,17 @@ function theGame($,phys,GameFramework, Box2D, drawutils, mathutils) {
                     this.task.objectposx[index] = pos.x;
                     this.task.objectposy[index] = pos.y;
                     drawutils.drawMirroredBlock(30* pos.x,30 * pos.y, angle, this.task.colorSelected[index],4, 60);
-                    this.task.history.workpiece0.push({
-                        x: 30* pos.x,
-                        y: 30 * pos.y,
-                        theta: angle,
-                        t: Date.now()
-                    });
+                    if(this.task.workpieceTimeSinceLastWorkpeiceUpdate[index]===0 ||this._timeElapsed > this.task.workpieceTimeSinceLastWorkpeiceUpdate[index]+ this.task.timeInterval)
+                    {
+
+                        this.task.workpieceTimeSinceLastWorkpeiceUpdate[index] = this._timeElapsed;
+                        this.task.history.workpiece0.push({
+                            x: (pos.x).toFixed(2),
+                            y: (pos.y).toFixed(2),
+                            theta: angle.toFixed(1),
+                            t: (this._timeElapsed/1000).toFixed(2)
+                        });
+                    }
                 }
                 else if (type === 'workpiece1') {
                     // draw the pushable object
@@ -190,12 +200,16 @@ function theGame($,phys,GameFramework, Box2D, drawutils, mathutils) {
                     this.task.objectposx[index] = pos.x;
                     this.task.objectposy[index] = pos.y;
                     drawutils.drawMirroredBlock(30* pos.x,30 * pos.y, angle, this.task.colorSelected[index],4,60);
-                    this.task.history.workpiece0.push({
-                        x: 30* pos.x,
-                        y: 30 * pos.y,
-                        theta: angle,
-                        t: Date.now()
-                    });
+                    if(this.task.workpieceTimeSinceLastWorkpeiceUpdate[index]===0 || this._timeElapsed - this.task.timeInterval> this.task.workpieceTimeSinceLastWorkpeiceUpdate[index])
+                    {
+                        this.task.workpieceTimeSinceLastWorkpeiceUpdate[index] = this._timeElapsed;
+                        this.task.history.workpiece1.push({
+                            x: (pos.x).toFixed(2),
+                            y: (pos.y).toFixed(2),
+                            theta: angle.toFixed(1),
+                            t: (this._timeElapsed/1000).toFixed(2)
+                        });
+                    }
                 }
 
                  else {
@@ -214,18 +228,31 @@ function theGame($,phys,GameFramework, Box2D, drawutils, mathutils) {
         }
 
         switch (this.task.mode) {
-            case 'full-state': for( i = 0; i < this.task.numRobots; ++i) {
+            case 'full-state': 
+                                    meanx = 0;
+                                    meany = 0;
+                                    for( i = 0; i < this.task.numRobots; ++i) {
                                     var radius = this.task.robots[i].m_fixtureList.m_shape.m_radius;
                                     pos = this.task.robots[i].GetPosition();
+                                    meanx = meanx + pos.x/this.task.numRobots;
+                                    meany = meany + pos.y/this.task.numRobots;
                                     drawutils.drawRobot( 30*pos.x, 30*pos.y,angle, 30*radius, this.constants.colorRobot,this.constants.colorRobotEdge); 
                                 }
+                                varx = 0;
+                                vary = 0;
+                                for( i = 0; i < this.task.numRobots; ++i) {
+                                        pos = this.task.robots[i].GetPosition();
+                                        varx =  varx + (pos.x-meanx)*(pos.x-meanx)/this.task.numRobots;
+                                        vary =  vary + (pos.y-meany)*(pos.y-meany)/this.task.numRobots;
+                                    }
                                 break;
+            
             case 'mean & variance': // http://en.wikipedia.org/wiki/Algorithms_for_calculating_variance
                                     // t95% confidence ellipse
                                     meanx = 0;
                                     meany = 0;
-                                    var varx = 0;
-                                    var vary = 0;
+                                    varx = 0;
+                                    vary = 0;
                                     var covxy = 0;
                                     for( i = 0; i < this.task.numRobots; ++i) {
                                         pos = this.task.robots[i].GetPosition();
@@ -249,12 +276,19 @@ function theGame($,phys,GameFramework, Box2D, drawutils, mathutils) {
                                     break;
             case 'mean':    meanx = 0;
                             meany = 0;
+                            varx = 0;
+                            vary = 0;
                             for( i = 0; i < this.task.numRobots; ++i) {
                                 pos = this.task.robots[i].GetPosition();
                                 meanx = meanx + pos.x/this.task.numRobots;
                                 meany = meany + pos.y/this.task.numRobots;
                             }
                             drawutils.drawRobot( 30*meanx, 30*meany,0, 15, 'red',this.task.colorRobot);
+                            for( i = 0; i < this.task.numRobots; ++i) {
+                                        pos = this.task.robots[i].GetPosition();
+                                        varx =  varx + (pos.x-meanx)*(pos.x-meanx)/this.task.numRobots;
+                                        vary =  vary + (pos.y-meany)*(pos.y-meany)/this.task.numRobots;
+                                    }
                             break;
             case 'graph':   var R = 5;
                             meanx = 0;
@@ -277,12 +311,10 @@ function theGame($,phys,GameFramework, Box2D, drawutils, mathutils) {
                                 varNearx[i] = 0;
                                 varNeary[i] = 0;
                                 covNearxy[i] = 0;
-                               // drawutils.drawText(300,350, 'meanNearx '+ meanNearx[i], 2, color, color);
                             }
 
                             for( i = 0; i < this.task.numRobots; ++i) {
 
-                                //var rad = this.task.robots[i].m_fixtureList.m_shape.m_radius;
                                 pos = this.task.robots[i].GetPosition();
                                 meanx = meanx + pos.x;
                                 meany = meany + pos.y;
@@ -294,7 +326,7 @@ function theGame($,phys,GameFramework, Box2D, drawutils, mathutils) {
                                     meanNeary[j] = meanNeary[j] + pos.y;
                                     
                                     ++nearRobots[j];
-                                //    drawutils.drawRobot( 30*pos.x, 30*pos.y,angle, 30*rad, this.constants.colorRobot,this.constants.colorRobotEdge);
+                                
                                 }
                             }
                             }
@@ -337,6 +369,18 @@ function theGame($,phys,GameFramework, Box2D, drawutils, mathutils) {
                                     drawutils.drawRobot( 30*meanx, 30*meany,0, 15, 'red',this.constants.colorRobot);
                                     drawutils.drawEllipse( 30*meanx, 30*meany,2.4*30*Math.sqrt(varxp), 2.4*30*Math.sqrt(varyp),angle,'red',4 );
                             break;
+        }
+        if(this.task.workpieceTimeSinceLastWorkpeiceUpdate[2]===0 || this._timeElapsed > this.task.workpieceTimeSinceLastWorkpeiceUpdate[2]+ this.task.timeInterval)
+        {
+            
+            this.task.workpieceTimeSinceLastWorkpeiceUpdate[2] = this._timeElapsed;
+            this.task.history.swarm.push({
+                meanx: meanx.toFixed(2),
+                meany: meany.toFixed(2),
+                varx: varx.toFixed(2),
+                vary: vary.toFixed(2),
+                t: (this._timeElapsed/1000).toFixed(2)
+            });
         }
 
         // draw goal zone
@@ -512,7 +556,11 @@ function theGame($,phys,GameFramework, Box2D, drawutils, mathutils) {
         return {
             numRobots: this.task.numRobots,
             task: 'assembly-and-delivery',
-            mode: this.task.mode
+            mode: this.task.mode,
+            /* the "extra" key is used to store task-specific or run-specific information */
+            extra: {
+               history: this.task.history
+            }
         };
     });
 
