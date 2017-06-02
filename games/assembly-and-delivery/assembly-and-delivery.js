@@ -24,7 +24,10 @@ function theGame($,phys,GameFramework, Box2D, drawutils, mathutils) {
         this.task.objectposy = [];
         this.task.counter = 0;
         this.task.colorSelected = [];
-
+        this.task.history = {
+            workpiece0: [],
+            workpiece1: []
+        };
         // fixture definition for obstacles
         var fixDef = new phys.fixtureDef();
         fixDef.density = 1.0;
@@ -170,6 +173,12 @@ function theGame($,phys,GameFramework, Box2D, drawutils, mathutils) {
                     this.task.objectposx[index] = pos.x;
                     this.task.objectposy[index] = pos.y;
                     drawutils.drawMirroredBlock(30* pos.x,30 * pos.y, angle, this.task.colorSelected[index],4, 60);
+                    this.task.history.workpiece0.push({
+                        x: 30* pos.x,
+                        y: 30 * pos.y,
+                        theta: angle,
+                        t: Date.now()
+                    });
                 }
                 else if (type === 'workpiece1') {
                     // draw the pushable object
@@ -181,6 +190,12 @@ function theGame($,phys,GameFramework, Box2D, drawutils, mathutils) {
                     this.task.objectposx[index] = pos.x;
                     this.task.objectposy[index] = pos.y;
                     drawutils.drawMirroredBlock(30* pos.x,30 * pos.y, angle, this.task.colorSelected[index],4,60);
+                    this.task.history.workpiece0.push({
+                        x: 30* pos.x,
+                        y: 30 * pos.y,
+                        theta: angle,
+                        t: Date.now()
+                    });
                 }
 
                  else {
