@@ -379,6 +379,9 @@ function theGame($,phys,GameFramework, Box2D, drawutils, mathutils) {
                 t: (this._timeElapsed/1000).toFixed(2)
             });
         }
+
+        drawutils.drawRobot(30*this.task.objectposx[0], 30*this.task.objectposy[0],0, 30*0.1, this.constants.colorRobot,this.constants.colorRobotEdge );
+        drawutils.drawRobot(30*this.task.objectposx[1], 30*this.task.objectposy[1],0, 30*0.1, this.constants.colorRobot,this.constants.colorRobotEdge );
         // draw goal zone
         this.task.goals.forEach( function (g) { 
             pos = g.GetPosition();
@@ -516,8 +519,7 @@ function theGame($,phys,GameFramework, Box2D, drawutils, mathutils) {
     game.setWinTestCallback( function() {
 
         var ret = true;
-        drawutils.drawRobot(30*this.task.objectposx[0], 30*this.task.objectposy[0],0, 30*0.1, this.constants.colorRobot,this.constants.colorRobotEdge );
-        drawutils.drawRobot(30*this.task.objectposx[1], 30*this.task.objectposy[1],0, 30*0.1, this.constants.colorRobot,this.constants.colorRobotEdge );
+        
         var dist = Math.sqrt((this.task.objectposx[0]-this.task.objectposx[1])*(this.task.objectposx[0]-this.task.objectposx[1]) + (this.task.objectposy[0]-this.task.objectposy[1])*(this.task.objectposy[0]-this.task.objectposy[1]));
         if(dist>=0.1)
         {ret = true;}
