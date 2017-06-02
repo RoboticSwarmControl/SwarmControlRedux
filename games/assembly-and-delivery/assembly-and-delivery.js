@@ -4,7 +4,7 @@
 function theGame($,phys,GameFramework, Box2D, drawutils, mathutils) {
     /* jshint unused:true */
     'use strict';
-    var game = new GameFramework('assembly', 'assembly','Visualization method');
+    var game = new GameFramework('assembly-and-delivery', 'assembly-and-delivery','Visualization method');
     function URFP( x ) { /* jshint expr:true */ x; }
     URFP(mathutils);
 
