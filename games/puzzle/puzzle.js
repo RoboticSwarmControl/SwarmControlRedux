@@ -457,12 +457,12 @@ function theGame($,phys,GameFramework, Box2D, drawutils, mathutils) {
         drawutils.drawPuzzle2(30* 10, 30 * 10, 0, this.task.colorSelected[1],4,120,0.6);
         drawutils.drawPuzzle3(30* 10, 30 * 10, 0, this.task.colorSelected[2],4,120,0.6);
         drawutils.drawPuzzle4(30* 10, 30 * 10, 0, this.task.colorSelected[3],4,120,0.6);
-        drawutils.drawText(30 * 10, 30 * 15,'Goal', 1.5, this.constants.colorGoal, this.constants.colorGoal);
+        drawutils.drawText(30 * 10, 30 * 15,'Assemble This!', 1.5, this.constants.colorGoal, this.constants.colorGoal);
 
         if(this.mobileUserAgent) {
-            drawutils.drawText(300,30*5,'move swarm by tilting screen', 1.5, this.constants.colorGoal, this.constants.colorGoal);
+            drawutils.drawText(300,30*2,'move swarm by tilting screen', 1.5, this.constants.colorGoal, this.constants.colorGoal);
         }else{
-            drawutils.drawText(300,30*5,'move swarm with arrow keys', 1.5, this.constants.colorGoal, this.constants.colorGoal);
+            drawutils.drawText(300,30*2,'move swarm with arrow keys', 1.5, this.constants.colorGoal, this.constants.colorGoal);
         }
         
         var meanx = 0;
@@ -594,7 +594,7 @@ function theGame($,phys,GameFramework, Box2D, drawutils, mathutils) {
             drawutils.drawPuzzle2(30* pos.x,30 * (pos.y-2), 0, this.task.colorSelected[1],4,45,0.6);
             drawutils.drawPuzzle3(30* pos.x,30 * (pos.y-2), 0, this.task.colorSelected[2],4,45,0.6);
             drawutils.drawPuzzle4(30* pos.x,30 * (pos.y-2), 0, this.task.colorSelected[3],4,45,0.6);
-            drawutils.drawText(30*pos.x,30*pos.y,'Assemble This!', 1.5, this.constants.colorGoal, this.constants.colorGoal);
+            drawutils.drawText(30*pos.x,30*pos.y,'Goal', 1.5, this.constants.colorGoal, this.constants.colorGoal);
         }.bind(this));
         
         var ret = true;
