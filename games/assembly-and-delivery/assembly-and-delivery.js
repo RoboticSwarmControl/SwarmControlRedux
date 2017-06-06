@@ -395,11 +395,24 @@ function theGame($,phys,GameFramework, Box2D, drawutils, mathutils) {
     game.setOverviewCallback( function() {
         var color = 'white';
 
+        drawutils.drawMirroredBlock(30 * 5, 30 * 10, 0, 'BlueViolet',4, 120);
+        drawutils.drawMirroredBlock(30 * 5, 30 * 10, 180, 'Salmon',4, 120);
+        drawutils.drawText(30 * 5, 30 * 5,'Assemble This!', 1.5, this.constants.colorGoal, this.constants.colorGoal);
+
         if(this.mobileUserAgent) {
-            drawutils.drawText(300,300,'move object to goal by tilting screen', 1.5, 'white', 'white');
+            drawutils.drawText(300, 30*14,'move swarm to goal by tilting screen', 1.5, this.constants.colorGoal, this.constants.colorGoal);
         }else{
-            drawutils.drawText(300,300,'move object to goal with arrow keys', 1.5, 'white', 'white');
+            drawutils.drawText(300, 30*14,'move swarm to goal with arrow keys', 1.5, this.constants.colorGoal, this.constants.colorGoal);
         }
+
+        var pGoalArrow = [[425,150],[30 * 9,30 * 8]];
+        drawutils.drawLine(pGoalArrow,this.constants.colorGoalArrow,false,25,true);
+
+        pGoalArrow = [[425 + Math.sin(180) * 40, 150 + Math.cos(180) * 40],[425,150],[425 + Math.sin(270) * 40, 150 + Math.cos(270) * 40]];
+        drawutils.drawLine(pGoalArrow,this.constants.colorGoalArrow,false,25,true);
+         drawutils.drawText(347, 195,'push object to goal', 1, color, color, -30);
+        
+        
 
         var meanx = 0;
         var meany = 0;

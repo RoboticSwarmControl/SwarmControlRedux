@@ -465,12 +465,6 @@ function theGame($,phys,GameFramework, Box2D, drawutils, mathutils) {
             drawutils.drawText(300,300,'move object to goal with arrow keys', 1.5, 'white', 'white');
         }
 
-        // this.task.blocks.forEach( function (g) { 
-        //     var pos = g.GetPosition();
-        //     color = 'white';
-        //     drawutils.drawText(30*pos.x,30*pos.y,'Object', 1.5, color, color);
-        // }.bind(this));
-
         var meanx = 0;
         var meany = 0;
         for(var i = 0; i < this.task.numRobots; ++i) {
