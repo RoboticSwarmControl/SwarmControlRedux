@@ -430,7 +430,9 @@ function theGame($,phys,GameFramework, Box2D, drawutils, mathutils) {
         drawutils.drawText(30*meanx,30*(meany+1),this.task.numRobots+' Robots', 1.5, color, color);
         color = 'black';
         drawutils.drawRect(30*meanx,30*(meany+2), 120,30, 'rgba(240, 240, 240, 0.7)');
+        this.task.mode = this.task.modes[Math.round(new Date().getTime()/2500)%this.task.modes.length];
         drawutils.drawText(30*meanx,30*(meany+2),this.task.mode, 1.5, color, color);
+        
     });
 
     game.setUpdateCallback( function (dt, inputs) {
