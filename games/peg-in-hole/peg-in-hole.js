@@ -207,6 +207,7 @@ function theGame($,phys,GameFramework, Box2D, drawutils, mathutils) {
         var meany;
         var varx;
         var vary;
+        var covxy;
         var meanNearx = [];
         var meanNeary = [];
         var angle;
@@ -300,6 +301,7 @@ function theGame($,phys,GameFramework, Box2D, drawutils, mathutils) {
                                         pos = this.task.robots[i].GetPosition();
                                         varx =  varx + (pos.x-meanx)*(pos.x-meanx)/this.task.numRobots;
                                         vary =  vary + (pos.y-meany)*(pos.y-meany)/this.task.numRobots;
+                                        covxy=  covxy+ (pos.x-meanx)*(pos.y-meany)/this.task.numRobots;
                                     }
                                 break;
             
@@ -309,7 +311,7 @@ function theGame($,phys,GameFramework, Box2D, drawutils, mathutils) {
                                     meany = 0;
                                     varx = 0;
                                     vary = 0;
-                                    var covxy = 0;
+                                    covxy = 0;
                                     for( i = 0; i < this.task.numRobots; ++i) {
                                         pos = this.task.robots[i].GetPosition();
                                         meanx = meanx + pos.x/this.task.numRobots;
@@ -344,6 +346,7 @@ function theGame($,phys,GameFramework, Box2D, drawutils, mathutils) {
                                         pos = this.task.robots[i].GetPosition();
                                         varx =  varx + (pos.x-meanx)*(pos.x-meanx)/this.task.numRobots;
                                         vary =  vary + (pos.y-meany)*(pos.y-meany)/this.task.numRobots;
+                                        covxy=  covxy+ (pos.x-meanx)*(pos.y-meany)/this.task.numRobots;
                                     }
                             break;
             case 'graph':   var R = 5;
@@ -436,6 +439,7 @@ function theGame($,phys,GameFramework, Box2D, drawutils, mathutils) {
                 meany: meany.toFixed(2),
                 varx: varx.toFixed(2),
                 vary: vary.toFixed(2),
+                covxy: covxy.toFixed(2),
                 t: (this._timeElapsed/1000).toFixed(2)
             });
         }
