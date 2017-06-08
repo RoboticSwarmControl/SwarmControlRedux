@@ -29,7 +29,7 @@ function theGame($,phys,GameFramework, Box2D, drawutils, mathutils) {
         };
         this.task.workpieceTimeSinceLastWorkpeiceUpdate = [0,0];
         this.task.timeInterval = 500;
-        
+        this.task.btnCycle = true;
 
         // fixture definition for obstacles
         var fixDef = new phys.fixtureDef();
@@ -191,6 +191,7 @@ function theGame($,phys,GameFramework, Box2D, drawutils, mathutils) {
                 $('.mode-button').removeClass('btn-success');
                 $('#button-'+curMode).addClass('btn-success');
                 this.task.mode = m;
+                this.task.btnCycle = false;
             }.bind(this));
         }.bind(this));
     });
@@ -481,6 +482,22 @@ function theGame($,phys,GameFramework, Box2D, drawutils, mathutils) {
         drawutils.drawText(30*meanx,30*(meany+1),this.task.numRobots+' Robots', 1.5, color, color);
         color = 'green';
         drawutils.drawRect(30*meanx,30*(meany+2), 120,30, 'rgba(240, 240, 240, 0.7)');
+        
+        if (this.task.btnCycle){
+            var curMode = this.task.mode;
+
+            $('.mode-button').removeClass('btn-success');
+
+            curMode = this.task.mode = this.task.modes[Math.round(new Date().getTime()/2500)%this.task.modes.length];
+            
+
+            if( curMode === 'mean & variance') {
+                curMode = 'mean±var';
+            }
+
+            $('#button-'+curMode).addClass('btn-success');
+        }
+
         drawutils.drawText(30*meanx,30*(meany+2),this.task.mode, 1.5, color, color);
     });
 
