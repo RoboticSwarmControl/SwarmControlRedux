@@ -13,7 +13,10 @@ function theGame($,phys,GameFramework, Box2D, drawutils, mathutils) {
         /* ^ we do this because the Box2D bindings are fugly. */
 
         this.task = {};
-        this.task.numRobots = 100;          // number of robots
+        
+        if(this.mobileUserAgent) {this.task.numRobots = 20;}          // number of robots
+        else{this.task.numRobots = 100;}
+        
         this.task.numBlocks = 4;
         this.task.robotRadius = 0.5*4.0/Math.sqrt(this.task.numRobots);
         this.task.robots = [];              // array of bodies representing the robots

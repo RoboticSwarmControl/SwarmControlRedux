@@ -510,12 +510,12 @@
         this.tiltX = 0; // -1 left, 0 none, 1 right
         this.tiltY = 0; // -1 down, 0 none, 1 up
 
-        $(window).on('deviceorientation', function _functionOrientationChange(evt){
+        window.addEventListener('deviceorientation', function _functionOrientationChange(evt){
         	this._lastInputTime = new Date();
 			evt.preventDefault();
 
             var yval = -evt.beta;  // In degree in the range [-180,180]
-            var xval = -evt.gamma; // In degree in the range [-90,90]
+            var xval = evt.gamma; // In degree in the range [-90,90]
 
             if( !this.useKeyboard ){
                 //property may change. A value of 0 means portrait view, 
