@@ -243,6 +243,7 @@ function theGame($,phys,GameFramework, Box2D, drawutils, mathutils) {
                                 }
                                 varx = 0;
                                 vary = 0;
+                                covxy = 0;
                                 for( i = 0; i < this.task.numRobots; ++i) {
                                         pos = this.task.robots[i].GetPosition();
                                         varx =  varx + (pos.x-meanx)*(pos.x-meanx)/this.task.numRobots;
@@ -282,6 +283,7 @@ function theGame($,phys,GameFramework, Box2D, drawutils, mathutils) {
                             meany = 0;
                             varx = 0;
                             vary = 0;
+                            covxy = 0;
                             for( i = 0; i < this.task.numRobots; ++i) {
                                 pos = this.task.robots[i].GetPosition();
                                 meanx = meanx + pos.x/this.task.numRobots;

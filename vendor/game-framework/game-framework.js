@@ -181,7 +181,25 @@
 		this._drawCallback();
 		this._overviewCallback( dt, inputEvents);
 
-		if ( inputEvents.some( function _anyStarts(evt){ return evt.type === 'mouseup'; }) ) {
+		if (!this.mobileUserAgent && inputEvents.some( function _anyStarts(evt){ var start = false;
+											if(evt.type === 'keydown'){
+												switch( evt.key ) {
+								                    case 37 : 
+								                    case 39 : 
+								                    case 38 : 
+								                    case 40 : 
+								                    case 65 : 
+								                    case 68 : 
+								                    case 87 : 
+								                    case 83 : 
+								                    start = true; break;
+								                }
+								            }
+											return (evt.type === 'mouseup' || start);})) {
+			// on new input, we're gonna run. fire the preagme and roll!
+			this._pregameCallback();
+			return this.doStateRunning;
+		}if (inputEvents.some( function _anyStarts(evt){ return evt.type === 'mouseup';})) {
 			// on new input, we're gonna run. fire the preagme and roll!
 			this._pregameCallback();
 			return this.doStateRunning;
