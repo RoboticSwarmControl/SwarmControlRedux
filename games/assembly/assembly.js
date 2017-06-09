@@ -70,10 +70,10 @@ function theGame($,phys,GameFramework, Box2D, drawutils, mathutils) {
                     20 - this.constants.obsThick, 10,
                     this.constants.obsThick, 10);
 
-            this.task.blocks.push( phys.makeMirroredBlock(this.world, 17, 3, 'workpiece0'));
-        this.task.blocks.push( phys.makeMirroredBlock(this.world, 17, 17, 'workpiece1'));
+        this.task.blocks.push( phys.makeMirroredBlock(this.world, (20 - 6 * this.constants.obsThick - 2 * 2) * Math.random() + 3 * this.constants.obsThick + 2, (20 - 6 * this.constants.obsThick - 2 * 2) * Math.random() + 3 * this.constants.obsThick + 2, 'workpiece0',  Math.PI * Math.random()));
         
 
+        this.task.blocks.push( phys.makeMirroredBlock(this.world, (20 - 6 * this.constants.obsThick - 2 * 2) * Math.random() + 3 * this.constants.obsThick + 2, (20 - 6 * this.constants.obsThick - 2 * 2) * Math.random() + 3 * this.constants.obsThick + 2, 'workpiece1',  Math.PI * Math.random()));
 
         // create the goal
         bodyDef.type = phys.body.b2_dynamicBody;

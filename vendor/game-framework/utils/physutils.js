@@ -293,7 +293,7 @@ window.phys = (function(Box2D){
             return body;
         },
 
-        makeMirroredBlock: function(world,x,y,userData){
+        makeMirroredBlock: function(world,x,y,userData,angle){
             var phys = window.phys;
             var bodyDef = new phys.bodyDef();
             var tolerance = 0.02;
@@ -346,7 +346,7 @@ window.phys = (function(Box2D){
                 body.CreateFixture(fixDef);        
                 body.m_angularDamping = 5;
                 body.m_linearDamping = 5;
-                //body.SetAngle(1.5);
+                body.SetAngle(angle);
             }
 
             return body;
