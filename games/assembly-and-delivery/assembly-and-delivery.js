@@ -70,10 +70,6 @@ function theGame($,phys,GameFramework, Box2D, drawutils, mathutils) {
                     20 - this.constants.obsThick, 10,
                     this.constants.obsThick, 10);
 
-        this.task.blocks.push( phys.makeMirroredBlock(this.world, 17, 3, 'workpiece0'));
-        this.task.blocks.push( phys.makeMirroredBlock(this.world, 17, 17, 'workpiece1'));
-        
-
         // create the goal
         bodyDef.type = phys.body.b2_dynamicBody;
         bodyDef.userData = 'goal';
@@ -94,6 +90,27 @@ function theGame($,phys,GameFramework, Box2D, drawutils, mathutils) {
                                                     this.task.robotRadius,
                                                     'robot'));
         }
+
+
+        var generateObj1x;
+        var generateObj1y;
+        
+        do {
+            generateObj1x = (20 - 6 * this.constants.obsThick - 2 * 2) * Math.random() + 3 * this.constants.obsThick + 2;
+            generateObj1y = (20 - 6 * this.constants.obsThick - 2 * 2) * Math.random() + 3 * this.constants.obsThick + 2;
+        }
+        while(mathutils.lineDistance(generateObj1x, generateObj1y, xoffset, yoffset) < 9);
+        this.task.blocks.push( phys.makeMirroredBlock(this.world, generateObj1x, generateObj1y, 'workpiece0',  Math.PI * Math.random()));
+
+        var generateObj2x;
+        var generateObj2y;
+
+        do {
+            generateObj2x = (20 - 6 * this.constants.obsThick - 2 * 2) * Math.random() + 3 * this.constants.obsThick + 2;
+            generateObj2y = (20 - 6 * this.constants.obsThick - 2 * 2) * Math.random() + 3 * this.constants.obsThick + 2;
+        }
+        while (mathutils.lineDistance(generateObj2x, generateObj2y, xoffset, yoffset) < 9 || mathutils.lineDistance(generateObj1x, generateObj1y, generateObj2x, generateObj2y) < 4.5);
+        this.task.blocks.push( phys.makeMirroredBlock(this.world, generateObj2x, generateObj2y, 'workpiece1',  Math.PI * Math.random()));
     });
 
     game.setInitTaskCallback( function() {
@@ -407,8 +424,8 @@ function theGame($,phys,GameFramework, Box2D, drawutils, mathutils) {
     game.setOverviewCallback( function() {
         var color = 'white';
 
-        drawutils.drawMirroredBlock(30 * 5, 30 * 10, 0, 'BlueViolet',4, 120);
-        drawutils.drawMirroredBlock(30 * 5, 30 * 10, 180, 'Salmon',4, 120);
+        drawutils.drawMirroredBlock(30 * 5, 30 * 10, 0, 'BlueViolet',4, 120, 0.6);
+        drawutils.drawMirroredBlock(30 * 5, 30 * 10, 180, 'Salmon',4, 120, 0.6);
         drawutils.drawText(30 * 5, 30 * 5,'Assemble This!', 1.5, this.constants.colorGoal, this.constants.colorGoal);
 
         if(this.mobileUserAgent) {
@@ -418,11 +435,11 @@ function theGame($,phys,GameFramework, Box2D, drawutils, mathutils) {
         }
 
         var pGoalArrow = [[425,150],[30 * 9,30 * 8]];
-        drawutils.drawLine(pGoalArrow,this.constants.colorGoalArrow,false,25,true);
+        drawutils.drawLine(pGoalArrow, this.constants.colorGoalArrow, false, 25, true);
 
         pGoalArrow = [[425 + Math.sin(180) * 40, 150 + Math.cos(180) * 40],[425,150],[425 + Math.sin(270) * 40, 150 + Math.cos(270) * 40]];
-        drawutils.drawLine(pGoalArrow,this.constants.colorGoalArrow,false,25,true);
-         drawutils.drawText(347, 195,'push object to goal', 1, color, color, -30);
+        drawutils.drawLine(pGoalArrow, this.constants.colorGoalArrow, false, 25, true);
+        drawutils.drawText(347, 195,'push object to goal', 1, color, color, -30);
         
         
 
