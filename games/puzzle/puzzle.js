@@ -20,7 +20,7 @@ function theGame($,phys,GameFramework, Box2D, drawutils, mathutils) {
         // add robots
         var rowLength = Math.floor(7/(2*this.task.robotRadius));
         var xoffset = this.task.robotRadius+0.5;
-        var yoffset = 14+this.task.robotRadius;
+        var yoffset = 15.5+this.task.robotRadius;
 
         for(var i = 0; i < numRobots; ++i) {
             this.task.robots.push( phys.makeRobot(  this.world,
@@ -34,7 +34,6 @@ function theGame($,phys,GameFramework, Box2D, drawutils, mathutils) {
     game.setSpawnWorldCallback( function() {
         /*jshint camelcase:false */
         /* ^ we do this because the Box2D bindings are fugly. */
-
         this.task = {};
 
         if(this.mobileUserAgent) {
@@ -102,13 +101,6 @@ function theGame($,phys,GameFramework, Box2D, drawutils, mathutils) {
                     20 - this.constants.obsThick, 10,
                     this.constants.obsThick, 10);
 
-
-        this.task.blocks.push( phys.makePuzzle1(this.world, 10, 10, 'workpiece0'));
-        this.task.blocks.push( phys.makePuzzle2(this.world, 6, 6, 'workpiece1'));
-        this.task.blocks.push( phys.makePuzzle3(this.world, 12, 6 , 'workpiece2'));
-        this.task.blocks.push( phys.makePuzzle4(this.world, 13, 13,'workpiece3'));
-
-
         // create the goal
         bodyDef.type = phys.body.b2_dynamicBody;
         bodyDef.userData = 'goal';
@@ -132,16 +124,34 @@ function theGame($,phys,GameFramework, Box2D, drawutils, mathutils) {
             }
         
         fixDef.shape.SetAsArray(points, points.length);
-        //fixDef.SetAngle(Math.PI/3);
-        //var body = world.CreateBody(bodyDef);
-        //body.CreateFixture(fixDef);
-        //body.SetAngle(Math.PI/3);
-        //fixDef.shape.SetAsBox(1.2,2);
         this.task.goals[0].CreateFixture(fixDef);
 
-        // create some robots
         // create some robots        
         setupRobots(this.task.numRobots);
+
+        var generateAngle1 = Math.PI * Math.random();
+        var generateAngle2 = Math.PI * Math.random();
+        var generateAngle3 = Math.PI * Math.random();
+        var generateAngle4 = Math.PI * Math.random();
+
+        var startPos = [
+            {x: 5, y: 5},
+            {x: 5, y: 15},
+            {x: 15, y: 15},
+            {x: 15, y: 5},
+        ];
+
+        for ( i = 0; i < 4; i++) {
+            var k = Math.floor(startPos.length * Math.random());
+            switch(i){
+                case 0 : this.task.blocks.push( phys.makePuzzle1(this.world, startPos[k].x + 2 * Math.cos(generateAngle1 - Math.PI*1/4), startPos[k].y + 2 * Math.sin(generateAngle1 - Math.PI*1/4), 'workpiece0', generateAngle1)); break;
+                case 1 : this.task.blocks.push( phys.makePuzzle2(this.world, startPos[k].x + 2 * Math.cos(generateAngle2 + Math.PI*1/6), startPos[k].y + 2 * Math.sin(generateAngle2 + Math.PI*1/6), 'workpiece1', generateAngle2)); break;
+                case 2 : this.task.blocks.push( phys.makePuzzle3(this.world, startPos[k].x + 2 * Math.cos(generateAngle3 + Math.PI*2/3), startPos[k].y + 2 * Math.sin(generateAngle3 + Math.PI*2/3), 'workpiece2', generateAngle3)); break;
+                case 3 : this.task.blocks.push( phys.makePuzzle4(this.world, startPos[k].x + 2 * Math.cos(generateAngle4 - Math.PI*3/4), startPos[k].y + 2 * Math.sin(generateAngle4 - Math.PI*3/4), 'workpiece3', generateAngle4)); break;
+            }
+            startPos.splice(k, 1);
+        }
+ 
     });
     game.setInitTaskCallback( function() {
         this.task.impulse = 80;             // impulse to move robots by
@@ -388,6 +398,12 @@ function theGame($,phys,GameFramework, Box2D, drawutils, mathutils) {
     game.setOverviewCallback( function() {
         var color = 'white';
 
+        // drawutils.drawRobot( 30 * this.task.obj1posx, 30 * this.task.obj1posy, Math.PI * Math.random(), 6, 'purple', 'purple'); 
+        // drawutils.drawRobot( 30 * this.task.obj2posx, 30 * this.task.obj2posy, Math.PI * Math.random(), 6, 'purple', 'purple'); 
+        // drawutils.drawRobot( 30 * this.task.obj3posx, 30 * this.task.obj3posy, Math.PI * Math.random(), 6, 'purple', 'purple'); 
+        // drawutils.drawRobot( 30 * this.task.obj4posx, 30 * this.task.obj4posy, Math.PI * Math.random(), 6, 'purple', 'purple'); 
+        
+
         drawutils.drawPuzzle1(30* 10, 30 * 10, 0, this.task.colorSelected[0],4,120,0.6);
         drawutils.drawPuzzle2(30* 10, 30 * 10, 0, this.task.colorSelected[1],4,120,0.6);
         drawutils.drawPuzzle3(30* 10, 30 * 10, 0, this.task.colorSelected[2],4,120,0.6);
@@ -411,8 +427,8 @@ function theGame($,phys,GameFramework, Box2D, drawutils, mathutils) {
         drawutils.drawRect(30*meanx,30*(meany+1), 120,30, 'rgba(240, 240, 240, 0.7)');
         drawutils.drawText(30*meanx,30*(meany+1),this.task.numRobots+' Robots', 1.5, color, color);
         color = 'black';
-        drawutils.drawRect(30*meanx,30*(meany+2), 120,30, 'rgba(240, 240, 240, 0.7)');
-        
+
+        // drawutils.drawRect(30*meanx,30*(meany+2), 120,30, 'rgba(240, 240, 240, 0.7)');
         // if (this.task.btnCycle){
         //     var curMode = this.task.mode;
 

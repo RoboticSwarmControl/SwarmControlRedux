@@ -88,7 +88,7 @@ window.phys = (function(Box2D){
             return body;
         },
 
-        makePuzzle1: function(world,x,y,userData){
+        makePuzzle1: function(world, x, y, userData, angle){
             var phys = window.phys;
             var bodyDef = new phys.bodyDef();
             var tolerance = 0.02;
@@ -127,12 +127,12 @@ window.phys = (function(Box2D){
                 body.CreateFixture(fixDef);        
                 body.m_angularDamping = 5;
                 body.m_linearDamping = 5;
-                //body.SetAngle(1.5);
+                body.SetAngle(angle);
             }
 
             return body;
         },
-        makePuzzle2: function(world,x,y,userData){
+        makePuzzle2: function(world, x, y, userData, angle){
             var phys = window.phys;
             var bodyDef = new phys.bodyDef();
             bodyDef.type = phys.body.b2_dynamicBody;
@@ -185,13 +185,13 @@ window.phys = (function(Box2D){
                 body.CreateFixture(fixDef);        
                 body.m_angularDamping = 5;
                 body.m_linearDamping = 5;
-                //body.SetAngle(1.5);
+                body.SetAngle(angle);
             }
 
             return body;
         },
 
-        makePuzzle3: function(world,x,y,userData){
+        makePuzzle3: function(world, x, y, userData, angle){
             var phys = window.phys;
             var bodyDef = new phys.bodyDef();
             var tolerance = 0.02;
@@ -243,12 +243,12 @@ window.phys = (function(Box2D){
                 body.CreateFixture(fixDef);        
                 body.m_angularDamping = 5;
                 body.m_linearDamping = 5;
-                //body.SetAngle(1.5);
+                body.SetAngle(angle);
             }
 
             return body;
         },
-        makePuzzle4: function(world,x,y,userData){
+        makePuzzle4: function(world, x, y, userData, angle){
             var phys = window.phys;
             var bodyDef = new phys.bodyDef();
             var tolerance = 0.02;
@@ -287,13 +287,13 @@ window.phys = (function(Box2D){
                 body.CreateFixture(fixDef);        
                 body.m_angularDamping = 5;
                 body.m_linearDamping = 5;
-                //body.SetAngle(1.5);
+                body.SetAngle(angle);
             }
 
             return body;
         },
 
-        makeMirroredBlock: function(world,x,y,userData,angle){
+        makeMirroredBlock: function(world, x, y, userData, angle){
             var phys = window.phys;
             var bodyDef = new phys.bodyDef();
             var tolerance = 0.02;
