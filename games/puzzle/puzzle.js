@@ -7,6 +7,7 @@ function theGame($,phys,GameFramework, Box2D, drawutils, mathutils) {
     var game = new GameFramework('puzzle', 'puzzle','Number of robots');
     function URFP( x ) { /* jshint expr:true */ x; }
     URFP(mathutils);
+    
     var setupRobots = function(numRobots) {
         this.task.robotRadius = 0.5*4.0/Math.sqrt(this.task.numRobots);
         
