@@ -4,18 +4,47 @@
 function theGame($,phys,GameFramework, Box2D, drawutils, mathutils) {
     /* jshint unused:true */
     'use strict';
-    var game = new GameFramework('puzzle', 'puzzle','Visualization method');
+    var game = new GameFramework('puzzle', 'puzzle','Number of robots');
     function URFP( x ) { /* jshint expr:true */ x; }
     URFP(mathutils);
+    var setupRobots = function(numRobots) {
+        this.task.robotRadius = 0.5*4.0/Math.sqrt(this.task.numRobots);
+        
+        // remove existing robots
+        this.task.robots.forEach( function(bot){
+            phys.destroyRobot(this.world, bot);
+        }.bind(this));
+        this.task.robots.length = 0;
+
+        // add robots
+        var rowLength = Math.floor(7/(2*this.task.robotRadius));
+        var xoffset = this.task.robotRadius+0.5;
+        var yoffset = 14+this.task.robotRadius;
+
+        for(var i = 0; i < numRobots; ++i) {
+            this.task.robots.push( phys.makeRobot(  this.world,
+                                                    (i%rowLength)*2.1*this.task.robotRadius + xoffset,
+                                                    Math.floor(i/rowLength)*2.1*this.task.robotRadius + yoffset,
+                                                    this.task.robotRadius,
+                                                    'robot'));
+        }
+    }.bind(game);
 
     game.setSpawnWorldCallback( function() {
         /*jshint camelcase:false */
         /* ^ we do this because the Box2D bindings are fugly. */
 
         this.task = {};
-        
-        if(this.mobileUserAgent) {this.task.numRobots = 20;}          // number of robots
-        else{this.task.numRobots = 100;}
+
+        if(this.mobileUserAgent) {
+            this.task.minRobots = 1;
+            this.task.maxRobots = 70;
+        }         
+        else{
+            this.task.minRobots = 1;
+            this.task.maxRobots = 250;
+        }
+        this.task.numRobots = Math.floor((Math.random()*this.task.maxRobots)+1);          // number of robots
         
         this.task.numBlocks = 4;
         this.task.robotRadius = 0.5*4.0/Math.sqrt(this.task.numRobots);
@@ -110,51 +139,71 @@ function theGame($,phys,GameFramework, Box2D, drawutils, mathutils) {
         this.task.goals[0].CreateFixture(fixDef);
 
         // create some robots
-        var xoffset = this.task.robotRadius+0.5;
-        var yoffset = 14+this.task.robotRadius;        
-        for(i = 0; i < this.task.numRobots; ++i) {
-            this.task.robots.push( phys.makeRobot(  this.world,
-                                                    xoffset + 7*Math.random(),
-                                                    yoffset +5*Math.random(),
-                                                    this.task.robotRadius,
-                                                    'robot'));
-        }
+        // create some robots        
+        setupRobots(this.task.numRobots);
     });
-
     game.setInitTaskCallback( function() {
-        this.task.modes = ['full-state', 'graph', 'mean & variance', 'mean'];
-        this.task.mode = this.task.modes[ Math.ceil( Math.random() * this.task.modes.length ) - 1];
-        
-        this.impulseStart = null;
-        this.task.impulse = 80;
-        this.impulseV = new phys.vec2(0,0);
-        this.keyUp = false;
-        this.keyDown = false;
-        this.keyLeft = false;
-        this.keyRight = false;
-        
+        this.task.impulse = 80;             // impulse to move robots by
+        this.impulseV = new phys.vec2(0,0); // global impulse to control all robots
 
-        $('.mode-button').prop('disabled',false);
-        
-        //set the inital mode
-        var curMode = this.task.mode;
-        if( curMode === 'mean & variance') {
-            curMode = 'mean±var';
-        }
-        $('#button-'+curMode).addClass('btn-success');
-        //add click functionality
-        this.task.modes.forEach( function (m) {
-            var curMode = m;
-            if( curMode === 'mean & variance') {
-                curMode = 'mean±var';
-            }
-            $('#button-'+curMode).click(function() {
-                $('.mode-button').removeClass('btn-success');
-                $('#button-'+curMode).addClass('btn-success');
-                this.task.mode = m;
-                this.task.btnCycle = false;
+        var $robotCounter = $('#select-robot-count');
+        $robotCounter.html(this.task.numRobots);
+  
+        this.task.clickStart = null;
+        this.task.clickTimeout = null;
+
+        this.$addRobotButton = $('#-add-robots');
+        this.$addRobotButton.on('mousedown', function(evt){
+            URFP(evt);
+            
+            this.task.clickStart = new Date();
+            this.task.clickTimeout = window.setTimeout( function _handleAddClick(){
+                if (this.task.numRobots < this.task.maxRobots) {
+                    this.task.numRobots++;
+                    $robotCounter.html(this.task.numRobots);
+                    this.task.clickTimeout = window.setTimeout( _handleAddClick.bind(this), 250 );
+                }
+            }.bind(this),0);
+
+            $(window).on('mouseup', function(evt){
+                URFP(evt);
+                if (this.task.clickTimeout) {
+                    setupRobots(this.task.numRobots);
+                    window.clearTimeout( this.task.clickTimeout );
+                    this.task.clickTimeout = null;
+                }
             }.bind(this));
         }.bind(this));
+        
+
+        this.$removeRobotButton = $('#-remove-robots');
+        this.$removeRobotButton.on('mousedown', function(evt){
+            URFP(evt);            
+            
+            this.task.clickStart = new Date();
+            this.task.clickTimeout = window.setTimeout( function _handleRemoveClick(){
+                if (this.task.numRobots > this.task.minRobots) {
+                    this.task.numRobots--;                    
+                    $robotCounter.html(this.task.numRobots);
+                    this.task.clickTimeout = window.setTimeout( _handleRemoveClick.bind(this), 250 );
+                }                
+            }.bind(this),0);
+
+            $(window).on('mouseup', function(evt){
+                URFP(evt);
+                if (this.task.clickTimeout) {
+                    setupRobots(this.task.numRobots);
+                    window.clearTimeout( this.task.clickTimeout );
+                    this.task.clickTimeout = null;
+                }
+            }.bind(this));
+        }.bind(this));
+        
+    });
+
+    game.setPregameCallback( function() {
+        this.$addRobotButton.prop('disabled',true);
+        this.$removeRobotButton.prop('disabled',true);
     });
 
     game.setDrawCallback( function() {
@@ -170,13 +219,14 @@ function theGame($,phys,GameFramework, Box2D, drawutils, mathutils) {
         var varx;
         var vary;
         var covxy;
-        var meanNearx = [];
-        var meanNeary = [];
+        // var meanNearx = [];
+        // var meanNeary = [];
         var angle;
         var X;
         var Y;
         var color;
         var verts;
+        var radius;
 
 
         
@@ -192,7 +242,10 @@ function theGame($,phys,GameFramework, Box2D, drawutils, mathutils) {
                     continue; // we drew the goal earlier
                 }
                 if (type ==='robot') {
-                    continue; // we draw the robots elsewhere
+                    radius = f.GetShape().GetRadius();
+                    
+                    drawutils.drawRobot( 30*pos.x, 30*pos.y,angle, 30*radius, this.constants.colorRobot,this.constants.colorRobotEdge); 
+                    //continue; // we draw the robots elsewhere
                 } else if (type === 'workpiece0') {
                     // draw the pushable object
                     verts = f.GetShape().GetVertices();
@@ -295,155 +348,24 @@ function theGame($,phys,GameFramework, Box2D, drawutils, mathutils) {
                 }
             }
         }
-
-
-        switch (this.task.mode) {
-            case 'full-state': 
-                                    meanx = 0;
-                                    meany = 0;
-                                    for( i = 0; i < this.task.numRobots; ++i) {
-                                    var radius = this.task.robots[i].m_fixtureList.m_shape.m_radius;
-                                    pos = this.task.robots[i].GetPosition();
-                                    meanx = meanx + pos.x/this.task.numRobots;
-                                    meany = meany + pos.y/this.task.numRobots;
-                                    drawutils.drawRobot( 30*pos.x, 30*pos.y,angle, 30*radius, this.constants.colorRobot,this.constants.colorRobotEdge); 
-                                }
-                                varx = 0;
-                                vary = 0;
-                                covxy = 0;
-                                for( i = 0; i < this.task.numRobots; ++i) {
-                                        pos = this.task.robots[i].GetPosition();
-                                        varx =  varx + (pos.x-meanx)*(pos.x-meanx)/this.task.numRobots;
-                                        vary =  vary + (pos.y-meany)*(pos.y-meany)/this.task.numRobots;
-                                        covxy=  covxy+ (pos.x-meanx)*(pos.y-meany)/this.task.numRobots;
-                                    }
-                                break;
-            
-            case 'mean & variance': // http://en.wikipedia.org/wiki/Algorithms_for_calculating_variance
-                                    // t95% confidence ellipse
-                                    meanx = 0;
-                                    meany = 0;
-                                    varx = 0;
-                                    vary = 0;
-                                    covxy = 0;
-                                    for( i = 0; i < this.task.numRobots; ++i) {
-                                        pos = this.task.robots[i].GetPosition();
-                                        meanx = meanx + pos.x/this.task.numRobots;
-                                        meany = meany + pos.y/this.task.numRobots;
-                                    }
-                                    for( i = 0; i < this.task.numRobots; ++i) {
-                                        pos = this.task.robots[i].GetPosition();
-                                        varx =  varx + (pos.x-meanx)*(pos.x-meanx)/this.task.numRobots;
-                                        vary =  vary + (pos.y-meany)*(pos.y-meany)/this.task.numRobots;
-                                        covxy=  covxy+ (pos.x-meanx)*(pos.y-meany)/this.task.numRobots;
-                                    }
-                                    var diffeq = Math.sqrt( (varx-vary)*(varx-vary)/4 + covxy*covxy);
-                                    var varxp = (varx+vary)/2 + diffeq;
-                                    var varyp = (varx+vary)/2 - diffeq;
-                                    angle = 180/Math.PI*1/2*Math.atan2( 2*covxy, varx-vary);
-
-                                    drawutils.drawRobot( 30*meanx, 30*meany,0, 15, 'red',this.constants.colorRobot);
-                                    drawutils.drawEllipse( 30*meanx, 30*meany,2.4*30*Math.sqrt(varxp), 2.4*30*Math.sqrt(varyp),angle,'red',4 );
-
-                                    break;
-            case 'mean':    meanx = 0;
-                            meany = 0;
-                            varx = 0;
-                            vary = 0;
-                            covxy = 0;
-                            for( i = 0; i < this.task.numRobots; ++i) {
-                                pos = this.task.robots[i].GetPosition();
-                                meanx = meanx + pos.x/this.task.numRobots;
-                                meany = meany + pos.y/this.task.numRobots;
-                            }
-                            drawutils.drawRobot( 30*meanx, 30*meany,0, 15, 'red',this.task.colorRobot);
-                            for( i = 0; i < this.task.numRobots; ++i) {
-                                        pos = this.task.robots[i].GetPosition();
-                                        varx =  varx + (pos.x-meanx)*(pos.x-meanx)/this.task.numRobots;
-                                        vary =  vary + (pos.y-meany)*(pos.y-meany)/this.task.numRobots;
-                                        covxy=  covxy+ (pos.x-meanx)*(pos.y-meany)/this.task.numRobots;
-                                    }
-                            break;
-            case 'graph':   var R = 5;
-                            meanx = 0;
-                            meany = 0;
-                            meanNearx = [];
-                            meanNeary = [];
-                            varx = 0;
-                            vary = 0;
-                            covxy = 0;
-                            var varNearx = [];
-                            var varNeary = [];
-                            var covNearxy = [];
-                            var nearRobots = [];
-                            var j;
-                            for (i = 0 ; i < this.task.numBlocks; ++i)
-                            {
-                                nearRobots[i] = 0;
-                                meanNearx[i] = 0;
-                                meanNeary[i] = 0;
-                                varNearx[i] = 0;
-                                varNeary[i] = 0;
-                                covNearxy[i] = 0;
-                            }
-
-                            for( i = 0; i < this.task.numRobots; ++i) {
-
-                                pos = this.task.robots[i].GetPosition();
-                                meanx = meanx + pos.x;
-                                meany = meany + pos.y;
-
-                                for ( j = 0 ; j< this.task.numBlocks; j ++){
-                                if (Math.sqrt((pos.x-this.task.objectposx[j])*(pos.x-this.task.objectposx[j]) + (pos.y-this.task.objectposy[j])*(pos.y-this.task.objectposy[j])) <= R){
-
-                                    meanNearx[j] = meanNearx[j] + pos.x;
-                                    meanNeary[j] = meanNeary[j] + pos.y;
-                                    
-                                    ++nearRobots[j];
-                                
-                                }
-                            }
-                            }
-                            meanx = meanx/this.task.numRobots;
-                            meany = meany/this.task.numRobots;
-                            for (i = 0; i < this.task.numBlocks; i++){
-                            meanNearx[i]= meanNearx[i]/nearRobots[i];
-                            meanNeary[i] = meanNeary[i]/nearRobots[i];
-                        }
-
-                            for( i = 0; i < this.task.numRobots; ++i) {
-                                pos = this.task.robots[i].GetPosition();
-                                varx =  varx + (pos.x-meanx)*(pos.x-meanx)/this.task.numRobots;
-                                vary =  vary + (pos.y-meany)*(pos.y-meany)/this.task.numRobots;
-                                covxy=  covxy+ (pos.x-meanx)*(pos.y-meany)/this.task.numRobots;
-                                for (j = 0 ; j < this.task.numBlocks; j ++){
-                                if (Math.sqrt((pos.x-this.task.objectposx[j])*(pos.x-this.task.objectposx[j]) + (pos.y-this.task.objectposy[j])*(pos.y-this.task.objectposy[j])) <= R)
-                                {
-                                    varNearx[j] =  varNearx[j] + (pos.x-meanNearx[j])*(pos.x-meanNearx[j])/nearRobots[j];
-                                    varNeary[j] =  varNeary[j] + (pos.y-meanNeary[j])*(pos.y-meanNeary[j])/nearRobots[j];
-                                    covNearxy[j]=  covNearxy[j]+ (pos.x-meanNearx[j])*(pos.y-meanNeary[j])/nearRobots[j];
-                                }
-                            }
-                            }
-                            for (j = 0; j < this.task.numBlocks; j++){
-                            diffeq = Math.sqrt( (varNearx[j] - varNeary[j])*(varNearx[j] -varNeary[j])/4 + covNearxy[j]*covNearxy[j]);
-                            varxp = (varNearx[j]+varNeary[j])/2 + diffeq;
-                            varyp = (varNearx[j]+varNeary[j])/2 - diffeq;
-                            angle = 180/Math.PI*1/2*Math.atan2( 2*covNearxy[j], varNearx[j]-varNeary[j]);
-
-                            
-                            
-                            drawutils.drawRobot( 30*meanNearx[j], 30*meanNeary[j] ,0, 10, this.task.colorSelected[j],this.task.colorRobot); // draw mean
-                            drawutils.drawEllipse( 30*meanNearx[j], 30*meanNeary[j],2.4*30*Math.sqrt(varxp), 2.4*30*Math.sqrt(varyp),angle,this.task.colorSelected[j],4 ); // draw ellipse
-                        }
-                        diffeq = Math.sqrt( (varx-vary)*(varx-vary)/4 + covxy*covxy);
-                                 varxp = (varx+vary)/2 + diffeq;
-                                 varyp = (varx+vary)/2 - diffeq;
-                                    angle = 180/Math.PI*1/2*Math.atan2( 2*covxy, varx-vary);
-                                    drawutils.drawRobot( 30*meanx, 30*meany,0, 15, 'red',this.constants.colorRobot);
-                                    drawutils.drawEllipse( 30*meanx, 30*meany,2.4*30*Math.sqrt(varxp), 2.4*30*Math.sqrt(varyp),angle,'red',4 );
-                            break;
+        meanx = 0;
+        meany = 0;
+        for( i = 0; i < this.task.numRobots; ++i) {
+            //radius = this.task.robots[i].m_fixtureList.m_shape.m_radius;
+            pos = this.task.robots[i].GetPosition();
+            meanx = meanx + pos.x/this.task.numRobots;
+            meany = meany + pos.y/this.task.numRobots;
         }
+        varx = 0;
+        vary = 0;
+        covxy = 0;
+        for( i = 0; i < this.task.numRobots; ++i) {
+            pos = this.task.robots[i].GetPosition();
+            varx =  varx + (pos.x-meanx)*(pos.x-meanx)/this.task.numRobots;
+            vary =  vary + (pos.y-meany)*(pos.y-meany)/this.task.numRobots;
+            covxy=  covxy+ (pos.x-meanx)*(pos.y-meany)/this.task.numRobots;
+        }
+                               
         if(this._timeElapsed > this.task.workpieceTimeSinceLastWorkpeiceUpdate[4]+ this.task.timeInterval)
         {
             
@@ -490,22 +412,22 @@ function theGame($,phys,GameFramework, Box2D, drawutils, mathutils) {
         color = 'black';
         drawutils.drawRect(30*meanx,30*(meany+2), 120,30, 'rgba(240, 240, 240, 0.7)');
         
-        if (this.task.btnCycle){
-            var curMode = this.task.mode;
+        // if (this.task.btnCycle){
+        //     var curMode = this.task.mode;
 
-            $('.mode-button').removeClass('btn-success');
+        //     $('.mode-button').removeClass('btn-success');
 
-            curMode = this.task.mode = this.task.modes[Math.round(new Date().getTime()/2500)%this.task.modes.length];
+        //     curMode = this.task.mode = this.task.modes[Math.round(new Date().getTime()/2500)%this.task.modes.length];
             
 
-            if( curMode === 'mean & variance') {
-                curMode = 'mean±var';
-            }
+        //     if( curMode === 'mean & variance') {
+        //         curMode = 'mean±var';
+        //     }
 
-            $('#button-'+curMode).addClass('btn-success');
-        }
+        //     $('#button-'+curMode).addClass('btn-success');
+        // }
 
-        drawutils.drawText(30*meanx,30*(meany+2),this.task.mode, 1.5, color, color);
+        // drawutils.drawText(30*meanx,30*(meany+2),this.task.mode, 1.5, color, color);
     });
 
     game.setUpdateCallback( function (dt, inputs) {
@@ -601,9 +523,7 @@ function theGame($,phys,GameFramework, Box2D, drawutils, mathutils) {
         }.bind(this) );
     });
 
-    game.setPregameCallback( function() {
-        $('.mode-button').prop('disabled',true);
-    });
+
 
     game.setLoseTestCallback( function() {
         // in this game, we can't lose--no time constraints or anything.
@@ -652,7 +572,7 @@ function theGame($,phys,GameFramework, Box2D, drawutils, mathutils) {
         return {
             numRobots: this.task.numRobots,
             task: 'puzzle',
-            mode: this.task.mode,
+            mode: 'default',
             /* the "extra" key is used to store task-specific or run-specific information */
             extra: {
                history: this.task.history

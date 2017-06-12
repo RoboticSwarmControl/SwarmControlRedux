@@ -1,5 +1,5 @@
 {
 	"name" : "peg-in-hole",
-	"xAxisLabel" : "Visualization method",
+	"xAxisLabel" : "Noise (% control power)",
 	"displayName": "Peg in hole"
 }

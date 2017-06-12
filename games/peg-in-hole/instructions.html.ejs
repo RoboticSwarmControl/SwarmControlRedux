@@ -1,34 +1,10 @@
 <h2> Instructions </h2>
 
 <p>
-	Move <span id="task-mode-count"></span> robots (blue) to the goal area (outlined) using the arrow keys (&#8592;,&#8593;,&#8595;,&#8594;). Play all four visualization methods!
+	Move <span id="task-mode-count"></span> robots (blue) to the goal area (outlined) using the arrow keys (&#8592;,&#8593;,&#8595;,&#8594;). 
 </p>
 
-<div class='btn-group-xs'>
-	<button class='btn btn-default mode-button btn-block' title='choose visualization mode' id='button-full-state'>
-		full-state
-	</button>
-	<button class='btn btn-default mode-button btn-block' title='choose visualization mode' id='button-graph'>
-		region-based-mean±var
-	</button>
-	<button class='btn btn-default mode-button btn-block' title='choose visualization mode' id='button-mean±var'>
-		mean±var
-	</button>
-	<button class='btn btn-default mode-button btn-block' title='choose visualization mode' id='button-mean'>
-		mean
-	</button>
-</div>
-
-<br>
 
 <p>
-	<strong>Full-state</strong> sensing provides the most information, because it provides the position of all robots (200 numbers for 100 robots).
-
-	<br>
-
-	<strong>Mean</strong> tells where the average position of the entire swarm is(just 2 numbers for all 100 robots), and knowing the <strong>variance</strong> adds only 3 additional numbers while showing a ring depicting the deviation from the mean.
-
-	<br>
-
-	<strong>Region-based mean and variance</strong> will add information by not only giving the mean and variance of the entire swarm but individual mean and variances for the robots close to each object as well.
+	Be careful! <a href="http://en.wikipedia.org/wiki/Brownian_noise">Brownian noise</a> that is <span id="task-mode-power"></span>% of control power is pushing your robots.
 </p>

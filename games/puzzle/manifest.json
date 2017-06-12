@@ -1,5 +1,5 @@
 {
 	"name" : "puzzle",
-	"xAxisLabel" : "Visualization method",
+	"xAxisLabel" : "Number of robots",
 	"displayName": "Puzzle"
 }
