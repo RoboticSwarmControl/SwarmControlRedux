@@ -398,12 +398,6 @@ function theGame($,phys,GameFramework, Box2D, drawutils, mathutils) {
     game.setOverviewCallback( function() {
         var color = 'white';
 
-        // drawutils.drawRobot( 30 * this.task.obj1posx, 30 * this.task.obj1posy, Math.PI * Math.random(), 6, 'purple', 'purple'); 
-        // drawutils.drawRobot( 30 * this.task.obj2posx, 30 * this.task.obj2posy, Math.PI * Math.random(), 6, 'purple', 'purple'); 
-        // drawutils.drawRobot( 30 * this.task.obj3posx, 30 * this.task.obj3posy, Math.PI * Math.random(), 6, 'purple', 'purple'); 
-        // drawutils.drawRobot( 30 * this.task.obj4posx, 30 * this.task.obj4posy, Math.PI * Math.random(), 6, 'purple', 'purple'); 
-        
-
         drawutils.drawPuzzle1(30* 10, 30 * 10, 0, this.task.colorSelected[0],4,120,0.6);
         drawutils.drawPuzzle2(30* 10, 30 * 10, 0, this.task.colorSelected[1],4,120,0.6);
         drawutils.drawPuzzle3(30* 10, 30 * 10, 0, this.task.colorSelected[2],4,120,0.6);
