@@ -114,7 +114,7 @@ function theGame($,phys,GameFramework, Box2D, drawutils, mathutils) {
         for ( i = 0; i < 2; i++) {
             var k = Math.floor(startPos.length * Math.random());
             switch(i){
-                case 0 : this.task.blocks.push( phys.makeMirroredBlock(this.world, 3 + Math.cos(generateAngle1 - Math.PI*1/2), 3 + Math.sin(generateAngle1 - Math.PI*1/2), 'workpiece0', generateAngle1, 1.0)); break;
+                case 0 : this.task.blocks.push( phys.makeMirroredBlock(this.world, startPos[k].x + Math.cos(generateAngle1 - Math.PI*1/2), startPos[k].y + Math.sin(generateAngle1 - Math.PI*1/2), 'workpiece0', generateAngle1, 1.0)); break;
                 default : this.task.blocks.push( phys.makeMirroredBlock(this.world, startPos[k].x + Math.cos(generateAngle2 - Math.PI*1/2), startPos[k].y + Math.sin(generateAngle2 - Math.PI*1/2), 'workpiece1', generateAngle2, 1.0)); break;
             }
             startPos.splice(k, 1);

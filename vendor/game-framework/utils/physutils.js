@@ -310,27 +310,26 @@ window.phys = (function(Box2D){
             var i = 0;
             
             var Mpoints1 = [ 
-                            {x: 1/4, y: 1/2},           
-                            //{x: 1/2, y: Math.sqrt(3)/2},
+                            {x: 1/4, y: 1/2},
                             {x: -1/2, y: Math.sqrt(3)/2},
                             {x: -1, y: 0},
                             {x: 0, y: 0}
                             ];
             var Mpoints2 = [
-                            {x: -tolerance, y: 0},
+                            {x: 1/4 - tolerance, y: 1/2},
                             {x: -3/4 + tolerance, y: 0},
-                            {x: -2/4 + tolerance, y: -1/2},
+                            {x: -1/2 + tolerance, y: -1/2},
                             {x: -1/4 - tolerance, y: -1/2}
                             ];
             var Mpoints3 = [  
-                            {x: 1/4, y: 1/2},
+                            {x: -1/2, y: 1/2},
                             {x: 1/2, y: 1/2},
                             {x: 1/2, y: Math.sqrt(3)/2},
                             {x: -1/2, y: Math.sqrt(3)/2},
                             ];
             var Mpoints4 = [
                             {x: 1/2, y: Math.sqrt(3)/2},
-                            {x: 1/2, y: 1/2},
+                            {x: -(Math.sqrt(3) - 3) / 4, y: Math.sqrt(3)/2},
                             {x: 3/4, y: 0},
                             {x: 1, y: 0}
                             ];
