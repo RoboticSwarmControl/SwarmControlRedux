@@ -88,7 +88,7 @@ window.phys = (function(Box2D){
             return body;
         },
 
-        makePuzzle1: function(world,x,y,userData){
+        makePuzzle1: function(world,x,y,angle,userData, shapeSize){
             var phys = window.phys;
             var bodyDef = new phys.bodyDef();
             var tolerance = 0.02;
@@ -120,19 +120,19 @@ window.phys = (function(Box2D){
             for (var j = 0 ; j< Mpoints.length; j++){
                 var points = [];
                 for ( i = 0; i < Mpoints[j].length; i++) {
-                    points.push( new phys.vec2(4*Mpoints[j][i].x, 4*Mpoints[j][i].y) );
+                    points.push( new phys.vec2(shapeSize*Mpoints[j][i].x, shapeSize*Mpoints[j][i].y) );
                 }
                 fixDef.shape = new Box2D.Collision.Shapes.b2PolygonShape();
                 fixDef.shape.SetAsArray(points, points.length);
                 body.CreateFixture(fixDef);        
                 body.m_angularDamping = 5;
                 body.m_linearDamping = 5;
-                //body.SetAngle(1.5);
+                body.SetAngle(angle* Math.PI / 180);
             }
 
             return body;
         },
-        makePuzzle2: function(world,x,y,userData){
+        makePuzzle2: function(world,x,y,angle,userData, shapeSize){
             var phys = window.phys;
             var bodyDef = new phys.bodyDef();
             bodyDef.type = phys.body.b2_dynamicBody;
@@ -178,20 +178,20 @@ window.phys = (function(Box2D){
             for (var j = 0 ; j< Mpoints.length; j++){
                 var points = [];
                 for ( i = 0; i < Mpoints[j].length; i++) {
-                    points.push( new phys.vec2(4*Mpoints[j][i].x, 4*Mpoints[j][i].y) );
+                    points.push( new phys.vec2(shapeSize*Mpoints[j][i].x, shapeSize*Mpoints[j][i].y) );
                 }
                 fixDef.shape = new Box2D.Collision.Shapes.b2PolygonShape();
                 fixDef.shape.SetAsArray(points, points.length);
                 body.CreateFixture(fixDef);        
                 body.m_angularDamping = 5;
                 body.m_linearDamping = 5;
-                //body.SetAngle(1.5);
+                body.SetAngle(angle* Math.PI / 180);
             }
 
             return body;
         },
 
-        makePuzzle3: function(world,x,y,userData){
+        makePuzzle3: function(world,x,y,angle,userData, shapeSize){
             var phys = window.phys;
             var bodyDef = new phys.bodyDef();
             var tolerance = 0.02;
@@ -236,19 +236,19 @@ window.phys = (function(Box2D){
             for (var j = 0 ; j< Mpoints.length; j++){
                 var points = [];
                 for ( i = 0; i < Mpoints[j].length; i++) {
-                    points.push( new phys.vec2(4*Mpoints[j][i].x, 4*Mpoints[j][i].y) );
+                    points.push( new phys.vec2(shapeSize*Mpoints[j][i].x, shapeSize*Mpoints[j][i].y) );
                 }
                 fixDef.shape = new Box2D.Collision.Shapes.b2PolygonShape();
                 fixDef.shape.SetAsArray(points, points.length);
                 body.CreateFixture(fixDef);        
                 body.m_angularDamping = 5;
                 body.m_linearDamping = 5;
-                //body.SetAngle(1.5);
+                body.SetAngle(angle* Math.PI / 180);
             }
 
             return body;
         },
-        makePuzzle4: function(world,x,y,userData){
+        makePuzzle4: function(world,x,y,angle, userData, shapeSize){
             var phys = window.phys;
             var bodyDef = new phys.bodyDef();
             var tolerance = 0.02;
@@ -280,14 +280,14 @@ window.phys = (function(Box2D){
             for (var j = 0 ; j< Mpoints.length; j++){
                 var points = [];
                 for ( i = 0; i < Mpoints[j].length; i++) {
-                    points.push( new phys.vec2(4*Mpoints[j][i].x, 4*Mpoints[j][i].y) );
+                    points.push( new phys.vec2(shapeSize*Mpoints[j][i].x, shapeSize*Mpoints[j][i].y) );
                 }
                 fixDef.shape = new Box2D.Collision.Shapes.b2PolygonShape();
                 fixDef.shape.SetAsArray(points, points.length);
                 body.CreateFixture(fixDef);        
                 body.m_angularDamping = 5;
                 body.m_linearDamping = 5;
-                //body.SetAngle(1.5);
+                body.SetAngle(angle* Math.PI / 180);
             }
 
             return body;
