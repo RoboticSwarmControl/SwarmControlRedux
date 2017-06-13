@@ -102,9 +102,9 @@ function theGame($,phys,GameFramework, Box2D, drawutils, mathutils) {
             {x: 17, y: 17},
             {x: 17, y: 3}
         ];
-        this.task.blocks.push( phys.makeMirroredBlock(this.world, startPos[0].x , startPos[0].y, 'workpiece0', 0, 1.0));
+        this.task.blocks.push( phys.makeMirroredBlock(this.world, startPos[0].x , startPos[0].y, 'workpiece0', 0, this.task.density));
         //this.task.blocks.push( phys.makeMirroredBlock(this.world, startPos[Math.floor(Math.random()* 2 +1)].x , startPos[Math.floor(Math.random()* 2 +1)].y, 'workpiece1', 0, 1.0));
-        this.task.blocks.push( phys.makeMirroredBlock(this.world, startPos[1].x , startPos[1].y, 'workpiece1', Math.PI, 1.0));
+        this.task.blocks.push( phys.makeMirroredBlock(this.world, startPos[1].x , startPos[1].y, 'workpiece1', Math.PI, this.task.density));
     });
 
     game.setInitTaskCallback( function() {
