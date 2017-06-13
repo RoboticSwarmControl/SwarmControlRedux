@@ -1,5 +1,5 @@
 {
 	"name" : "peg-in-hole",
-	"xAxisLabel" : "Visualization method",
+	"xAxisLabel" : "Number of robots",
 	"displayName": "Peg in hole"
 }

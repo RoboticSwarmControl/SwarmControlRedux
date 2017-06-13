@@ -4,14 +4,37 @@
 function theGame($,phys,GameFramework, Box2D, drawutils, mathutils) {
     /* jshint unused:true */
     'use strict';
+
     var game = new GameFramework('puzzle', 'puzzle','Size of shape');
     function URFP( x ) { /* jshint expr:true */ x; }
     URFP(mathutils);
+    
+    var setupRobots = function(numRobots) {
+        this.task.robotRadius = 0.5*4.0/Math.sqrt(this.task.numRobots);
+        
+        // remove existing robots
+        this.task.robots.forEach( function(bot){
+            phys.destroyRobot(this.world, bot);
+        }.bind(this));
+        this.task.robots.length = 0;
+
+        // add robots
+        var rowLength = Math.floor(7/(2*this.task.robotRadius));
+        var xoffset = this.task.robotRadius+0.5;
+        var yoffset = 15.5+this.task.robotRadius;
+
+        for(var i = 0; i < numRobots; ++i) {
+            this.task.robots.push( phys.makeRobot(  this.world,
+                                                    (i%rowLength)*2.1*this.task.robotRadius + xoffset,
+                                                    Math.floor(i/rowLength)*2.1*this.task.robotRadius + yoffset,
+                                                    this.task.robotRadius,
+                                                    'robot'));
+        }
+    }.bind(game);
 
     game.setSpawnWorldCallback( function() {
         /*jshint camelcase:false */
         /* ^ we do this because the Box2D bindings are fugly. */
-
         this.task = {};
         
         if(this.mobileUserAgent) {
@@ -80,11 +103,11 @@ function theGame($,phys,GameFramework, Box2D, drawutils, mathutils) {
                     this.constants.obsThick, 10);
 
 
+
         this.task.blocks.push( phys.makePuzzle1(this.world, 3, 15, 180,'workpiece0', this.task.shapeSize));
         this.task.blocks.push( phys.makePuzzle2(this.world, 3, 3, 180,'workpiece1', this.task.shapeSize));
         this.task.blocks.push( phys.makePuzzle3(this.world, 15, 3 ,180, 'workpiece2', this.task.shapeSize));
         this.task.blocks.push( phys.makePuzzle4(this.world, 15, 15,180,'workpiece3', this.task.shapeSize));
-
 
         // create the goal
         bodyDef.type = phys.body.b2_dynamicBody;
@@ -109,13 +132,34 @@ function theGame($,phys,GameFramework, Box2D, drawutils, mathutils) {
             }
         
         fixDef.shape.SetAsArray(points, points.length);
-        //fixDef.SetAngle(Math.PI/3);
-        //var body = world.CreateBody(bodyDef);
-        //body.CreateFixture(fixDef);
-        //body.SetAngle(Math.PI/3);
-        //fixDef.shape.SetAsBox(1.2,2);
         this.task.goals[0].CreateFixture(fixDef);
 
+// <<<<<<< RandomizedGames
+//         // create some robots        
+//         setupRobots(this.task.numRobots);
+
+//         var generateAngle1 = Math.PI * Math.random();
+//         var generateAngle2 = Math.PI * Math.random();
+//         var generateAngle3 = Math.PI * Math.random();
+//         var generateAngle4 = Math.PI * Math.random();
+
+//         var startPos = [
+//             {x: 5, y: 5},
+//             {x: 5, y: 15},
+//             {x: 15, y: 15},
+//             {x: 15, y: 5},
+//         ];
+
+//         for ( i = 0; i < 4; i++) {
+//             var k = Math.floor(startPos.length * Math.random());
+//             switch(i){
+//                 case 0 : this.task.blocks.push( phys.makePuzzle1(this.world, startPos[k].x + 2 * Math.cos(generateAngle1 - Math.PI*1/4), startPos[k].y + 2 * Math.sin(generateAngle1 - Math.PI*1/4), 'workpiece0', generateAngle1)); break;
+//                 case 1 : this.task.blocks.push( phys.makePuzzle2(this.world, startPos[k].x + 2 * Math.cos(generateAngle2 + Math.PI*1/6), startPos[k].y + 2 * Math.sin(generateAngle2 + Math.PI*1/6), 'workpiece1', generateAngle2)); break;
+//                 case 2 : this.task.blocks.push( phys.makePuzzle3(this.world, startPos[k].x + 2 * Math.cos(generateAngle3 + Math.PI*2/3), startPos[k].y + 2 * Math.sin(generateAngle3 + Math.PI*2/3), 'workpiece2', generateAngle3)); break;
+//                 case 3 : this.task.blocks.push( phys.makePuzzle4(this.world, startPos[k].x + 2 * Math.cos(generateAngle4 - Math.PI*3/4), startPos[k].y + 2 * Math.sin(generateAngle4 - Math.PI*3/4), 'workpiece3', generateAngle4)); break;
+//             }
+//             startPos.splice(k, 1);
+// =======
         // create some robots
         var xoffset = this.task.robotRadius+0.5;
         var yoffset = 0.5 + this.task.robotRadius;        
@@ -126,9 +170,10 @@ function theGame($,phys,GameFramework, Box2D, drawutils, mathutils) {
                                                     this.task.robotRadius,
                                                     'robot'));
         }
+ 
     });
-
     game.setInitTaskCallback( function() {
+
 
         
              
@@ -164,6 +209,7 @@ function theGame($,phys,GameFramework, Box2D, drawutils, mathutils) {
         var Y;
         var color;
         var verts;
+        var radius;
 
 
         
@@ -179,6 +225,7 @@ function theGame($,phys,GameFramework, Box2D, drawutils, mathutils) {
                     continue; // we drew the goal earlier
                 }
                 if (type ==='robot') {
+
                     // draw the robots
                     var radius = f.GetShape().GetRadius();
                     drawutils.drawRobot( 30*pos.x, 30*pos.y,angle, 30*radius, this.constants.colorRobot,this.constants.colorRobotEdge); 
@@ -285,10 +332,11 @@ function theGame($,phys,GameFramework, Box2D, drawutils, mathutils) {
             }
         }
 
+
         meanx = 0;
         meany = 0;
         for( i = 0; i < this.task.numRobots; ++i) {
-            
+
             pos = this.task.robots[i].GetPosition();
             meanx = meanx + pos.x/this.task.numRobots;
             meany = meany + pos.y/this.task.numRobots;
@@ -347,24 +395,24 @@ function theGame($,phys,GameFramework, Box2D, drawutils, mathutils) {
         drawutils.drawRect(30*meanx,30*(meany+1), 120,30, 'rgba(240, 240, 240, 0.7)');
         drawutils.drawText(30*meanx,30*(meany+1),this.task.numRobots+' Robots', 1.5, color, color);
         color = 'black';
-        drawutils.drawRect(30*meanx,30*(meany+2), 120,30, 'rgba(240, 240, 240, 0.7)');
-        
-        if (this.task.btnCycle){
-            var curMode = this.task.mode;
 
-            $('.mode-button').removeClass('btn-success');
+        // drawutils.drawRect(30*meanx,30*(meany+2), 120,30, 'rgba(240, 240, 240, 0.7)');
+        // if (this.task.btnCycle){
+        //     var curMode = this.task.mode;
 
-            curMode = this.task.mode = this.task.modes[Math.round(new Date().getTime()/2500)%this.task.modes.length];
+        //     $('.mode-button').removeClass('btn-success');
+
+        //     curMode = this.task.mode = this.task.modes[Math.round(new Date().getTime()/2500)%this.task.modes.length];
             
 
-            if( curMode === 'mean & variance') {
-                curMode = 'mean±var';
-            }
+        //     if( curMode === 'mean & variance') {
+        //         curMode = 'mean±var';
+        //     }
 
-            $('#button-'+curMode).addClass('btn-success');
-        }
+        //     $('#button-'+curMode).addClass('btn-success');
+        // }
 
-        drawutils.drawText(30*meanx,30*(meany+2),this.task.mode, 1.5, color, color);
+        // drawutils.drawText(30*meanx,30*(meany+2),this.task.mode, 1.5, color, color);
     });
 
     game.setUpdateCallback( function (dt, inputs) {
@@ -460,9 +508,7 @@ function theGame($,phys,GameFramework, Box2D, drawutils, mathutils) {
         }.bind(this) );
     });
 
-    game.setPregameCallback( function() {
-        $('.mode-button').prop('disabled',true);
-    });
+
 
     game.setLoseTestCallback( function() {
         // in this game, we can't lose--no time constraints or anything.
@@ -511,6 +557,7 @@ function theGame($,phys,GameFramework, Box2D, drawutils, mathutils) {
         return {
             numRobots: this.task.numRobots,
             task: 'puzzle',
+
             mode: this.task.shapeSize,
             /* the "extra" key is used to store task-specific or run-specific information */
             extra: {

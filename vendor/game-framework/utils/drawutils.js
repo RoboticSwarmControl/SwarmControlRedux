@@ -203,7 +203,7 @@ window.drawutils = (function(){
   };
 
 
-  var drawMirroredBlock = function(x,y,rotate, color,strokeWidth, unitLength)
+  var drawMirroredBlock = function(x, y, rotate, color, strokeWidth, unitLength, opacity)
       {
         
         var tolerance = 0.02 * unitLength;
@@ -212,7 +212,7 @@ window.drawutils = (function(){
           fn: function(ctx) {
 
             ctx.save();
-     
+            ctx.globalAlpha = opacity;
             ctx.translate(x,y);
             ctx.rotate(rotate * Math.PI /180);
             ctx.fillStyle = color;
@@ -451,7 +451,7 @@ var drawEmptyRect = function (x,y,w,h,color,angle,strokeWidth) {
     });
   };
 
-  var drawLine = function (pts,color,closed, strokeWidth,rounded){
+  var drawLine = function (pts, color, closed, strokeWidth, rounded){
     closed = typeof closed !== 'undefined' ? closed : false;
     strokeWidth = typeof strokeWidth !== 'undefined' ? strokeWidth : 4;
     rounded = typeof rounded !== 'undefined' ? rounded : false;
