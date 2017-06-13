@@ -14,8 +14,12 @@ function theGame($,phys,GameFramework, Box2D, drawutils, mathutils) {
 
         this.task = {};
         
-        if(this.mobileUserAgent) {this.task.numRobots = 20;}          // number of robots
-        else{this.task.numRobots = 100;}
+        if(this.mobileUserAgent) {
+            this.task.numRobots = 20;
+        }          // number of robots
+        else{
+            this.task.numRobots = 100;
+        }
 
         this.task.numBlocks = 2;
         this.task.robotRadius = 0.5*4.0/Math.sqrt(this.task.numRobots);
@@ -84,11 +88,11 @@ function theGame($,phys,GameFramework, Box2D, drawutils, mathutils) {
 
         // create some robots
         var xoffset = this.task.robotRadius+0.5;
-        var yoffset = 14+this.task.robotRadius;        
+        var yoffset = 0.5 +this.task.robotRadius;        
         for(i = 0; i < this.task.numRobots; ++i) {
             this.task.robots.push( phys.makeRobot(  this.world,
-                                                    xoffset + 7*Math.random(),
-                                                    yoffset +5*Math.random(),
+                                                    xoffset + 19*Math.random(),
+                                                    yoffset +19 *Math.random(),
                                                     this.task.robotRadius,
                                                     'robot'));
         }
