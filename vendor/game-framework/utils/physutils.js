@@ -110,10 +110,10 @@ window.phys = (function(Box2D){
                             {x: -1/2, y: Math.sqrt(3)/2}
                             ];
             var Mpoints2 = [ 
-                            {x: -1/2 + tolerance, y: Math.sqrt(3)/4},
+                            {x: -5/8 + tolerance, y: Math.sqrt(3)/4 + 1/4},
                             {x: -3/8 + tolerance, y: Math.sqrt(3)/4 - 1/4},
                             {x: -1/4 - tolerance, y: Math.sqrt(3)/4 - 1/4},
-                            {x: -1/8 - tolerance, y: Math.sqrt(3)/4},
+                            {x: -tolerance, y: Math.sqrt(3)/4 + 1/4},
                             ];
                     
             var Mpoints = [Mpoints1, Mpoints2];
@@ -150,7 +150,6 @@ window.phys = (function(Box2D){
                             {x: 0, y: Math.sqrt(3)/4},      
                             {x: -1/8, y: Math.sqrt(3)/4},
                             {x: -1/4, y: Math.sqrt(3)/4 - 1/4},
-                            {x: -Math.sqrt(3)/6, y: -Math.sqrt(3)/6},
                             {x: 0, y: -Math.sqrt(3)/12}
                             ];
             var Mpoints2 = [ 
@@ -170,11 +169,20 @@ window.phys = (function(Box2D){
             var Mpoints4 = [ 
                             {x: -3/4, y: Math.sqrt(3)/4},
                             {x: -1, y: 0},
-                            {x: -3/8, y: Math.sqrt(3)/4 - 1/4},
+                            {x: -1/4, y: Math.sqrt(3)/4 - 1/2},
                             {x: -1/2, y: Math.sqrt(3)/4}
                             ];
+            var Mpoints5 = [ 
+                            
+                            
+                            {x: 0, y: Math.sqrt(3)/4 - 1/4},
+                            {x: -Math.sqrt(3)/6, y: Math.sqrt(3)/4 - 1/4},
+                            {x: -Math.sqrt(3)/3, y: Math.sqrt(3)/4 - 1/4},
+                            {x: -Math.sqrt(3)/3, y: -Math.sqrt(3)*3/12},
+                            {x: 0, y: -Math.sqrt(3)/12}
+                            ];
             
-            var Mpoints = [Mpoints1, Mpoints2, Mpoints3, Mpoints4];
+            var Mpoints = [Mpoints1, Mpoints2, Mpoints3, Mpoints4, Mpoints5];
             for (var j = 0 ; j< Mpoints.length; j++){
                 var points = [];
                 for ( i = 0; i < Mpoints[j].length; i++) {
@@ -214,20 +222,20 @@ window.phys = (function(Box2D){
                     {x: 2/3, y: -1/3}
                     ];
             var Mpoints2 = [ 
-                    {x: 0, y: -Math.sqrt(3)/12 - tolerance},
+                    {x: Math.sqrt(3)/12, y: -Math.sqrt(3)/24 - tolerance},
                     {x: -Math.sqrt(3)/6, y: -Math.sqrt(3)/6 - tolerance},
                     {x: -Math.sqrt(3)/6, y: -Math.sqrt(3)/3 + tolerance},
-                    {x: 0, y: -Math.sqrt(3)*5/12 + tolerance}
+                    {x: Math.sqrt(3)/12, y: -Math.sqrt(3)*11/24 + tolerance}
                     ];
             var Mpoints3 = [ 
                     {x: 1, y: 0},
                     {x: 5/6, y: 0},
                     {x: 2/3, y: -1/3},
-                    {x: 2/3, y: -Math.sqrt(3)/3},
+                    {x: 1/2, y: -Math.sqrt(3)/2},
                     ];
             var Mpoints4 = [
                     {x: 0, y: 0},
-                    {x: 0, y: -1/3},
+                    {x: 0, y: -Math.sqrt(3)/2},
                     {x: 1/3, y: -1/3},
                     {x: 1/6, y: 0}
                     ];
@@ -270,10 +278,10 @@ window.phys = (function(Box2D){
                             {x: 0, y: Math.sqrt(3)/2}
                             ];
             var Mpoints2 = [ 
-                            {x: 1/6 + tolerance, y: 0},
+                            {x: 1/12 + tolerance, y: 1/6},
                             {x: 1/3 + tolerance, y: -1/3},
                             {x: 2/3 - tolerance, y: -1/3},
-                            {x: 5/6 - tolerance, y: 0}
+                            {x: 11/12 - tolerance, y: 1/6}
                             ];
             
             var Mpoints = [Mpoints1, Mpoints2];
