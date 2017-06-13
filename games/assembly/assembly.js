@@ -85,40 +85,77 @@ function theGame($,phys,GameFramework, Box2D, drawutils, mathutils) {
         fixDef.shape.SetAsBox(Math.sqrt(3)/4, 0.8); 
         this.task.goals[0].CreateFixture(fixDef);
 
-        // create some robots
-        var xoffset = this.task.robotRadius + 0.5;
-        var yoffset = 0.5 + this.task.robotRadius;        
-        for(i = 0; i < this.task.numRobots; ++i) {
-            this.task.robots.push( phys.makeRobot(  this.world,
-                                                    xoffset + 19 * Math.random(),
-                                                    yoffset + 19 * Math.random(),
-                                                    this.task.robotRadius,
-                                                    'robot'));
-        }
-
-        var generateAngle1 = Math.PI * Math.random();
-        var generateAngle2 = Math.PI * Math.random();
-
+        // create the objects
+        // var generateAngle1 = Math.PI * Math.random();
+        // var generateAngle2 = Math.PI * Math.random();
         var startPos = [
             {x: 3, y: 3},
-            {x: 3, y: 10},
-            {x: 3, y: 17},
-            {x: 10, y: 3},
-            {x: 10, y: 10},
-            {x: 10, y: 17},
-            {x: 17, y: 3},
-            {x: 17, y: 10},
             {x: 17, y: 17},
+            {x: 17, y: 3}
         ];
+        this.task.blocks.push( phys.makeMirroredBlock(this.world, startPos[0].x , startPos[0].y, 'workpiece0', 0, 1.0));
+        //this.task.blocks.push( phys.makeMirroredBlock(this.world, startPos[Math.floor(Math.random()* 2 +1)].x , startPos[Math.floor(Math.random()* 2 +1)].y, 'workpiece1', 0, 1.0));
+        this.task.blocks.push( phys.makeMirroredBlock(this.world, startPos[1].x , startPos[1].y, 'workpiece1', Math.PI, 1.0));
+        // var startPos = [
+        //     {x: 3, y: 3},
+        //     {x: 3, y: 10},
+        //     {x: 3, y: 17},
+        //     {x: 10, y: 3},
+        //     {x: 10, y: 10},
+        //     {x: 10, y: 17},
+        //     {x: 17, y: 3},
+        //     {x: 17, y: 10},
+        //     {x: 17, y: 17},
+        // ];
 
-        for ( i = 0; i < 2; i++) {
-            var k = Math.floor(startPos.length * Math.random());
-            switch(i){
-                case 0 : this.task.blocks.push( phys.makeMirroredBlock(this.world, startPos[k].x + Math.cos(generateAngle1 - Math.PI*1/2), startPos[k].y + Math.sin(generateAngle1 - Math.PI*1/2), 'workpiece0', generateAngle1, 1.0)); break;
-                default : this.task.blocks.push( phys.makeMirroredBlock(this.world, startPos[k].x + Math.cos(generateAngle2 - Math.PI*1/2), startPos[k].y + Math.sin(generateAngle2 - Math.PI*1/2), 'workpiece1', generateAngle2, 1.0)); break;
-            }
-            startPos.splice(k, 1);
+        // for ( i = 0; i < this.task.numBlocks; i++) {
+        //     var k = Math.floor(startPos.length * Math.random());
+        //     switch(i){
+        //         case 0 : this.task.blocks.push( phys.makeMirroredBlock(this.world, startPos[k].x + Math.cos(generateAngle1 - Math.PI*1/2), startPos[k].y + Math.sin(generateAngle1 - Math.PI*1/2), 'workpiece0', generateAngle1, 1.0)); break;
+        //         default : this.task.blocks.push( phys.makeMirroredBlock(this.world, startPos[k].x + Math.cos(generateAngle2 - Math.PI*1/2), startPos[k].y + Math.sin(generateAngle2 - Math.PI*1/2), 'workpiece1', generateAngle2, 1.0)); break;
+        //     }
+        //     startPos.splice(k, 1);
+        // }
+
+        //this.task.blocks.push( phys.makeMirroredBlock(this.world, startPos[k].x + Math.cos(generateAngle1 - Math.PI*1/2), startPos[k].y + Math.sin(generateAngle1 - Math.PI*1/2), 'workpiece0', generateAngle1, 1.0)); break;
+        // create some robots
+        var xoffset = this.task.robotRadius + 0.5;
+        var yoffset = 0.5 + this.task.robotRadius;  
+        var robX;
+        var robY;   
+         
+        for(i = 0; i < this.task.numRobots; ++i) {
+            robX = xoffset + 19 * Math.random();
+            robY = yoffset + 19 * Math.random();
+            var rob = phys.makeRobot(  this.world,
+                                                    robX,
+                                                    robY,
+                                                    this.task.robotRadius,
+                                                    'robot');
+        //     for (i = 0; i < this.task.blocks.length; i++){
+        //         var check = false;  
+        //     // this.task.blocks.forEach( function (b) { 
+        //     while(!check){
+        //         if(this.task.blocks[i].GetFixtureList().GetAABB().Contains( rob.GetFixtureList().GetAABB())){
+        //             phys.destroyRobot(this.world,rob);
+        //             robX = xoffset + 19 * Math.random();
+        //         robY = yoffset + 19 * Math.random();
+
+        //         rob = phys.makeRobot(  this.world,
+        //                                             robX,
+        //                                             robY,
+        //                                             this.task.robotRadius,
+        //                                             'robot');
+        //         }
+        //         else {
+        //             check = true;
+        //         }
+        //     }
+        // }//.bind(this));
+            this.task.robots.push( rob);
         }
+
+        
     });
 
     game.setInitTaskCallback( function() {
@@ -319,6 +356,8 @@ function theGame($,phys,GameFramework, Box2D, drawutils, mathutils) {
 
         drawutils.drawMirroredBlock(30 * 10,30 * 10, 0, 'BlueViolet',4, 120, 0.6);
         drawutils.drawMirroredBlock(30 * 10,30 * 10, 180, 'Salmon',4, 120, 0.6);
+        //drawutils.drawText(30*10,30*15,'Block[1]: '+this.task.blocks[1].GetFixtureList().GetAABB().Contains( this.task.blocks[0].GetFixtureList().GetAABB()), 1.5, this.constants.colorGoal, this.constants.colorGoal);
+        
         drawutils.drawText(30*10,30*15,'Assemble This!', 1.5, this.constants.colorGoal, this.constants.colorGoal);
 
         if(this.mobileUserAgent) {
