@@ -4,7 +4,8 @@
 function theGame($,phys,GameFramework, Box2D, drawutils, mathutils) {
     /* jshint unused:true */
     'use strict';
-    var game = new GameFramework('puzzle', 'puzzle','Number of robots');
+
+    var game = new GameFramework('puzzle', 'puzzle','Size of shape');
     function URFP( x ) { /* jshint expr:true */ x; }
     URFP(mathutils);
     
@@ -35,22 +36,22 @@ function theGame($,phys,GameFramework, Box2D, drawutils, mathutils) {
         /*jshint camelcase:false */
         /* ^ we do this because the Box2D bindings are fugly. */
         this.task = {};
-
-        if(this.mobileUserAgent) {
-            this.task.minRobots = 1;
-            this.task.maxRobots = 70;
-        }         
-        else{
-            this.task.minRobots = 1;
-            this.task.maxRobots = 250;
-        }
-        this.task.numRobots = Math.floor((Math.random()*this.task.maxRobots)+1);          // number of robots
         
+        if(this.mobileUserAgent) {
+            this.task.numRobots = 20;
+        }          // number of robots
+        else{
+            this.task.numRobots = 100;
+        }
+        
+        this.task.shapeSize =Math.floor(5*Math.random()+1);  
+
         this.task.numBlocks = 4;
         this.task.robotRadius = 0.5*4.0/Math.sqrt(this.task.numRobots);
         this.task.robots = [];              // array of bodies representing the robots
         this.task.goals = [];               // array of goals of form {x,y,w,h}
         this.task.blocks = [];              // array of bodies representing blocks
+        //this.task.shapeSize = 1;
         var i;
         this.task.objectposx = [];
         this.task.objectposy = [];
@@ -101,6 +102,13 @@ function theGame($,phys,GameFramework, Box2D, drawutils, mathutils) {
                     20 - this.constants.obsThick, 10,
                     this.constants.obsThick, 10);
 
+
+
+        this.task.blocks.push( phys.makePuzzle1(this.world, 3, 15, 180,'workpiece0', this.task.shapeSize));
+        this.task.blocks.push( phys.makePuzzle2(this.world, 3, 3, 180,'workpiece1', this.task.shapeSize));
+        this.task.blocks.push( phys.makePuzzle3(this.world, 15, 3 ,180, 'workpiece2', this.task.shapeSize));
+        this.task.blocks.push( phys.makePuzzle4(this.world, 15, 15,180,'workpiece3', this.task.shapeSize));
+
         // create the goal
         bodyDef.type = phys.body.b2_dynamicBody;
         bodyDef.userData = 'goal';
@@ -126,95 +134,59 @@ function theGame($,phys,GameFramework, Box2D, drawutils, mathutils) {
         fixDef.shape.SetAsArray(points, points.length);
         this.task.goals[0].CreateFixture(fixDef);
 
-        // create some robots        
-        setupRobots(this.task.numRobots);
+// <<<<<<< RandomizedGames
+//         // create some robots        
+//         setupRobots(this.task.numRobots);
 
-        var generateAngle1 = Math.PI * Math.random();
-        var generateAngle2 = Math.PI * Math.random();
-        var generateAngle3 = Math.PI * Math.random();
-        var generateAngle4 = Math.PI * Math.random();
+//         var generateAngle1 = Math.PI * Math.random();
+//         var generateAngle2 = Math.PI * Math.random();
+//         var generateAngle3 = Math.PI * Math.random();
+//         var generateAngle4 = Math.PI * Math.random();
 
-        var startPos = [
-            {x: 5, y: 5},
-            {x: 5, y: 15},
-            {x: 15, y: 15},
-            {x: 15, y: 5},
-        ];
+//         var startPos = [
+//             {x: 5, y: 5},
+//             {x: 5, y: 15},
+//             {x: 15, y: 15},
+//             {x: 15, y: 5},
+//         ];
 
-        for ( i = 0; i < 4; i++) {
-            var k = Math.floor(startPos.length * Math.random());
-            switch(i){
-                case 0 : this.task.blocks.push( phys.makePuzzle1(this.world, startPos[k].x + 2 * Math.cos(generateAngle1 - Math.PI*1/4), startPos[k].y + 2 * Math.sin(generateAngle1 - Math.PI*1/4), 'workpiece0', generateAngle1)); break;
-                case 1 : this.task.blocks.push( phys.makePuzzle2(this.world, startPos[k].x + 2 * Math.cos(generateAngle2 + Math.PI*1/6), startPos[k].y + 2 * Math.sin(generateAngle2 + Math.PI*1/6), 'workpiece1', generateAngle2)); break;
-                case 2 : this.task.blocks.push( phys.makePuzzle3(this.world, startPos[k].x + 2 * Math.cos(generateAngle3 + Math.PI*2/3), startPos[k].y + 2 * Math.sin(generateAngle3 + Math.PI*2/3), 'workpiece2', generateAngle3)); break;
-                case 3 : this.task.blocks.push( phys.makePuzzle4(this.world, startPos[k].x + 2 * Math.cos(generateAngle4 - Math.PI*3/4), startPos[k].y + 2 * Math.sin(generateAngle4 - Math.PI*3/4), 'workpiece3', generateAngle4)); break;
-            }
-            startPos.splice(k, 1);
+//         for ( i = 0; i < 4; i++) {
+//             var k = Math.floor(startPos.length * Math.random());
+//             switch(i){
+//                 case 0 : this.task.blocks.push( phys.makePuzzle1(this.world, startPos[k].x + 2 * Math.cos(generateAngle1 - Math.PI*1/4), startPos[k].y + 2 * Math.sin(generateAngle1 - Math.PI*1/4), 'workpiece0', generateAngle1)); break;
+//                 case 1 : this.task.blocks.push( phys.makePuzzle2(this.world, startPos[k].x + 2 * Math.cos(generateAngle2 + Math.PI*1/6), startPos[k].y + 2 * Math.sin(generateAngle2 + Math.PI*1/6), 'workpiece1', generateAngle2)); break;
+//                 case 2 : this.task.blocks.push( phys.makePuzzle3(this.world, startPos[k].x + 2 * Math.cos(generateAngle3 + Math.PI*2/3), startPos[k].y + 2 * Math.sin(generateAngle3 + Math.PI*2/3), 'workpiece2', generateAngle3)); break;
+//                 case 3 : this.task.blocks.push( phys.makePuzzle4(this.world, startPos[k].x + 2 * Math.cos(generateAngle4 - Math.PI*3/4), startPos[k].y + 2 * Math.sin(generateAngle4 - Math.PI*3/4), 'workpiece3', generateAngle4)); break;
+//             }
+//             startPos.splice(k, 1);
+// =======
+        // create some robots
+        var xoffset = this.task.robotRadius+0.5;
+        var yoffset = 0.5 + this.task.robotRadius;        
+        for(i = 0; i < this.task.numRobots; ++i) {
+            this.task.robots.push( phys.makeRobot(  this.world,
+                                                    xoffset + 19*Math.random(),
+                                                    yoffset +19*Math.random(),
+                                                    this.task.robotRadius,
+                                                    'robot'));
         }
  
     });
     game.setInitTaskCallback( function() {
-        this.task.impulse = 80;             // impulse to move robots by
-        this.impulseV = new phys.vec2(0,0); // global impulse to control all robots
 
-        var $robotCounter = $('#select-robot-count');
-        $robotCounter.html(this.task.numRobots);
-  
-        this.task.clickStart = null;
-        this.task.clickTimeout = null;
 
-        this.$addRobotButton = $('#-add-robots');
-        this.$addRobotButton.on('mousedown', function(evt){
-            URFP(evt);
-            
-            this.task.clickStart = new Date();
-            this.task.clickTimeout = window.setTimeout( function _handleAddClick(){
-                if (this.task.numRobots < this.task.maxRobots) {
-                    this.task.numRobots++;
-                    $robotCounter.html(this.task.numRobots);
-                    this.task.clickTimeout = window.setTimeout( _handleAddClick.bind(this), 250 );
-                }
-            }.bind(this),0);
-
-            $(window).on('mouseup', function(evt){
-                URFP(evt);
-                if (this.task.clickTimeout) {
-                    setupRobots(this.task.numRobots);
-                    window.clearTimeout( this.task.clickTimeout );
-                    this.task.clickTimeout = null;
-                }
-            }.bind(this));
-        }.bind(this));
         
+             
+        this.mX = 0;
+        this.mY = 0;
+        this.impulseV = new phys.vec2(0,0);
+        this.task.impulse = 50;
+        this.keyUp = false;
+        this.keyDown = false;
+        this.keyLeft = false;
+        this.keyRight = false;
 
-        this.$removeRobotButton = $('#-remove-robots');
-        this.$removeRobotButton.on('mousedown', function(evt){
-            URFP(evt);            
-            
-            this.task.clickStart = new Date();
-            this.task.clickTimeout = window.setTimeout( function _handleRemoveClick(){
-                if (this.task.numRobots > this.task.minRobots) {
-                    this.task.numRobots--;                    
-                    $robotCounter.html(this.task.numRobots);
-                    this.task.clickTimeout = window.setTimeout( _handleRemoveClick.bind(this), 250 );
-                }                
-            }.bind(this),0);
-
-            $(window).on('mouseup', function(evt){
-                URFP(evt);
-                if (this.task.clickTimeout) {
-                    setupRobots(this.task.numRobots);
-                    window.clearTimeout( this.task.clickTimeout );
-                    this.task.clickTimeout = null;
-                }
-            }.bind(this));
-        }.bind(this));
-        
-    });
-
-    game.setPregameCallback( function() {
-        this.$addRobotButton.prop('disabled',true);
-        this.$removeRobotButton.prop('disabled',true);
+        $('#task-mode-power').html(this.task.shapeSize);
     });
 
     game.setDrawCallback( function() {
@@ -253,10 +225,10 @@ function theGame($,phys,GameFramework, Box2D, drawutils, mathutils) {
                     continue; // we drew the goal earlier
                 }
                 if (type ==='robot') {
-                    radius = f.GetShape().GetRadius();
-                    
+
+                    // draw the robots
+                    var radius = f.GetShape().GetRadius();
                     drawutils.drawRobot( 30*pos.x, 30*pos.y,angle, 30*radius, this.constants.colorRobot,this.constants.colorRobotEdge); 
-                    //continue; // we draw the robots elsewhere
                 } else if (type === 'workpiece0') {
                     // draw the pushable object
                     verts = f.GetShape().GetVertices();
@@ -266,7 +238,7 @@ function theGame($,phys,GameFramework, Box2D, drawutils, mathutils) {
                     this.task.colorSelected[index] = 'green';
                     this.task.objectposx[index] = pos.x;
                     this.task.objectposy[index] = pos.y;
-                    drawutils.drawPuzzle1(30* pos.x,30 * pos.y, angle, this.task.colorSelected[index],4,120,1);
+                    drawutils.drawPuzzle1(30* pos.x,30 * pos.y, angle, this.task.colorSelected[index],4,this.task.shapeSize*30,1);
                     if(this._timeElapsed > this.task.workpieceTimeSinceLastWorkpeiceUpdate[index]+ this.task.timeInterval)
                     {
 
@@ -288,7 +260,7 @@ function theGame($,phys,GameFramework, Box2D, drawutils, mathutils) {
                     this.task.colorSelected[index] = 'salmon';
                     this.task.objectposx[index] = pos.x;
                     this.task.objectposy[index] = pos.y;
-                    drawutils.drawPuzzle2(30* pos.x,30 * pos.y, angle, this.task.colorSelected[index],4, 120,1);
+                    drawutils.drawPuzzle2(30* pos.x,30 * pos.y, angle, this.task.colorSelected[index],4, this.task.shapeSize*30,1);
                     if(this._timeElapsed > this.task.workpieceTimeSinceLastWorkpeiceUpdate[index]+ this.task.timeInterval)
                     {
 
@@ -310,7 +282,7 @@ function theGame($,phys,GameFramework, Box2D, drawutils, mathutils) {
                     this.task.colorSelected[index] = 'seagreen';
                     this.task.objectposx[index] = pos.x;
                     this.task.objectposy[index] = pos.y;
-                    drawutils.drawPuzzle3(30* pos.x,30 * pos.y, angle, this.task.colorSelected[index],4,120,1);
+                    drawutils.drawPuzzle3(30* pos.x,30 * pos.y, angle, this.task.colorSelected[index],4,this.task.shapeSize*30,1);
                     if(this._timeElapsed > this.task.workpieceTimeSinceLastWorkpeiceUpdate[index]+ this.task.timeInterval)
                     {
 
@@ -332,7 +304,7 @@ function theGame($,phys,GameFramework, Box2D, drawutils, mathutils) {
                     this.task.colorSelected[index] = 'coral';
                     this.task.objectposx[index] = pos.x;
                     this.task.objectposy[index] = pos.y;
-                    drawutils.drawPuzzle4(30* pos.x,30 * pos.y, angle, this.task.colorSelected[index],4,120,1);
+                    drawutils.drawPuzzle4(30* pos.x,30 * pos.y, angle, this.task.colorSelected[index],4,this.task.shapeSize*30,1);
                     if(this._timeElapsed > this.task.workpieceTimeSinceLastWorkpeiceUpdate[index]+ this.task.timeInterval)
                     {
 
@@ -359,10 +331,12 @@ function theGame($,phys,GameFramework, Box2D, drawutils, mathutils) {
                 }
             }
         }
+
+
         meanx = 0;
         meany = 0;
         for( i = 0; i < this.task.numRobots; ++i) {
-            //radius = this.task.robots[i].m_fixtureList.m_shape.m_radius;
+
             pos = this.task.robots[i].GetPosition();
             meanx = meanx + pos.x/this.task.numRobots;
             meany = meany + pos.y/this.task.numRobots;
@@ -398,10 +372,10 @@ function theGame($,phys,GameFramework, Box2D, drawutils, mathutils) {
     game.setOverviewCallback( function() {
         var color = 'white';
 
-        drawutils.drawPuzzle1(30* 10, 30 * 10, 0, this.task.colorSelected[0],4,120,0.6);
-        drawutils.drawPuzzle2(30* 10, 30 * 10, 0, this.task.colorSelected[1],4,120,0.6);
-        drawutils.drawPuzzle3(30* 10, 30 * 10, 0, this.task.colorSelected[2],4,120,0.6);
-        drawutils.drawPuzzle4(30* 10, 30 * 10, 0, this.task.colorSelected[3],4,120,0.6);
+        drawutils.drawPuzzle1(30* 10, 30 * 10, 0, this.task.colorSelected[0],4,this.task.shapeSize*30,0.6);
+        drawutils.drawPuzzle2(30* 10, 30 * 10, 0, this.task.colorSelected[1],4,this.task.shapeSize*30,0.6);
+        drawutils.drawPuzzle3(30* 10, 30 * 10, 0, this.task.colorSelected[2],4,this.task.shapeSize*30,0.6);
+        drawutils.drawPuzzle4(30* 10, 30 * 10, 0, this.task.colorSelected[3],4,this.task.shapeSize*30,0.6);
         drawutils.drawText(30 * 10, 30 * 15,'Assemble This!', 1.5, this.constants.colorGoal, this.constants.colorGoal);
 
         if(this.mobileUserAgent) {
@@ -583,7 +557,8 @@ function theGame($,phys,GameFramework, Box2D, drawutils, mathutils) {
         return {
             numRobots: this.task.numRobots,
             task: 'puzzle',
-            mode: 'default',
+
+            mode: this.task.shapeSize,
             /* the "extra" key is used to store task-specific or run-specific information */
             extra: {
                history: this.task.history

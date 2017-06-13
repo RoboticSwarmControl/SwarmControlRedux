@@ -1,5 +1,7 @@
 {
 	"name" : "puzzle",
-	"xAxisLabel" : "Number of robots",
+
+	"xAxisLabel" : "Size of shape",
+
 	"displayName": "Puzzle"
 }
