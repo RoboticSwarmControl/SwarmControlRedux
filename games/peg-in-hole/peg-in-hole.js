@@ -4,9 +4,33 @@
 function theGame($,phys,GameFramework, Box2D, drawutils, mathutils) {
     /* jshint unused:true */
     'use strict';
-    var game = new GameFramework('peg-in-hole', 'peg-in-hole','Noise (% control power)');
+    var game = new GameFramework('peg-in-hole', 'peg-in-hole','Number of robots');
     function URFP( x ) { /* jshint expr:true */ x; }
     URFP(mathutils);
+
+    var setupRobots = function(numRobots) {
+        //this.task.robotRadius = 0.5*4.0/Math.sqrt(this.task.numRobots);
+        this.task.robotRadius = 0.5*4.0/Math.sqrt(100);
+        
+        // remove existing robots
+        this.task.robots.forEach( function(bot){
+            phys.destroyRobot(this.world, bot);
+        }.bind(this));
+        this.task.robots.length = 0;
+
+        // add robots
+        var rowLength = Math.floor(7/(2*this.task.robotRadius));
+        var xoffset = this.task.robotRadius+0.5;
+        var yoffset = 14+this.task.robotRadius;
+
+        for(var i = 0; i < numRobots; ++i) {
+            this.task.robots.push( phys.makeRobot(  this.world,
+                                                    (i%rowLength)*2.1*this.task.robotRadius + xoffset,
+                                                    Math.floor(i/rowLength)*2.1*this.task.robotRadius + yoffset,
+                                                    this.task.robotRadius,
+                                                    'robot'));
+        }
+    }.bind(game);
 
     game.setSpawnWorldCallback( function() {
         /*jshint camelcase:false */
@@ -14,11 +38,20 @@ function theGame($,phys,GameFramework, Box2D, drawutils, mathutils) {
 
         this.task = {};
         
-        if(this.mobileUserAgent) {this.task.numRobots = 20;}          // number of robots
-        else{this.task.numRobots = 100;}
+        if(this.mobileUserAgent) {
+            this.task.minRobots = 1;
+            this.task.maxRobots = 70;
+        }         
+        else{
+            this.task.minRobots = 1;
+            this.task.maxRobots = 250;
+        }
+        this.task.numRobots = Math.floor((Math.random()*this.task.maxRobots)+1);          // number of robots
+        
         
         this.task.numBlocks = 1;
-        this.task.robotRadius = 0.5*4.0/Math.sqrt(this.task.numRobots);
+        //this.task.robotRadius = 0.5*4.0/Math.sqrt(this.task.numRobots);
+        this.task.robotRadius = 0.5*4.0/Math.sqrt(100);
         this.task.robots = [];              // array of bodies representing the robots
         this.task.goals = [];               // array of goals of form {x,y,w,h}
         this.task.blocks = [];              // array of bodies representing blocks
@@ -164,17 +197,66 @@ function theGame($,phys,GameFramework, Box2D, drawutils, mathutils) {
     });
 
     game.setInitTaskCallback( function() {
-        this.task.noise =(10*Math.random()).toFixed(1);  //add some noise: 0.0 to 10.0        
-        this.mX = 0;
-        this.mY = 0;
-        this.impulseV = new phys.vec2(0,0);
-        this.task.impulse = 50;
-        this.keyUp = false;
-        this.keyDown = false;
-        this.keyLeft = false;
-        this.keyRight = false;
+          this.task.impulse = 80;             // impulse to move robots by
+        this.impulseV = new phys.vec2(0,0); // global impulse to control all robots
 
-        $('#task-mode-power').html(this.task.noise * 10);
+        var $robotCounter = $('#select-robot-count');
+        $robotCounter.html(this.task.numRobots);
+  
+        this.task.clickStart = null;
+        this.task.clickTimeout = null;
+
+        this.$addRobotButton = $('#-add-robots');
+        this.$addRobotButton.on('mousedown', function(evt){
+            URFP(evt);
+            
+            this.task.clickStart = new Date();
+            this.task.clickTimeout = window.setTimeout( function _handleAddClick(){
+                if (this.task.numRobots < this.task.maxRobots) {
+                    this.task.numRobots++;
+                    $robotCounter.html(this.task.numRobots);
+                    this.task.clickTimeout = window.setTimeout( _handleAddClick.bind(this), 250 );
+                }
+            }.bind(this),0);
+
+            $(window).on('mouseup', function(evt){
+                URFP(evt);
+                if (this.task.clickTimeout) {
+                    setupRobots(this.task.numRobots);
+                    window.clearTimeout( this.task.clickTimeout );
+                    this.task.clickTimeout = null;
+                }
+            }.bind(this));
+        }.bind(this));
+        
+
+        this.$removeRobotButton = $('#-remove-robots');
+        this.$removeRobotButton.on('mousedown', function(evt){
+            URFP(evt);            
+            
+            this.task.clickStart = new Date();
+            this.task.clickTimeout = window.setTimeout( function _handleRemoveClick(){
+                if (this.task.numRobots > this.task.minRobots) {
+                    this.task.numRobots--;                    
+                    $robotCounter.html(this.task.numRobots);
+                    this.task.clickTimeout = window.setTimeout( _handleRemoveClick.bind(this), 250 );
+                }                
+            }.bind(this),0);
+
+            $(window).on('mouseup', function(evt){
+                URFP(evt);
+                if (this.task.clickTimeout) {
+                    setupRobots(this.task.numRobots);
+                    window.clearTimeout( this.task.clickTimeout );
+                    this.task.clickTimeout = null;
+                }
+            }.bind(this));
+        }.bind(this));
+    });
+
+    game.setPregameCallback( function() {
+        this.$addRobotButton.prop('disabled',true);
+        this.$removeRobotButton.prop('disabled',true);
     });
 
     game.setDrawCallback( function() {
@@ -444,7 +526,7 @@ function theGame($,phys,GameFramework, Box2D, drawutils, mathutils) {
         this.impulseV.y *=  forceScaler;  
         // apply the user force to all the robots
         this.task.robots.forEach( function(r) { 
-            var mag = this.task.noise*10 *Math.random();
+            var mag = 5 *Math.random();
             var ang = 2*Math.PI*Math.random();
             var brownianImpulse = new phys.vec2( mag*Math.cos(ang) + this.impulseV.x,
                                                 mag*Math.sin(ang) + this.impulseV.y);
@@ -499,7 +581,7 @@ function theGame($,phys,GameFramework, Box2D, drawutils, mathutils) {
         return {
             numRobots: this.task.numRobots,
             task: 'peg-in-hole',
-            mode: this.task.noise,
+            mode: 'default',
             /* the "extra" key is used to store task-specific or run-specific information */
             extra: {
                history: this.task.history
