@@ -339,8 +339,8 @@ function theGame($,phys,GameFramework, Box2D, drawutils, mathutils) {
             });
         }
 
-        drawutils.drawRobot(30*this.task.objectposx[0], 30*this.task.objectposy[0],0, 30*0.1, this.constants.colorRobot,this.constants.colorRobotEdge );
-        drawutils.drawRobot(30*this.task.objectposx[1], 30*this.task.objectposy[1],0, 30*0.1, this.constants.colorRobot,this.constants.colorRobotEdge );    
+        drawutils.drawRobot(30*this.task.objectposx[0], 30*this.task.objectposy[0],0, 30*0.1, 'red',this.constants.colorRobotEdge );
+        drawutils.drawRobot(30*this.task.objectposx[1], 30*this.task.objectposy[1],0, 30*0.1, 'red',this.constants.colorRobotEdge );    
         // draw goal zone
         this.task.goals.forEach( function (g) { 
             pos = g.GetPosition();
