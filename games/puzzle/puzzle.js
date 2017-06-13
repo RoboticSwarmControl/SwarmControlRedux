@@ -9,28 +9,7 @@ function theGame($,phys,GameFramework, Box2D, drawutils, mathutils) {
     function URFP( x ) { /* jshint expr:true */ x; }
     URFP(mathutils);
     
-    var setupRobots = function(numRobots) {
-        this.task.robotRadius = 0.5*4.0/Math.sqrt(this.task.numRobots);
-        
-        // remove existing robots
-        this.task.robots.forEach( function(bot){
-            phys.destroyRobot(this.world, bot);
-        }.bind(this));
-        this.task.robots.length = 0;
-
-        // add robots
-        var rowLength = Math.floor(7/(2*this.task.robotRadius));
-        var xoffset = this.task.robotRadius+0.5;
-        var yoffset = 15.5+this.task.robotRadius;
-
-        for(var i = 0; i < numRobots; ++i) {
-            this.task.robots.push( phys.makeRobot(  this.world,
-                                                    (i%rowLength)*2.1*this.task.robotRadius + xoffset,
-                                                    Math.floor(i/rowLength)*2.1*this.task.robotRadius + yoffset,
-                                                    this.task.robotRadius,
-                                                    'robot'));
-        }
-    }.bind(game);
+    
 
     game.setSpawnWorldCallback( function() {
         /*jshint camelcase:false */
@@ -44,7 +23,11 @@ function theGame($,phys,GameFramework, Box2D, drawutils, mathutils) {
             this.task.numRobots = 100;
         }
         
-        this.task.shapeSize =Math.floor(5*Math.random()+1);  
+        this.task.shapeSize =Math.floor(10*Math.random())/2+1;
+        if(this.task.shapeSize=== 5.5)
+        {
+            this.task.shapeSize = 5;
+        }
 
         this.task.numBlocks = 4;
         this.task.robotRadius = 0.5*4.0/Math.sqrt(this.task.numRobots);
@@ -209,7 +192,6 @@ function theGame($,phys,GameFramework, Box2D, drawutils, mathutils) {
         var Y;
         var color;
         var verts;
-        var radius;
 
 
         
