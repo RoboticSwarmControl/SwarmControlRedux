@@ -293,7 +293,7 @@ window.phys = (function(Box2D){
             return body;
         },
 
-        makeMirroredBlock: function(world, x, y, userData, angle){
+        makeMirroredBlock: function(world, x, y, userData, angle, density){
             var phys = window.phys;
             var bodyDef = new phys.bodyDef();
             var tolerance = 0.02;
@@ -302,7 +302,7 @@ window.phys = (function(Box2D){
             bodyDef.position.Set(x,y);        
 
             var fixDef = new phys.fixtureDef();
-            fixDef.density = 1.0;
+            fixDef.density = density;
             fixDef.friction = 0.5;
             fixDef.restitution = 0.2;  //bouncing value
             fixDef.isSensor = false;

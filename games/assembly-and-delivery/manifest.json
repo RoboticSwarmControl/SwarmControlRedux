@@ -1,5 +1,5 @@
 {
 	"name" : "assembly-and-delivery",
-	"xAxisLabel" : "Number of robots",
+	"xAxisLabel" : "Density",
 	"displayName": "Assembly and Delivery"
 }

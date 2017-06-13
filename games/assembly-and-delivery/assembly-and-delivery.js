@@ -4,32 +4,9 @@
 function theGame($,phys,GameFramework, Box2D, drawutils, mathutils) {
     /* jshint unused:true */
     'use strict';
-    var game = new GameFramework('assembly-and-delivery', 'assembly-and-delivery','Number of robots');
+    var game = new GameFramework('assembly-and-delivery', 'assembly-and-delivery','Density');
     function URFP( x ) { /* jshint expr:true */ x; }
     URFP(mathutils);
-
-    var setupRobots = function(numRobots) {
-        this.task.robotRadius = 0.5*4.0/Math.sqrt(this.task.numRobots);
-        
-        // remove existing robots
-        this.task.robots.forEach( function(bot){
-            phys.destroyRobot(this.world, bot);
-        }.bind(this));
-        this.task.robots.length = 0;
-
-        // add robots
-        var rowLength = Math.floor(7/(2*this.task.robotRadius));
-        var xoffset = this.task.robotRadius+0.5;
-        var yoffset = 14+this.task.robotRadius;
-
-        for(var i = 0; i < numRobots; ++i) {
-            this.task.robots.push( phys.makeRobot(  this.world,
-                                                    (i%rowLength)*2.1*this.task.robotRadius + xoffset,
-                                                    Math.floor(i/rowLength)*2.1*this.task.robotRadius + yoffset,
-                                                    this.task.robotRadius,
-                                                    'robot'));
-        }
-    }.bind(game);
 
     game.setSpawnWorldCallback( function() {
         /*jshint camelcase:false */
@@ -37,16 +14,9 @@ function theGame($,phys,GameFramework, Box2D, drawutils, mathutils) {
 
         this.task = {};
         
-        if(this.mobileUserAgent) {
-            this.task.minRobots = 1;
-            this.task.maxRobots = 70;
-        }         
-        else{
-            this.task.minRobots = 1;
-            this.task.maxRobots = 250;
-        }
-        this.task.numRobots = Math.floor((Math.random()*this.task.maxRobots)+1);          // number of robots
-        
+        if(this.mobileUserAgent) {this.task.numRobots = 20;}          // number of robots
+        else{this.task.numRobots = 100;}
+
         this.task.numBlocks = 2;
         this.task.robotRadius = 0.5*4.0/Math.sqrt(this.task.numRobots);
         this.task.robots = [];              // array of bodies representing the robots
@@ -65,6 +35,8 @@ function theGame($,phys,GameFramework, Box2D, drawutils, mathutils) {
         this.task.workpieceTimeSinceLastWorkpeiceUpdate = [0,0,0];
         this.task.timeInterval = 500;
         this.task.btnCycle = true;
+
+        this.task.density = (5 * Math.random()).toFixed(1);
 
         // fixture definition for obstacles
         var fixDef = new phys.fixtureDef();
@@ -139,74 +111,25 @@ function theGame($,phys,GameFramework, Box2D, drawutils, mathutils) {
         for ( i = 0; i < 2; i++) {
             var k = Math.floor(startPos.length * Math.random());
             switch(i){
-                case 0 : this.task.blocks.push( phys.makeMirroredBlock(this.world, startPos[k].x + Math.cos(generateAngle1 - Math.PI*1/2), startPos[k].y + Math.sin(generateAngle1 - Math.PI*1/2), 'workpiece0', generateAngle1)); break;
-                default : this.task.blocks.push( phys.makeMirroredBlock(this.world, startPos[k].x + Math.cos(generateAngle2 - Math.PI*1/2), startPos[k].y + Math.sin(generateAngle2 - Math.PI*1/2), 'workpiece1', generateAngle2)); break;
+                case 0 : this.task.blocks.push( phys.makeMirroredBlock(this.world, startPos[k].x + Math.cos(generateAngle1 - Math.PI*1/2), startPos[k].y + Math.sin(generateAngle1 - Math.PI*1/2), 'workpiece0', generateAngle1, this.task.density)); break;
+                default : this.task.blocks.push( phys.makeMirroredBlock(this.world, startPos[k].x + Math.cos(generateAngle2 - Math.PI*1/2), startPos[k].y + Math.sin(generateAngle2 - Math.PI*1/2), 'workpiece1', generateAngle2, this.task.density)); break;
             }
             startPos.splice(k, 1);
         }
     });
 
     game.setInitTaskCallback( function() {
-       this.task.impulse = 80;             // impulse to move robots by
+        this.task.impulse = 80;             // impulse to move robots by
         this.impulseV = new phys.vec2(0,0); // global impulse to control all robots
+        this.mX = 0;
+        this.mY = 0;
+        this.task.impulse = 50;
+        this.keyUp = false;
+        this.keyDown = false;
+        this.keyLeft = false;
+        this.keyRight = false;
 
-        var $robotCounter = $('#select-robot-count');
-        $robotCounter.html(this.task.numRobots);
-  
-        this.task.clickStart = null;
-        this.task.clickTimeout = null;
-
-        this.$addRobotButton = $('#-add-robots');
-        this.$addRobotButton.on('mousedown', function(evt){
-            URFP(evt);
-            
-            this.task.clickStart = new Date();
-            this.task.clickTimeout = window.setTimeout( function _handleAddClick(){
-                if (this.task.numRobots < this.task.maxRobots) {
-                    this.task.numRobots++;
-                    $robotCounter.html(this.task.numRobots);
-                    this.task.clickTimeout = window.setTimeout( _handleAddClick.bind(this), 250 );
-                }
-            }.bind(this),0);
-
-            $(window).on('mouseup', function(evt){
-                URFP(evt);
-                if (this.task.clickTimeout) {
-                    setupRobots(this.task.numRobots);
-                    window.clearTimeout( this.task.clickTimeout );
-                    this.task.clickTimeout = null;
-                }
-            }.bind(this));
-        }.bind(this));
-        
-
-        this.$removeRobotButton = $('#-remove-robots');
-        this.$removeRobotButton.on('mousedown', function(evt){
-            URFP(evt);            
-            
-            this.task.clickStart = new Date();
-            this.task.clickTimeout = window.setTimeout( function _handleRemoveClick(){
-                if (this.task.numRobots > this.task.minRobots) {
-                    this.task.numRobots--;                    
-                    $robotCounter.html(this.task.numRobots);
-                    this.task.clickTimeout = window.setTimeout( _handleRemoveClick.bind(this), 250 );
-                }                
-            }.bind(this),0);
-
-            $(window).on('mouseup', function(evt){
-                URFP(evt);
-                if (this.task.clickTimeout) {
-                    setupRobots(this.task.numRobots);
-                    window.clearTimeout( this.task.clickTimeout );
-                    this.task.clickTimeout = null;
-                }
-            }.bind(this));
-        }.bind(this));
-    });
-
-    game.setPregameCallback( function() {
-        this.$addRobotButton.prop('disabled',true);
-        this.$removeRobotButton.prop('disabled',true);
+        $('#task-mode-density').html(this.task.density);
     });
 
     game.setDrawCallback( function() {
@@ -386,25 +309,6 @@ function theGame($,phys,GameFramework, Box2D, drawutils, mathutils) {
         drawutils.drawRect(30*meanx,30*(meany+1), 120,30, 'rgba(240, 240, 240, 0.7)');
         drawutils.drawText(30*meanx,30*(meany+1),this.task.numRobots+' Robots', 1.5, color, color);
         color = 'black';
-        // drawutils.drawRect(30*meanx,30*(meany+2), 120,30, 'rgba(240, 240, 240, 0.7)');
-
-        // if (this.task.btnCycle){
-        //     var curMode = this.task.mode;
-
-        //     $('.mode-button').removeClass('btn-success');
-
-        //     curMode = this.task.mode = this.task.modes[Math.round(new Date().getTime()/2500)%this.task.modes.length];
-            
-
-        //     if( curMode === 'mean & variance') {
-        //         curMode = 'mean±var';
-        //     }
-
-        //     $('#button-'+curMode).addClass('btn-success');
-        // }
-
-        // drawutils.drawText(30*meanx,30*(meany+2),this.task.mode, 1.5, color, color);
-        
     });
 
     game.setUpdateCallback( function (dt, inputs) {
@@ -546,7 +450,7 @@ function theGame($,phys,GameFramework, Box2D, drawutils, mathutils) {
         return {
             numRobots: this.task.numRobots,
             task: 'assembly-and-delivery',
-            mode: 'default',
+            mode: this.task.density,
             /* the "extra" key is used to store task-specific or run-specific information */
             extra: {
                history: this.task.history
