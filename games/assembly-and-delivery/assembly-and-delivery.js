@@ -97,29 +97,14 @@ function theGame($,phys,GameFramework, Box2D, drawutils, mathutils) {
                                                     'robot'));
         }
 
-        var generateAngle1 = Math.PI * Math.random();
-        var generateAngle2 = Math.PI * Math.random();
-
-        var startPos = [
+    var startPos = [
             {x: 3, y: 3},
-            {x: 3, y: 10},
-            {x: 3, y: 17},
-            {x: 10, y: 3},
-            {x: 10, y: 10},
-            {x: 10, y: 17},
-            {x: 17, y: 3},
-            {x: 17, y: 10},
             {x: 17, y: 17},
+            {x: 17, y: 3}
         ];
-
-        for ( i = 0; i < 2; i++) {
-            var k = Math.floor(startPos.length * Math.random());
-            switch(i){
-                case 0 : this.task.blocks.push( phys.makeMirroredBlock(this.world, startPos[k].x + Math.cos(generateAngle1 - Math.PI*1/2), startPos[k].y + Math.sin(generateAngle1 - Math.PI*1/2), 'workpiece0', generateAngle1, this.task.density)); break;
-                default : this.task.blocks.push( phys.makeMirroredBlock(this.world, startPos[k].x + Math.cos(generateAngle2 - Math.PI*1/2), startPos[k].y + Math.sin(generateAngle2 - Math.PI*1/2), 'workpiece1', generateAngle2, this.task.density)); break;
-            }
-            startPos.splice(k, 1);
-        }
+        this.task.blocks.push( phys.makeMirroredBlock(this.world, startPos[0].x , startPos[0].y, 'workpiece0', 0, 1.0));
+        //this.task.blocks.push( phys.makeMirroredBlock(this.world, startPos[Math.floor(Math.random()* 2 +1)].x , startPos[Math.floor(Math.random()* 2 +1)].y, 'workpiece1', 0, 1.0));
+        this.task.blocks.push( phys.makeMirroredBlock(this.world, startPos[1].x , startPos[1].y, 'workpiece1', Math.PI, 1.0));
     });
 
     game.setInitTaskCallback( function() {
