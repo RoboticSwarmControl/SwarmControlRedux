@@ -232,7 +232,6 @@ window.resultutils = (function ($,_, Flotr) {
                             taskResults[0].task === 'foraging' ||
                             taskResults[0].task === 'varying-visualization' ||
                             taskResults[0].task === 'predator' ||
-                            taskResults[0].task === 'peg-in-hole' ||
                             taskResults[0].task === 'assembly'  ||
                             taskResults[0].task === 'assembly-and-delivery' ||
                             taskResults[0].task === 'puzzle';
