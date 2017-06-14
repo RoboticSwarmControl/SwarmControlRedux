@@ -79,7 +79,7 @@ window.resultutils = (function ($,_, Flotr) {
         _.each( res, function (r) {
             y = parseTime(r.runtime);
             
-            if (r.task === 'varying-number' || r.task === 'robot-positioning'){
+            if (r.task === 'varying-number' || r.task === 'robot-positioning'|| r.task === 'peg-in-hole'){
                 x = r.robotCount;
             }else if (r.task ==='varying-control-scheme' ||
                 r.task === 'foraging' ||
@@ -87,8 +87,7 @@ window.resultutils = (function ($,_, Flotr) {
                 r.task === 'varying-visualization' ||
                 r.task === 'assembly' ||
                 r.task === 'assembly-and-delivery' ||
-                r.task === 'puzzle' ||
-                r.task === 'peg-in-hole'){
+                r.task === 'puzzle'){
                 x = _.indexOf(modekeys, r.mode);
             }else if(r.task === 'pyramid-building'){
                 x = 10*parseFloat(r.mode);
