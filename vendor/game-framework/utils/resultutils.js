@@ -207,7 +207,7 @@ window.resultutils = (function ($,_, Flotr) {
                               },
                         xaxis: { min: xmin - margins*xrange, 
                                 max: xmax + margins*xrange, 
-                                title: xAxisLabel,
+                                title: xAxisLabel + 'Your unique ID is : ' +  myParticipant,
                                 ticks: myTicks,
                                 labelsAngle: 45
                             },

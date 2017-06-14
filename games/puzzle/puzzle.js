@@ -494,10 +494,10 @@ function theGame($,phys,GameFramework, Box2D, drawutils, mathutils) {
         }.bind(this));
         
         var ret = true;
-        drawutils.drawRobot(30*this.task.objectposx[0], 30*this.task.objectposy[0],0, 30*0.2, this.task.colorSelected[0],this.constants.colorRobotEdge );
-        drawutils.drawRobot(30*this.task.objectposx[1], 30*this.task.objectposy[1],0, 30*0.2, this.task.colorSelected[1],this.constants.colorRobotEdge );
-        drawutils.drawRobot(30*this.task.objectposx[2], 30*this.task.objectposy[2],0, 30*0.2, this.task.colorSelected[2],this.constants.colorRobotEdge );
-        drawutils.drawRobot(30*this.task.objectposx[3], 30*this.task.objectposy[3],0, 30*0.2, this.task.colorSelected[3],this.constants.colorRobotEdge );
+        drawutils.drawRobot(30*this.task.objectposx[0], 30*this.task.objectposy[0],0, 30*0.05*this.task.shapeSize, this.task.colorSelected[0],this.constants.colorRobotEdge );
+        drawutils.drawRobot(30*this.task.objectposx[1], 30*this.task.objectposy[1],0, 30*0.05*this.task.shapeSize, this.task.colorSelected[1],this.constants.colorRobotEdge );
+        drawutils.drawRobot(30*this.task.objectposx[2], 30*this.task.objectposy[2],0, 30*0.05*this.task.shapeSize, this.task.colorSelected[2],this.constants.colorRobotEdge );
+        drawutils.drawRobot(30*this.task.objectposx[3], 30*this.task.objectposy[3],0, 30*0.05*this.task.shapeSize, this.task.colorSelected[3],this.constants.colorRobotEdge );
         var dist1 = Math.sqrt((this.task.objectposx[0]-this.task.objectposx[1])*(this.task.objectposx[0]-this.task.objectposx[1]) + (this.task.objectposy[0]-this.task.objectposy[1])*(this.task.objectposy[0]-this.task.objectposy[1]));
         var dist2 = Math.sqrt((this.task.objectposx[2]-this.task.objectposx[1])*(this.task.objectposx[2]-this.task.objectposx[1]) + (this.task.objectposy[2]-this.task.objectposy[1])*(this.task.objectposy[2]-this.task.objectposy[1]));
         var dist3 = Math.sqrt((this.task.objectposx[0]-this.task.objectposx[3])*(this.task.objectposx[0]-this.task.objectposx[3]) + (this.task.objectposy[0]-this.task.objectposy[3])*(this.task.objectposy[0]-this.task.objectposy[3]));

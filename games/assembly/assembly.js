@@ -142,7 +142,7 @@ function theGame($,phys,GameFramework, Box2D, drawutils, mathutils) {
     });
 
     game.setInitTaskCallback( function() {
-        this.task.noise =(7.5*Math.random()).toFixed(1);  //add some noise: 0.0 to 10.0        
+        this.task.noise =(5*Math.random()).toFixed(1);  //add some noise: 0.0 to 10.0        
         this.mX = 0;
         this.mY = 0;
         this.impulseV = new phys.vec2(0,0);
