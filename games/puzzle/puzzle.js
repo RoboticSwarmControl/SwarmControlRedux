@@ -23,18 +23,13 @@ function theGame($,phys,GameFramework, Box2D, drawutils, mathutils) {
             this.task.numRobots = 100;
         }
         
-        this.task.shapeSize = Math.floor(10*Math.random())/2+1;
-        if(this.task.shapeSize=== 5.5)
-        {
-            this.task.shapeSize = 5;
-        }
+        this.task.shapeSize = Math.floor(9*Math.random())/2+1;
 
         this.task.numBlocks = 4;
         this.task.robotRadius = 0.5*4.0/Math.sqrt(this.task.numRobots);
         this.task.robots = [];              // array of bodies representing the robots
         this.task.goals = [];               // array of goals of form {x,y,w,h}
         this.task.blocks = [];              // array of bodies representing blocks
-        //this.task.shapeSize = 1;
         var i;
         this.task.objectposx = [];
         this.task.objectposy = [];
@@ -194,8 +189,6 @@ function theGame($,phys,GameFramework, Box2D, drawutils, mathutils) {
         var varx;
         var vary;
         var covxy;
-        // var meanNearx = [];
-        // var meanNeary = [];
         var angle;
         var X;
         var Y;
@@ -383,23 +376,6 @@ function theGame($,phys,GameFramework, Box2D, drawutils, mathutils) {
         drawutils.drawText(30*meanx,30*(meany+1),this.task.numRobots+' Robots', 1.5, color, color);
         color = 'black';
 
-        // drawutils.drawRect(30*meanx,30*(meany+2), 120,30, 'rgba(240, 240, 240, 0.7)');
-        // if (this.task.btnCycle){
-        //     var curMode = this.task.mode;
-
-        //     $('.mode-button').removeClass('btn-success');
-
-        //     curMode = this.task.mode = this.task.modes[Math.round(new Date().getTime()/2500)%this.task.modes.length];
-            
-
-        //     if( curMode === 'mean & variance') {
-        //         curMode = 'mean±var';
-        //     }
-
-        //     $('#button-'+curMode).addClass('btn-success');
-        // }
-
-        // drawutils.drawText(30*meanx,30*(meany+2),this.task.mode, 1.5, color, color);
     });
 
     game.setUpdateCallback( function (dt, inputs) {
