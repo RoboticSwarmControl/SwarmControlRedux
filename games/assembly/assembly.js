@@ -119,79 +119,29 @@ function theGame($,phys,GameFramework, Box2D, drawutils, mathutils) {
 
         //this.task.blocks.push( phys.makeMirroredBlock(this.world, startPos[k].x + Math.cos(generateAngle1 - Math.PI*1/2), startPos[k].y + Math.sin(generateAngle1 - Math.PI*1/2), 'workpiece0', generateAngle1, 1.0)); break;
         // create some robots
-        var xoffset = this.task.robotRadius + 0.5;
-        var yoffset = 0.5 + this.task.robotRadius;  
-        var robX;
-        var robY;   
-         
+        var offset = this.task.robotRadius + 0.5;
+        var xassign = 0;
+        var yassign = 0;        
         for(i = 0; i < this.task.numRobots; ++i) {
-            robX = xoffset + 19 * Math.random();
-            robY = yoffset + 19 * Math.random();
-            var rob = phys.makeRobot(  this.world,
-                                                    robX,
-                                                    robY,
+            do{
+                xassign = offset + (20 - 2*offset) * Math.random();
+                yassign = offset + (20 - 2*offset) * Math.random();
+            } 
+            while(
+                mathutils.lineDistance(startPos[0].x, startPos[0].y, xassign, yassign) < 2.5 + this.task.robotRadius ||
+                mathutils.lineDistance(startPos[1].x, startPos[1].y, xassign, yassign) < 2.5 + this.task.robotRadius
+            );
+
+            this.task.robots.push( phys.makeRobot(  this.world,
+                                                    xassign,
+                                                    yassign,
                                                     this.task.robotRadius,
-                                                    'robot');
-        //     for (i = 0; i < this.task.blocks.length; i++){
-        //         var check = false;  
-        //     // this.task.blocks.forEach( function (b) { 
-        //     while(!check){
-        //         if(this.task.blocks[i].GetFixtureList().GetAABB().Contains( rob.GetFixtureList().GetAABB())){
-        //             phys.destroyRobot(this.world,rob);
-        //             robX = xoffset + 19 * Math.random();
-        //         robY = yoffset + 19 * Math.random();
+                                                    'robot'));
 
-        //         rob = phys.makeRobot(  this.world,
-        //                                             robX,
-        //                                             robY,
-        //                                             this.task.robotRadius,
-        //                                             'robot');
-        //         }
-        //         else {
-        //             check = true;
-        //         }
-        //     }
-        // }//.bind(this));
-            this.task.robots.push( rob);
-        }
-
-        
+        }        
     });
 
     game.setInitTaskCallback( function() {
-        // this.task.modes = ['full-state', 'graph', 'mean & variance', 'mean'];
-        // this.task.mode = this.task.modes[ Math.ceil( Math.random() * this.task.modes.length ) - 1];
-        
-        // this.impulseStart = null;
-        // this.task.impulse = 80;
-        // this.impulseV = new phys.vec2(0,0);
-        // this.keyUp = false;
-        // this.keyDown = false;
-        // this.keyLeft = false;
-        // this.keyRight = false;
-        
-
-        // $('.mode-button').prop('disabled',false);
-        
-        // //set the inital mode
-        // var curMode = this.task.mode;
-        // if( curMode === 'mean & variance') {
-        //     curMode = 'mean±var';
-        // }
-        // $('#button-'+curMode).addClass('btn-success');
-        // //add click functionality
-        // this.task.modes.forEach( function (m) {
-        //     var curMode = m;
-        //     if( curMode === 'mean & variance') {
-        //         curMode = 'mean±var';
-        //     }
-        //     $('#button-'+curMode).click(function() {
-        //         $('.mode-button').removeClass('btn-success');
-        //         $('#button-'+curMode).addClass('btn-success');
-        //         this.task.mode = m;
-        //         this.task.btnCycle = false;
-        //     }.bind(this));
-        // }.bind(this));
         this.task.noise =(7.5*Math.random()).toFixed(1);  //add some noise: 0.0 to 10.0        
         this.mX = 0;
         this.mY = 0;

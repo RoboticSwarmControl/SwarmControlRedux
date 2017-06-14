@@ -23,7 +23,7 @@ function theGame($,phys,GameFramework, Box2D, drawutils, mathutils) {
             this.task.numRobots = 100;
         }
         
-        this.task.shapeSize =Math.floor(10*Math.random())/2+1;
+        this.task.shapeSize = Math.floor(10*Math.random())/2+1;
         if(this.task.shapeSize=== 5.5)
         {
             this.task.shapeSize = 5;
@@ -144,22 +144,31 @@ function theGame($,phys,GameFramework, Box2D, drawutils, mathutils) {
 //             startPos.splice(k, 1);
 // =======
         // create some robots
-        var xoffset = this.task.robotRadius+0.5;
-        var yoffset = 0.5 + this.task.robotRadius;        
+        var offset = 0.5 + this.task.robotRadius;  
+        var xassign = 0;
+        var yassign = 0;        
         for(i = 0; i < this.task.numRobots; ++i) {
+            do{
+                xassign = offset + (20 - 2*offset) * Math.random();
+                yassign = offset + (20 - 2*offset) * Math.random();
+            } 
+            while(
+                mathutils.lineDistance(3 - this.task.shapeSize * 2/3 * Math.cos(Math.PI - Math.PI*1/3), 15 - this.task.shapeSize * 2/3 * Math.sin(Math.PI - Math.PI*1/3), xassign, yassign) < this.task.shapeSize * 1/2 + this.task.robotRadius ||
+                mathutils.lineDistance(3 - this.task.shapeSize/2 * Math.cos(Math.PI + Math.PI*1/6), 3 - this.task.shapeSize/2 * Math.sin(Math.PI + Math.PI*1/6), xassign, yassign) < this.task.shapeSize * 7/8 + this.task.robotRadius ||
+                mathutils.lineDistance(15 - this.task.shapeSize/2 * Math.cos(Math.PI + Math.PI*2/3), 3 - this.task.shapeSize/2 * Math.sin(Math.PI + Math.PI*2/3), xassign, yassign) < this.task.shapeSize + this.task.robotRadius ||
+                mathutils.lineDistance(15 - this.task.shapeSize * 1/2 * Math.cos(Math.PI - Math.PI*3/4), 15 - this.task.shapeSize * 1/2 * Math.sin(Math.PI - Math.PI*3/4), xassign, yassign) < this.task.shapeSize * 7/8 + this.task.robotRadius
+            );
+
+
             this.task.robots.push( phys.makeRobot(  this.world,
-                                                    xoffset + 19*Math.random(),
-                                                    yoffset +19*Math.random(),
+                                                    xassign,
+                                                    yassign,
                                                     this.task.robotRadius,
                                                     'robot'));
+
         }
- 
     });
-    game.setInitTaskCallback( function() {
-
-
-        
-             
+    game.setInitTaskCallback( function() {  
         this.mX = 0;
         this.mY = 0;
         this.impulseV = new phys.vec2(0,0);
@@ -192,7 +201,6 @@ function theGame($,phys,GameFramework, Box2D, drawutils, mathutils) {
         var Y;
         var color;
         var verts;
-
 
         
         //draw robots and obstacles
@@ -346,9 +354,6 @@ function theGame($,phys,GameFramework, Box2D, drawutils, mathutils) {
                 t: (this._timeElapsed/1000).toFixed(2)
             });
         }
-
-        // draw goal zone
-        
     });
 
     game.setOverviewCallback( function() {

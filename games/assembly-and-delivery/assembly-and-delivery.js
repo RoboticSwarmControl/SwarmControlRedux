@@ -85,19 +85,7 @@ function theGame($,phys,GameFramework, Box2D, drawutils, mathutils) {
         fixDef.shape = new phys.circleShape(2.5); 
         this.task.goals[0].CreateFixture(fixDef);
 
-
-        // create some robots
-        var xoffset = this.task.robotRadius+0.5;
-        var yoffset = 0.5 +this.task.robotRadius;        
-        for(i = 0; i < this.task.numRobots; ++i) {
-            this.task.robots.push( phys.makeRobot(  this.world,
-                                                    xoffset + 19*Math.random(),
-                                                    yoffset +19 *Math.random(),
-                                                    this.task.robotRadius,
-                                                    'robot'));
-        }
-
-    var startPos = [
+        var startPos = [
             {x: 3, y: 3},
             {x: 17, y: 17},
             {x: 17, y: 3}
@@ -105,6 +93,28 @@ function theGame($,phys,GameFramework, Box2D, drawutils, mathutils) {
         this.task.blocks.push( phys.makeMirroredBlock(this.world, startPos[0].x , startPos[0].y, 'workpiece0', 0, this.task.density));
         //this.task.blocks.push( phys.makeMirroredBlock(this.world, startPos[Math.floor(Math.random()* 2 +1)].x , startPos[Math.floor(Math.random()* 2 +1)].y, 'workpiece1', 0, 1.0));
         this.task.blocks.push( phys.makeMirroredBlock(this.world, startPos[1].x , startPos[1].y, 'workpiece1', Math.PI, this.task.density));
+    
+        // create some robots
+        var offset = this.task.robotRadius + 0.5;
+        var xassign = 0;
+        var yassign = 0;        
+        for(i = 0; i < this.task.numRobots; ++i) {
+            do{
+                xassign = offset + (20 - 2*offset) * Math.random();
+                yassign = offset + (20 - 2*offset) * Math.random();
+            } 
+            while(
+                mathutils.lineDistance(startPos[0].x, startPos[0].y, xassign, yassign) < 2.5 + this.task.robotRadius ||
+                mathutils.lineDistance(startPos[1].x, startPos[1].y, xassign, yassign) < 2.5 + this.task.robotRadius
+            );
+
+            this.task.robots.push( phys.makeRobot(  this.world,
+                                                    xassign,
+                                                    yassign,
+                                                    this.task.robotRadius,
+                                                    'robot'));
+
+        }
     });
 
     game.setInitTaskCallback( function() {
@@ -263,6 +273,7 @@ function theGame($,phys,GameFramework, Box2D, drawutils, mathutils) {
             color = this.constants.colorGoal;
             drawutils.drawText(30*pos.x,30*pos.y,'Goal', 1.5, color, color);
         }.bind(this));
+                    
     });
 
     game.setOverviewCallback( function() {
