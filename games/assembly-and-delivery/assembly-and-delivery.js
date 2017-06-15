@@ -8,6 +8,12 @@ function theGame($,phys,GameFramework, Box2D, drawutils, mathutils) {
     function URFP( x ) { /* jshint expr:true */ x; }
     URFP(mathutils);
 
+    var myParticipant =  document.cookie.slice(document.cookie.indexOf('task_sig')+('task_sig').length+1); //substring starting at task_sig 
+    if (myParticipant.indexOf(';') !== -1) {
+        myParticipant = myParticipant.substr(0,myParticipant.indexOf(';')); //trim any extra info off the string
+    }
+
+
     game.setSpawnWorldCallback( function() {
         /*jshint camelcase:false */
         /* ^ we do this because the Box2D bindings are fugly. */
@@ -309,6 +315,7 @@ function theGame($,phys,GameFramework, Box2D, drawutils, mathutils) {
         drawutils.drawRect(30*meanx,30*(meany+1), 120,30, 'rgba(240, 240, 240, 0.7)');
         drawutils.drawText(30*meanx,30*(meany+1),this.task.numRobots+' Robots', 1.5, color, color);
         color = 'black';
+        $('#unique-id-player').html(myParticipant);
     });
 
     game.setUpdateCallback( function (dt, inputs) {

@@ -124,7 +124,7 @@ window.resultutils = (function ($,_, Flotr) {
         dme.push([xmax, mydataTrendline[0] + mydataTrendline[1]*xmax]);        
 
         var robotCounts = _.groupBy( res, function (m) { return m.robotCount;} );
-        var mtitle = prettyTaskName;
+        var mtitle = prettyTaskName ;
         if( mypoints.length === 1){
             mtitle = mtitle + ' -- Play again to get a trendline!';
         }
@@ -207,7 +207,7 @@ window.resultutils = (function ($,_, Flotr) {
                               },
                         xaxis: { min: xmin - margins*xrange, 
                                 max: xmax + margins*xrange, 
-                                title: xAxisLabel + 'Your unique ID is : ' +  myParticipant,
+                                title: xAxisLabel ,
                                 ticks: myTicks,
                                 labelsAngle: 45
                             },

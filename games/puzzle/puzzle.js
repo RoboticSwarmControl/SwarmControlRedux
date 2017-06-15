@@ -9,7 +9,10 @@ function theGame($,phys,GameFramework, Box2D, drawutils, mathutils) {
     function URFP( x ) { /* jshint expr:true */ x; }
     URFP(mathutils);
     
-    
+    var myParticipant =  document.cookie.slice(document.cookie.indexOf('task_sig')+('task_sig').length+1); //substring starting at task_sig 
+    if (myParticipant.indexOf(';') !== -1) {
+        myParticipant = myParticipant.substr(0,myParticipant.indexOf(';')); //trim any extra info off the string
+    }
 
     game.setSpawnWorldCallback( function() {
         /*jshint camelcase:false */
@@ -174,6 +177,7 @@ function theGame($,phys,GameFramework, Box2D, drawutils, mathutils) {
         this.keyRight = false;
 
         $('#task-mode-power').html(this.task.shapeSize);
+        $('#unique-id-player').html(myParticipant);
     });
 
     game.setDrawCallback( function() {

@@ -7,7 +7,10 @@ function theGame($,phys,GameFramework, Box2D, drawutils, mathutils) {
     var game = new GameFramework('peg-in-hole', 'peg-in-hole','Number of robots');
     function URFP( x ) { /* jshint expr:true */ x; }
     URFP(mathutils);
-
+    var myParticipant =  document.cookie.slice(document.cookie.indexOf('task_sig')+('task_sig').length+1); //substring starting at task_sig 
+    if (myParticipant.indexOf(';') !== -1) {
+        myParticipant = myParticipant.substr(0,myParticipant.indexOf(';')); //trim any extra info off the string
+    }
     var setupRobots = function(numRobots) {
         //this.task.robotRadius = 0.5*4.0/Math.sqrt(this.task.numRobots);
         this.task.robotRadius = 0.5*4.0/Math.sqrt(100);
@@ -252,6 +255,7 @@ function theGame($,phys,GameFramework, Box2D, drawutils, mathutils) {
                 }
             }.bind(this));
         }.bind(this));
+        $('#unique-id-player').html(myParticipant);
     });
 
     game.setPregameCallback( function() {
