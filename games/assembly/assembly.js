@@ -438,7 +438,7 @@ function theGame($,phys,GameFramework, Box2D, drawutils, mathutils) {
         this.impulseV.y *=  forceScaler;  
         // apply the user force to all the robots
         this.task.robots.forEach( function(r) { 
-            var mag = this.task.noise;
+            var mag = this.task.noise*10*Math.random();
             var ang = 2*Math.PI*Math.random();
             var brownianImpulse = new phys.vec2( mag*Math.cos(ang) + this.impulseV.x,
                                                 mag*Math.sin(ang) + this.impulseV.y);
