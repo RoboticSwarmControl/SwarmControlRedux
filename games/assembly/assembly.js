@@ -157,7 +157,7 @@ function theGame($,phys,GameFramework, Box2D, drawutils, mathutils) {
         this.keyLeft = false;
         this.keyRight = false;
 
-        $('#task-mode-power').html(this.task.noise * 7.5);
+        $('#task-mode-power').html(this.task.noise * 10);
         $('#unique-id-player').html(myParticipant);
     });
 
@@ -438,7 +438,7 @@ function theGame($,phys,GameFramework, Box2D, drawutils, mathutils) {
         this.impulseV.y *=  forceScaler;  
         // apply the user force to all the robots
         this.task.robots.forEach( function(r) { 
-            var mag = this.task.noise*10*Math.random();
+            var mag = this.task.noise;
             var ang = 2*Math.PI*Math.random();
             var brownianImpulse = new phys.vec2( mag*Math.cos(ang) + this.impulseV.x,
                                                 mag*Math.sin(ang) + this.impulseV.y);
