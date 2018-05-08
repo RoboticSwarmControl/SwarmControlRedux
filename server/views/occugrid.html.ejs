@@ -1,0 +1,555 @@
+<!DOCTYPE html>
+<!--////////////////////////////////////////////////////////description//
+// Occupancy grid mapping using a swarm of homogeneous particles. 
+/////////////////////////////////////////////////////////////////////////
+//
+// Author: Arun Mahadev and Aaron T. Becker
+// Started" 04/28/2018 -- present
+// Description: Occupancy grid mapping using uniformly controllable particles. The gray space is divided into a grid. 
+   The cells are set to white when particles visit the cells. The gray cells that can be marked as obstacles can be found by following the momentum change of the particles.
+   To do this, the probability is updated using Bayes’ rule.  
+
+//
+// Records output into a log file/
+//
+// Status {working, broken, in progress, replacedby}: in progress:
+//
+// TODO: we should make the occupancy grid the actual size, and then scale it up to make the drawing
+// TODO: represent probability with a float, not a 0 to 255 integer.
+//
+//////////////////////////////////////////////////////////////////////////-->
+<html>
+<link rel="ensemble icon" href="pictures/ATBensembleIcon.ico">
+
+<head>
+  <title>swarm mapping: occupancy grid</title>
+  <meta charset="utf-8" />
+</head>
+Use arrow keys to move swarm
+<body onload="init();">
+  <div style="position: relative;">
+    <canvas id="canvas" width="800" height="600" style="position: absolute; left: 0; top: 0; "></canvas>
+  </div>
+  <div style="position: absolute; left: 340; top: 20;">
+    <button id="start">start</button>
+    <button id="stop">stop</button>
+    <button onclick="exportToCsv()">export to CSV</button>
+  </div>
+</body>
+<script type="text/javascript" src="./shared/canvas2image.js"></script>
+<script type="text/javascript" src="./shared/Box2dWeb-2.1.a.3.min.js"></script>
+<!-- box2d -->
+<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.8.0/jquery.min.js"></script>
+<!-- forms & strings -->
+<script type="text/javascript" src="./shared/jcanvas.min.js"></script>
+<script type="text/javascript">
+  // in Chrome, to view the console: Use the keyboard shortcut Command - Option - J (Mac) or Control -Shift -J (Windows/Linux).
+
+  ///////////////////////////////
+  //Begin Global Variables
+  ///////////////////////////////
+  var ROBOT_INPUT = { //robot commands
+    ROBOT_IDLE: 0x0,
+    ROBOT_LEFT: 0x1,
+    ROBOT_RIGHT: 0x2,
+    ROBOT_UP: 0x4,
+    ROBOT_DOWN: 0x8,
+    WAIT: 0x40
+  };
+
+  var numrobotsOptions = [2, 50, 100, 150, 200]; //array of possible # of numRobots
+  var numrobots = numrobotsOptions[0]; // defines # of robots
+  var Time_Score; //time played
+
+  var vary = 3.3; //Brownian noise variable
+  var width = 600;
+  var m_ControlInputY = 0;
+
+  var m_controlState = ROBOT_INPUT.ROBOT_IDLE;
+  var mapXSize = 20;
+  var mapYSize = 20;
+  var mapScale = 40;
+  var ximpulse = 0;
+  var yimpulse = 0;
+
+  // Debugging Variables.
+  var timeFinished = 1000;
+  var wroteFinish = false;
+
+  var index_goal = 0; //current goal position
+  var map = new Array(mapXSize);
+  var done = false;
+  var grid_scale = 4;
+  // define array to store positions
+  var positionData = new Array(); // time in horizontal, xy in vertical;
+  /////////////////////////////
+  //End Global Variables
+  /////////////////////////////
+
+  function init() {
+    var b2Vec2 = Box2D.Common.Math.b2Vec2,
+      b2AABB = Box2D.Collision.b2AABB,
+      b2BodyDef = Box2D.Dynamics.b2BodyDef,
+      b2Body = Box2D.Dynamics.b2Body,
+      b2FixtureDef = Box2D.Dynamics.b2FixtureDef,
+      b2Fixture = Box2D.Dynamics.b2Fixture,
+      b2World = Box2D.Dynamics.b2World,
+      b2MassData = Box2D.Collision.Shapes.b2MassData,
+      b2PolygonShape = Box2D.Collision.Shapes.b2PolygonShape,
+      b2CircleShape = Box2D.Collision.Shapes.b2CircleShape,
+      b2DebugDraw = Box2D.Dynamics.b2DebugDraw,
+      b2MouseJointDef = Box2D.Dynamics.Joints.b2MouseJointDef;
+    var time_stop = true; //stops the timer when game finishes
+
+    var world = new b2World(
+      new b2Vec2(0, 00) //gravity setting to zero removes gravity
+      , true //allow sleep
+    );
+
+    // Inv
+    var timeStart = null;
+    var timeFinish = null;
+    var timer = null;
+    var passed = null;
+    var overall_time = null;
+    var firstloop = false;
+    var boundaryHeight = 2;
+    var boundaryWidth = 20;
+    var img = new Image();
+    img.src = 'myBlack.png';
+    var canvas = document.getElementById('canvas');
+    var ctx = canvas.getContext('2d');
+    ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+    img.style.display = 'none';
+    imgdata = ctx.getImageData(0, 0, canvas.width, canvas.height);
+    var data = imgdata.data;
+    //set everything to gray
+    for (var q = 0; q < canvas.height; ++q) {
+            for (var r = 0; r < canvas.width; ++r) {
+              data[(q * canvas.width + r) * 4 + 3] = 20;
+            };
+          };
+ 
+    var fixDef = new b2FixtureDef;
+    fixDef.density = 1.0;
+    fixDef.friction = 0.5;
+    fixDef.restitution = 0.2; //bouncing value
+    var bodyDef = new b2BodyDef;
+
+    //create enclosing boundary rectangles
+    bodyDef.userData = 'roundobstacle';
+    bodyDef.type = b2Body.b2_staticBody;
+    fixDef.shape = new b2PolygonShape;
+    fixDef.shape.SetAsBox(20, 2); //width, height
+    bodyDef.position.Set(10, width / mapScale + 1); //bottom
+    var bodyBottom = world.CreateBody(bodyDef);
+    bodyBottom.CreateFixture(fixDef);
+    bodyDef.position.Set(10, -1); //top
+    world.CreateBody(bodyDef).CreateFixture(fixDef);
+    fixDef.shape.SetAsBox(2, 14); //width, height
+    bodyDef.position.Set(-1, 13); //left
+    world.CreateBody(bodyDef).CreateFixture(fixDef);
+    bodyDef.position.Set(21, 13); // right side
+    world.CreateBody(bodyDef).CreateFixture(fixDef);
+    //creates circle obstacles
+    fixDef.density = 1.0;
+    fixDef.friction = 0.5;
+    fixDef.restitution = 0.2; //bouncing value
+    fixDef.isSensor = false;
+    bodyDef.userData = 'roundobstacle';
+    bodyDef.type = b2Body.b2_staticBody;
+    fixDef.shape = new b2CircleShape(2);
+    bodyDef.position.Set(10, 10); //bottom
+    var circleobst = world.CreateBody(bodyDef);
+    circleobst.CreateFixture(fixDef);
+
+    fixDef.shape = new b2CircleShape(1);
+    bodyDef.position.Set(15, 12); //bottom
+    var circleobst2 = world.CreateBody(bodyDef);
+    circleobst2.CreateFixture(fixDef);
+
+    fixDef.shape = new b2CircleShape(1);
+    bodyDef.position.Set(13, 5); //bottom
+    var circleobst3 = world.CreateBody(bodyDef);
+    circleobst3.CreateFixture(fixDef);
+
+    ////create the robots
+    bodyDef.type = b2Body.b2_dynamicBody;
+    var robotrad = 0.1; //for SwarmControl.net, we used 0.2;
+    var numrobots = numrobotsOptions[1]; // define the number of robots
+    for (i = 0; i < 2 * numrobots; i++) { // creates x and y arrays for each robot
+      positionData[i] = new Array();
+    }
+    fixDef.density = 1.0;
+    fixDef.friction = 0.5;
+    fixDef.restitution = 0.2; //bouncing value
+    fixDef.isSensor = false;
+    var m_Robot = new Array(); // array to store robot objects
+    var rowLength = Math.floor(5 / (2 * robotrad));
+    fixDef.shape = new b2CircleShape(robotrad);
+    // place the robots
+    for (var i = 0; i < numrobots; ++i) {
+      bodyDef.userData = 'robot';
+      bodyDef.position.y = 7 + (i % rowLength) * 2 * robotrad;
+      bodyDef.position.x = 1 + Math.floor(i / rowLength) * 2 * robotrad;
+      m_Robot[i] = world.CreateBody(bodyDef);
+      m_Robot[i].CreateFixture(fixDef);
+      m_Robot[i].m_angularDamping = 1; //was 1, we used 10 on SwarmControl
+      m_Robot[i].m_linearDamping = 1
+    }
+
+    window.requestAnimFrame = (function() {
+      return window.requestAnimationFrame ||
+        window.webkitRequestAnimationFrame ||
+        window.mozRequestAnimationFrame ||
+        window.oRequestAnimationFrame ||
+        window.msRequestAnimationFrame ||
+        function( /* function */ callback, /* DOMElement */ element) {
+          window.setTimeout(callback, 1000 / 60);
+        };
+    })();
+
+    var globalID;
+
+    (function animloop() {
+      $("<div />").appendTo("body");
+      globalID = requestAnimFrame(animloop);
+
+      update();
+    })();
+
+    $("#stop").on("click", function() {
+      ximpulse = 0;
+      console.table(positionData);
+    });
+    $("#start").on("click", function() {
+      ximpulse = 1;
+      // globalID = requestAnimFrame(animloop);
+    });
+
+    if (timeStart == null) {
+      var day = new Date();
+      timeStart = day.getTime();
+    }
+
+    //called each animation round
+    //y-axis is inverted in webpage
+    // exports positionData as csv somehow
+    // do not touch this
+    exportToCsv = function() {
+      var CsvString = "";
+      positionData.forEach(function(RowItem, RowIndex) {
+        RowItem.forEach(function(ColItem, ColIndex) {
+          CsvString += ColItem + ',';
+        });
+        CsvString += "\r\n";
+      });
+      CsvString = "data:application/csv," + encodeURIComponent(CsvString);
+      var x = document.createElement("A");
+      x.setAttribute("href", CsvString);
+      x.setAttribute("download", "somedata.csv");
+      document.body.appendChild(x);
+      x.click();
+    }
+
+	
+	//Called in each iteration to update locations list of particles, occupancy grid values, and simulation  
+    function update() {
+      var day = new Date();
+
+      var impulseV = new b2Vec2(0, 0);
+      var impulse = 0.2;
+
+      //allows users to control the robots with arrow keys
+      document.addEventListener("keydown", function(e) {
+        switch (e.keyCode) { // |= sets
+          case 37:
+            m_controlState |= ROBOT_INPUT.ROBOT_LEFT; break;
+          case 38:
+            m_controlState |= ROBOT_INPUT.ROBOT_UP;   break;
+          case 39:
+            m_controlState |= ROBOT_INPUT.ROBOT_RIGHT;break;
+          case 40:
+            m_controlState |= ROBOT_INPUT.ROBOT_DOWN; break;
+        }
+      })
+      document.addEventListener("keyup", function(e) {
+        switch (e.keyCode) { // &=~ resets
+          case 37:
+            m_controlState &= ~ROBOT_INPUT.ROBOT_LEFT;  break;
+          case 38:
+            m_controlState &= ~ROBOT_INPUT.ROBOT_UP;    break;
+          case 39:
+            m_controlState &= ~ROBOT_INPUT.ROBOT_RIGHT; break;
+          case 40:
+            m_controlState &= ~ROBOT_INPUT.ROBOT_DOWN;  break;
+        }
+      })
+      //adds velocity to robots based on array key input
+      if (m_controlState & ROBOT_INPUT.ROBOT_LEFT) {
+        impulseV.x -= impulse;
+      }
+      if (m_controlState & ROBOT_INPUT.ROBOT_UP) {
+        impulseV.y -= impulse;
+      }
+      if (m_controlState & ROBOT_INPUT.ROBOT_RIGHT) {
+        impulseV.x += impulse;
+      }
+      if (m_controlState & ROBOT_INPUT.ROBOT_DOWN) {
+        impulseV.y += impulse;
+      }
+
+      //	Initial measurement
+      //apply Brownian noise:
+      var brownianImpulse = new b2Vec2(0, 0);
+      var mag = 0;
+      var ang = 0;
+
+      // have a function which applies the key input and alternates between pressed and not pressed
+
+      for (var i = 0; i < m_Robot.length; i++) {
+        mag = vary * Math.random();
+        ang = 2 * Math.PI * Math.random();
+        brownianImpulse.x = mag * Math.cos(ang) + ximpulse+impulseV.x; // replaced impulseV.x with 1
+        brownianImpulse.y = mag * Math.sin(ang) + yimpulse+impulseV.y; // replaced impulseV.y with 0
+        // the force applied is now constant
+        m_Robot[i].ApplyForce(brownianImpulse, m_Robot[i].GetWorldPoint(new b2Vec2(0, 0)));
+      }
+
+      world.Step(1 / 60, 10, 10);
+      world.DrawDebugData();
+      world.ClearForces();
+      $("canvas").clearCanvas();
+      $("canvas").rotateCanvas({
+        x: 5 * mapScale,
+        y: 5 * mapScale,
+        rotate: angle
+      }).restoreCanvas();
+
+      var robot_counter = 0;
+      var current_positionData = [];
+      //update the occupancy grid
+      for (b = world.GetBodyList(); b; b = b.GetNext())
+        if (b.m_type == 2) { // if a robot
+          var pos = b.GetPosition();
+          var xmin = grid_scale*Math.floor( (pos.x-robotrad/2) * mapScale / grid_scale );
+          var xmax = grid_scale*Math.ceil(  (pos.x+robotrad/2) * mapScale / grid_scale );
+          var ymin = grid_scale*Math.floor( (pos.y-robotrad/2) * mapScale / grid_scale );
+          var ymax = grid_scale*Math.ceil(  (pos.y+robotrad/2) * mapScale / grid_scale );
+          current_positionData[2 * robot_counter] = x;
+          current_positionData[2 * robot_counter + 1] = y;
+          //console.log(x,y);
+          //console.log(new_positionData,newpos_counter);
+          positionData[2 * robot_counter].push(pos.x)
+          //console.log(robot_counter);
+          positionData[2 * robot_counter + 1].push(pos.y)
+          robot_counter = robot_counter + 1; // increments robot counter - this works
+          //console.log(current_positionData[2*newpos_counter]);
+          // loop for making robot cell white and bordering cells darker
+          for (var q = ymin-2*grid_scale; q < ymax + 3*grid_scale; ++q) {
+            for (var r = xmin-2*grid_scale; r < xmax + 3*grid_scale; ++r) {
+              var index = (q * imgdata.width + r) * 4;
+              if (ymin<=q && q< ymax && xmin<=r && r< xmax){
+                data[index + 3] = 0;
+              }else{
+                if( data[index + 3] > 0 && data[index + 3] <255){
+                  data[index + 3] = data[index + 3]+1;
+                };
+              };
+            };
+          };
+        }
+      //console.log(current_positionData);
+      imgdata.data = data;
+      ctx.putImageData(imgdata, 0, 0, 0, 0, canvas.width, canvas.height);
+	  
+      // Second round, to measure posterior
+      //apply Brownian noise:
+      var brownianImpulse = new b2Vec2(0, 0);
+      var mag = 0;
+      var ang = 0;
+      //vary= 1; //was 1
+
+      // have a function which applies the key input and alternates between pressed and not pressed
+      for (var i = 0; i < m_Robot.length; i++) {
+        mag = vary * Math.random();
+        ang = 2 * Math.PI * Math.random();
+        brownianImpulse.x = mag * Math.cos(ang) + ximpulse; // replaced impulseV.x with 1
+        brownianImpulse.y = mag * Math.sin(ang) + yimpulse; // replaced impulseV.y with 0
+        // the force applied is now constant
+        m_Robot[i].ApplyForce(brownianImpulse, m_Robot[i].GetWorldPoint(new b2Vec2(0, 0)));
+      }
+
+      world.Step(1 / 60, 10, 10);
+      world.DrawDebugData();
+      world.ClearForces();
+      $("canvas").clearCanvas();
+      $("canvas").rotateCanvas({
+        x: 5 * mapScale,
+        y: 5 * mapScale,
+        rotate: angle
+      }).restoreCanvas();
+
+      var newpos_counter = 0;
+      var new_positionData = [];
+      //update the occupancy grid
+      for (b = world.GetBodyList(); b; b = b.GetNext())
+        if (b.m_type == 2) { // if a robot
+          var pos = b.GetPosition();
+          var xQuotient = pos.x * mapScale / grid_scale;
+          var yQuotient = pos.y * mapScale / grid_scale;
+          var xremainder = xQuotient % 1;
+          var yremainder = yQuotient % 1;
+          var x = (xQuotient - xremainder) * grid_scale;
+          var y = (yQuotient - yremainder) * grid_scale;
+          new_positionData[2 * newpos_counter] = x;
+          new_positionData[2 * newpos_counter + 1] = y;
+          newpos_counter = newpos_counter + 1; // increments robot counter - this works
+          //console.log(robot_counter);
+          // loop for making robot cell white
+        }
+      imgdata.data = data;
+      ctx.putImageData(imgdata, 0, 0, 0, 0, canvas.width, canvas.height);
+	  
+	  // Calling the probability update to change the alpha value around the current position of 
+      prob_update(current_positionData, new_positionData, newpos_counter);
+
+      //draw robots and obstacles
+      for (b = world.GetBodyList(); b; b = b.GetNext()) {
+        var angle = b.GetAngle() * (180 / Math.PI);
+        for (f = b.GetFixtureList(); f; f = f.GetNext()) {
+          if (b.GetUserData() == 'robot') {
+            var radius = f.GetShape().GetRadius();
+            var pos = b.GetPosition();
+
+            $("canvas").drawArc({
+                strokeStyle: "lightred",
+                strokeWidth: 1,
+                fillStyle: "red",
+                x: pos.x * mapScale,
+                y: pos.y * mapScale,
+                radius: radius * mapScale
+              })
+              .restoreCanvas();
+          }
+          else if (b.GetUserData() == 'obstacle' || b.GetUserData() == 'moveable' || b.GetUserData() == 'rectangle_ground') {
+            var X = f.GetShape().GetVertices()[1].x - f.GetShape().GetVertices()[0].x;
+            var Y = f.GetShape().GetVertices()[2].y - f.GetShape().GetVertices()[1].y;
+            //console.log(X);
+            var pos = b.GetPosition();
+            var color = 'orange';
+            if (b.GetUserData() == 'obstacle')
+              color = 'brown';
+            $("canvas")
+              .rotateCanvas({
+                x: pos.x * mapScale,
+                y: pos.y * mapScale,
+                rotate: angle
+              })
+              .drawRect({
+                fillStyle: color,
+                x: pos.x * mapScale,
+                y: pos.y * mapScale,
+                width: X * mapScale,
+                height: Y * mapScale,
+                cornerRadius: 0
+              })
+              .restoreCanvas();
+          }
+        }
+      }
+
+      var day = new Date();
+      if (timeFinish == null && false) {
+        timeFinish = day.getTime();
+      }
+      if (overall_time == null) // set the start time
+      {
+        overall_time = day.getTime();
+      }
+      var elapsedTimeSec = (day.getTime() - overall_time) / 1000;
+      string = "Time = " + elapsedTimeSec + "s<br>In this game, users can manipulate the swarm robots (blue dots) to map the white freespace. The goal is to make the entire region grey";
+      $('#cc').html(string); //USERDATA WILL SHOWN IN "div" WITH ID "cc"
+
+      //prevents screen from moving around with arrow keys
+      window.addEventListener("keydown", function(e) {
+        if ([32, 37, 38, 39, 40].indexOf(e.keyCode) > -1) {
+          e.preventDefault();
+        }
+      }, false);
+    }
+
+	//Using the current position data to update the probability. TODO: Write normalization code. 
+	//TODO: Rewrite denominator to accomodate law of total probability.
+    // IDEA: The state change of delta s where s is speed and delta m where m is momentum will allow us to 
+	//mark specific occupancy grid cells with probabilities, hence localizing and focusing the attention to a small set of most probable locations. 	
+    function prob_update(cur_posDat, new_posDat, count) {
+
+      var motion_model = new Array(3);
+      for (var q = 0; q < 3; q++) {
+        motion_model[q] = new Array(3);
+      }
+      motion_model[0][0] = 0.0625;
+      motion_model[0][1] = 0.125;
+      motion_model[0][2] = 0.0625;
+      motion_model[1][0] = 0.125;
+      motion_model[1][1] = 0.25;
+      motion_model[1][2] = 0.125;
+      motion_model[2][0] = 0.0625;
+      motion_model[2][1] = 0.125;
+      motion_model[2][2] = 0.0625;
+      //console.log(data);
+      for (var i = 0; i < count; ++i) {
+
+        mean_x = cur_posDat[2 * i];
+        mean_y = cur_posDat[2 * i + 1];
+        //  console.log(mean_x,mean_y,i);
+        for (var row = -1; row < 2; row++) {
+          for (var col = -1; col < 2; col++) {
+            if (row != 0 && col != 0) {
+              var r = mean_x + row;
+              var c = mean_y + col;
+              var pixel = (c * imgdata.width + r) * 4;
+
+              if (data[pixel + 3] > 0) {
+                var P_measurement = ((motion_model[1][1] + motion_model[row + 1][col + 1]) * (data[pixel + 3] / 255.0)) + (motion_model[row + 1][col + 1] * (1.0 - (data[pixel + 3] / 225.0)));
+                console.log(P_measurement);
+                var posterior_probability = ((motion_model[[1][1]] + motion_model[[r][c]]) * (data[pixel + 3])) / P_measurement;
+                console.log(posterior_probability);
+                //console.log(r,c);
+              }
+
+              //for (var y = c; y <c+grid_scale ; ++c) {
+              //for (var x = r; x < r+grid_scale; ++x) {
+              //var index = (y * imgdata.width + x) * 4;
+
+              // data[index+3]= posterior_probability;
+              //console.log(imgdata.data[index]);
+              // }
+
+              //}
+              //}
+              //}
+            }
+          }
+          //imgdata.data=data;
+          //ctx.putImageData(imgdata, 0, 0,0,0,canvas.width,canvas.height);
+        }
+      }
+    }
+    // ????
+
+  };
+  //end update
+</script>
+<style>
+  #cc {
+    top: 600px;
+    width: 600px;
+    height: 200px;
+    margin: 0;
+    overflow: auto;
+  }
+</style>
+
+</html>

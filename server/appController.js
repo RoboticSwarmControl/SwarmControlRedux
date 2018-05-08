@@ -31,4 +31,16 @@ router.get('/videos', function _renderVideos( req, res) {
 	});
 });
 
+
+router.get('/occugrid', function _renderVideos( req, res) {
+	URFP(req);
+	util.renderPage('occugrid.html.ejs', { tasks: [] })
+	.then( function (page) {
+		res.status(200).send(page);
+	})
+	.catch(function (err) {
+		res.status(500).send(err.toString());
+	});
+});
+
 module.exports = router;
